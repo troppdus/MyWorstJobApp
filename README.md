@@ -31,28 +31,33 @@ But feel free to add more if you want to both of them.
 
 
 # Information management tasks 
-| #Table jobseeker			          |  #Description
+| Table jobseeker			            |  Description
+| ---                             | --- 
 | Retrieve all jobs 		          |  The user can see all jobs offered by recruiters or some specific jobs with the entered search keywords
 | Create a user profile		        |  To apply for a job the user must create a profile : user Id, username, address, date of birth, E-Mail, password, phone number, qualification, list of skills
 | Add files to his profile	      |  The user can add files to his profile, like CV, motivation letter, qualifications etc.
 | Update a user profile		        |  The user can update his personal information’s except his user Id or update the uploaded documents
 | Delete a user profile		        |  The user can delete completely his profile on the application
 | Notification with accepted jobs	|  The user gets notified if the application gets accepted and which company accepted him. At best with some kind of contact information.
-| ---                             |
-| #Table company			            |  #Description
+
+| Table company			              |  Description
+| ---                             | --- 
 | Retrieve all jobs		            |  The recruiter can see all jobs offered by other companies or some specific jobs with the entered search keywords
 | Create a company profile	      |  To publish a new job the company must create a profile : company Id, company name, address, E-Mail, password, phone number, description
 | Update a company profile	      |  The company can update her data items except the company Id
 | Delete a company profile	      |  The company can delete completely her profile on the application
-| ---                             |
-| #Table applyJob			            |  #Description
+
+| Table applyJob			            |  Description
+| ---                             | --- 
 | Apply to a new job		          |  The user can apply for one or multiple job offers
 | Add custom application		      |  After clicking on apply the applicant can add a custom application or take his standard application from the profile
-| ---                             | 
-| #Table jobOffer			            |  #Description
+
+| Table jobOffer			            |  Description
+| ---                             | --- 
 | Create a new job offer		      |  The company can create a new job offer
 | Delete a job offer		          |  The company can delete one or many job offers 
-| ---                             |
-| #Login				                  |  #Description
+
+| Login				                    |  Description
+| ---                             | --- 
 | Login to the user account	      |  The user can log in to his account and then has, dependent on the type of the account, different choices
 
