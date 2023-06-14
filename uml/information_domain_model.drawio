@@ -117,17 +117,19 @@
                         <mxPoint x="717" y="146" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="61" value="1 .. *" style="resizable=0;html=1;align=left;verticalAlign=top;labelBackgroundColor=none;" connectable="0" vertex="1" parent="60">
+                <mxCell id="61" value="1" style="resizable=0;html=1;align=left;verticalAlign=top;labelBackgroundColor=none;" connectable="0" vertex="1" parent="60">
                     <mxGeometry x="-1" relative="1" as="geometry">
-                        <mxPoint x="7" y="-30" as="offset"/>
+                        <mxPoint x="3" y="-27" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="62" value="1" style="resizable=0;html=1;align=right;verticalAlign=bottom;labelBackgroundColor=none;" connectable="0" vertex="1" parent="60">
-                    <mxGeometry x="1" relative="1" as="geometry"/>
+                <mxCell id="62" value="1.. *" style="resizable=0;html=1;align=right;verticalAlign=bottom;labelBackgroundColor=none;" connectable="0" vertex="1" parent="60">
+                    <mxGeometry x="1" relative="1" as="geometry">
+                        <mxPoint x="-7" y="-4" as="offset"/>
+                    </mxGeometry>
                 </mxCell>
                 <mxCell id="64" value="appliedJob" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="60">
                     <mxGeometry x="0.8284" relative="1" as="geometry">
-                        <mxPoint as="offset"/>
+                        <mxPoint x="-19" y="13" as="offset"/>
                     </mxGeometry>
                 </mxCell>
             </root>
