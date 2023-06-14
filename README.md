@@ -8,6 +8,6 @@
 - [x] Brainstorm over the job search functions and its UI.
 
 # Division of work
-- [x] **Phong Vu Thanh - fontvu**: task 1
-- [x] **Ilia Karasev - ilia-karasev**: task 2 for User, Company, and Job classes
-- [x] **LamaIshan Lamal - ishanism**: task 2 for Application and Document classes
+- **Phong Vu Thanh - fontvu**: task 1
+- **Ilia Karasev - ilia-karasev**: task 2 for User, Company, and Job classes
+- **LamaIshan Lamal - ishanism**: task 2 for Application and Document classes
