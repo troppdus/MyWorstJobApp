@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>MyWorstJob</title>
+  <meta name="description" content="MyWorstJob app."/>
+  <link rel="icon" href="favicon.ico"/>
+  <script type="module">
+    import Job from "./js/m/Job.mjs";
+
+    window.addEventListener("load", function () {
+      const clearButton = document.getElementById("clearData"),
+        generateTestDataButtons = document.querySelectorAll("button.generateTestData");
+      // set event handlers for the buttons "clearData" and "generateTestData"
+      clearButton.addEventListener("click", Job.clearData);
+      for (const btn of generateTestDataButtons) {
+        btn.addEventListener("click", Job.generateTestData);
+      }
+    });
+  </script>
+</head>
+<body>
+<main>
+  <h1>MyWorstJob</h1>
+  <div class="subheading">It can't get worse!</div>
+  <p>This app supports the following operations:</p>
+  <menu>
+    <li><a href="createJob.html">Create</a> a new job record</li>
+    <li><a href="retrieveAndListAllJobs.html">Retrieve</a> and list all job records</li>
+    <li><a href="updateJob.html">Update</a> a job record</li>
+    <li><a href="deleteJob.html">Delete</a> a job record</li>
+    <li style="margin-top: 1em"><button class="generateTestData" type="button">Generate test data</button></li>
+    <li><button id="clearData" type="button">Clear database</button></li>
+  </menu>
+</main>
+</body>
+</html>
