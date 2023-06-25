@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>MyWorstJob: Update</title>
+  <script src="js/v/updateJob.mjs" type="module"></script>
+</head>
+<body>
+<header>
+  <h1>Update a job record</h1>
+</header>
+<main>
+  <form id="Job">
+    <div>
+      <label>Select job:
+        <select name="selectJob">
+          <option value=""> ---</option>
+        </select>
+      </label>
+    </div>
+    <div><label>Job Id: <output name="jobId"/></label></div>
+    <div><label>Job Name: <input name="jobName"/></label></div>
+    <div><label>Location: <input name="location"/></label></div>
+    <div><label>Company: <input name="company"/></label></div>
+    <div><label>Salary: <input name="salary"/></label></div>
+    <div><label>Type of Employment: <input name="typeOfEmployment"/></label></div>
+    <div><label>Job Field Category: <input name="jobFieldCategory"/></label></div>
+    <div><label>Description: <textarea name="description"></textarea></label></div>
+    <div>
+      <button name="commit" type="button">Update</button>
+    </div>
+  </form>
+</main>
+<br>
+<footer>
+  <a href="index.html">« Back to main menu</a>
+</footer>
+</body>
+</html>
