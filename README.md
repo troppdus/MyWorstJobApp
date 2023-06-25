@@ -26,10 +26,16 @@
 - [x] Add the *Document* class and its attributes to provide a way to store the documents such as CV, cover letter, etc.
 - [x] Brainstorm over the job search functions and its UI.
 
-# Division of work
+# Division of work for Assignment 7B
 - **Phong Vu Thanh - fontvu**: task 1
 - **Ilia Karasev - ilia-karasev**: task 2 for User, Company, and Job classes
 - **LamaIshan Lamal - ishanism**: task 2 for Application and Document classes
+
+# Division of work for Assignment 7C-1
+- **Phong Vu Thanh - fontvu**: delete function, html files for index, delete, and retrive functions
+- **Ilia Karasev - ilia-karasev**: model class Job, retrieve and create functions
+- **LamaIshan Lamal - ishanism**: update function, html files for update and create functions
+
 
 
 
