@@ -147,3 +147,4 @@ dist
 .firebase/
 
 *.7z
+jsconfig.json
