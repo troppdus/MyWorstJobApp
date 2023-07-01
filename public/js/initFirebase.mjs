@@ -15,4 +15,9 @@ initializeApp( firebaseConfig);
 // Initialize Cloud Firestore interface
 const fsDb = getFirestore();
 
-export { fsDb };
+// Initialize a Firebase App object only if not already initialized
+const app = (!getApps().length) ? initializeApp( firebaseConfig ) : getApp();
+// Initialize Firebase Authentication
+const auth = getAuth( app);
+
+export { auth, fsDb };

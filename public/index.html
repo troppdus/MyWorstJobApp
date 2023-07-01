@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <title>MyWorstJob</title>
-  <meta name="description" content="MyWorstJob app."/>
-  <link rel="icon" href="favicon.ico"/>
+  <meta name="description" content="MyWorstJob app." />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+    a.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+      cursor: default;
+    }
+  </style>
   <script type="module">
     import Job from "./js/m/Job.mjs";
 
@@ -19,19 +27,26 @@
     });
   </script>
 </head>
+
 <body>
-<main>
-  <h1>MyWorstJob</h1>
-  <div class="subheading">It can't get worse!</div>
-  <p>This app supports the following operations:</p>
-  <menu>
-    <li><a href="createJob.html">Create</a> a new job record</li>
-    <li><a href="retrieveAndListAllJobs.html">Retrieve</a> and list all job records</li>
-    <li><a href="updateJob.html">Update</a> a job record</li>
-    <li><a href="deleteJob.html">Delete</a> a job record</li>
-    <li style="margin-top: 1em"><button class="generateTestData" type="button">Generate test data</button></li>
-    <li><button id="clearData" type="button">Clear database</button></li>
-  </menu>
-</main>
+  <header>
+    <div id="login-management"></div>
+    <h1>Minimal App with Access Control — MyWorstJob</h1>
+  </header>
+  <main>
+    <h1>MyWorstJob</h1>
+    <div class="subheading">It can't get worse!</div>
+    <p>This app supports the following operations:</p>
+    <menu>
+      <li><a href="createJob.html" class="disabled">Create</a> a new job record</li>
+      <li><a href="retrieveAndListAllJobs.html">Retrieve</a> and list all job records</li>
+      <li><a href="updateJob.html" class="disabled">Update</a> a job record</li>
+      <li><a href="deleteJob.html" class="disabled">Delete</a> a job record</li>
+      <li style="margin-top: 1em"><button class="generateTestData" type="button" disabled="disabled">Generate test
+          data</button></li>
+      <li><button id="clearData" type="button">Clear database</button></li>
+    </menu>
+  </main>
 </body>
+
 </html>
