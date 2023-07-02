@@ -37,6 +37,11 @@
 - **Ilia Karasev - ilia-karasev**: model class Job, retrieve and create functions
 - **Ishan Lamal - ishanism**: update function, html files for update and create functions
 
+# Division of work for Assignment 7C-2
+- **Phong Vu Thanh - fontvu**: access control and action handler
+- **Ilia Karasev - ilia-karasev**: sign in and sign up
+- **Ishan Lamal - ishanism**: firebase deployment and reset password
+
 
 
 
