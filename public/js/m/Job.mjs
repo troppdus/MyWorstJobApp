@@ -1,13 +1,18 @@
 import { fsDb } from "../initFirebase.mjs";
-import { collection as fsColl, deleteDoc, doc as fsDoc, getDoc, getDocs, setDoc, updateDoc, query as fsQuery }
+import { collection as fsColl, deleteDoc, doc as fsDoc, getDoc, getDocs, orderBy, query as fsQuery,
+  setDoc, updateDoc, deleteField }
   from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore-lite.js";
-
+import { isNonEmptyString, nextYear, isIntegerOrIntegerString }
+  from "../../lib/util.mjs";
+import { NoConstraintViolation, MandatoryValueConstraintViolation, RangeConstraintViolation,
+  IntervalConstraintViolation, PatternConstraintViolation, UniquenessConstraintViolation }
+  from "../../lib/errorTypes.mjs";
 
 //   «get/set» jobID[1] : number(int)
 // - «get/set» jobName[1] : String
 // - «get/set» location[1] : String
 // - «get/set» company[1] : Company -- string for now
-// - «get/set» salary[1] : Double -- changed to int
+// - «get/set» salary[1] : number(int)
 // - «get/set» typeOfEmployment[1] : String
 // - «get/set» jobFieldCategory[1] : String
 // - «get/set» description[0..1] : String
@@ -29,8 +34,210 @@ class Job {
     this.typeOfEmployment = typeOfEmployment;
     this.jobFieldCategory = jobFieldCategory;
     this.description = description;
-  }
+  };
+
+  get jobId() {
+    return this._jobId;
+  };
+
+  static checkJobId( jobId) {
+    if (!jobId) {
+      return new MandatoryValueConstraintViolation("A job ID must be provided!");
+    } else if (!isIntegerOrIntegerString( jobId) || parseInt( jobId) < 1)  {
+      return new RangeConstraintViolation("The job ID must be a positive integer!");
+    } else {
+      return new NoConstraintViolation();
+    }
+  };
+
+  static async checkJobIdAsId( jobId) {
+    let validationResult = Job.checkJobId( jobId);
+    if ((validationResult instanceof NoConstraintViolation)) {
+      if (!jobId) {
+        validationResult = new MandatoryValueConstraintViolation(
+          "A value for the job ID must be provided!");
+      } else {
+        const jobDocSn = await getDoc( fsDoc( fsDb, "jobs", jobId));
+        if (jobDocSn.exists()) {
+          validationResult = new UniquenessConstraintViolation(
+             "There is already a job record with this ID!");
+        } else {
+          validationResult = new NoConstraintViolation();
+        }
+      }
+    }
+    return validationResult;
+  };
+
+  set jobId( n) {
+    const validationResult = Job.checkJobId( n);
+    if (validationResult instanceof NoConstraintViolation) {
+      this._jobId = n;
+    } else {
+      throw validationResult;
+    }
+  };
+
+  get jobName() {
+    return this._jobName;
+  };
+
+  static checkJobName( n) {
+    if (!n) {
+      return new MandatoryValueConstraintViolation("A job name must be provided!");
+    } else if (!isNonEmptyString( n)) {
+      return new RangeConstraintViolation("The job name must be a non-empty string!");
+    } else {
+      return new NoConstraintViolation();
+    }
+  };
+
+  set jobName( n) {
+    const validationResult = Job.checkJobName( n);
+    if (validationResult instanceof NoConstraintViolation) {
+      this._jobName = n;
+    } else {
+      throw validationResult;
+    }
+  };
+
+  get location() {
+    return this._location;
+  };
+
+  static checkLocation(loc) {
+    if (!loc) {
+      return new MandatoryValueConstraintViolation("A location must be provided!");
+    } else if (!isNonEmptyString(loc)) {
+      return new RangeConstraintViolation("The location must be a non-empty string!");
+    } else {
+      return new NoConstraintViolation();
+    }
+  };
+
+  set location(loc) {
+    const validationResult = Job.checkLocation(loc);
+    if (validationResult instanceof NoConstraintViolation) {
+      this._location = loc;
+    } else {
+      throw validationResult;
+    }
+  };
+
+  get company() {
+    return this._company;
+  };
+
+  static checkCompany(company) {
+    if (!company) {
+      return new MandatoryValueConstraintViolation("A company name must be provided!");
+    } else if (!isNonEmptyString(company)) {
+      return new RangeConstraintViolation("The company name must be a non-empty string!");
+    } else {
+      return new NoConstraintViolation();
+    }
+  };
+
+  set company(company) {
+    const validationResult = Job.checkCompany(company);
+    if (validationResult instanceof NoConstraintViolation) {
+      this._company = company;
+    } else {
+      throw validationResult;
+    }
+  };
+
+  get salary() {
+    return this._salary;
+  };
+
+  static checkSalary(salary) {
+    if (!salary) {
+      return new MandatoryValueConstraintViolation("A salary must be provided!");
+    } else if (!isIntegerOrIntegerString( salary) || parseInt( salary) < 1) {
+      return new RangeConstraintViolation("The salary must be a positive integer!");
+    } else {
+      return new NoConstraintViolation();
+    }
+  };
+
+  set salary(salary) {
+    const validationResult = Job.checkSalary(salary);
+    if (validationResult instanceof NoConstraintViolation) {
+      this._salary = salary;
+    } else {
+      throw validationResult;
+    }
+  };
+
+  get typeOfEmployment() {
+    return this._typeOfEmployment;
+  };
+
+  static checkTypeOfEmployment(type) {
+    if (!type) {
+      return new MandatoryValueConstraintViolation("A type of employment must be provided!");
+    } else if (!isNonEmptyString(type)) {
+      return new RangeConstraintViolation("The type of employment must be a non-empty string!");
+    } else {
+      return new NoConstraintViolation();
+    }
+  };
+
+  set typeOfEmployment(type) {
+    const validationResult = Job.checkTypeOfEmployment(type);
+    if (validationResult instanceof NoConstraintViolation) {
+      this._typeOfEmployment = type;
+    } else {
+      throw validationResult;
+    }
+  };
+
+  get jobFieldCategory() {
+    return this._jobFieldCategory;
+  };
+
+  static checkJobFieldCategory(category) {
+    if (!category) {
+      return new MandatoryValueConstraintViolation("A job field category must be provided!");
+    } else if (!isNonEmptyString(category)) {
+      return new RangeConstraintViolation("The job field category must be a non-empty string!");
+    } else {
+      return new NoConstraintViolation();
+    }
+  };
+
+  set jobFieldCategory(category) {
+    const validationResult = Job.checkJobFieldCategory(category);
+    if (validationResult instanceof NoConstraintViolation) {
+      this._jobFieldCategory = category;
+    } else {
+      throw validationResult;
+    }
+  };
+
+  get description() {
+    return this._description;
+  };
+
+  static checkDescription(description) {
+    if (description && !isNonEmptyString(description)) {
+      return new RangeConstraintViolation("The description must be a non-empty string!");
+    } else {
+      return new NoConstraintViolation();
+    }
+  };
+
+  set description(description) {
+    const validationResult = Job.checkDescription(description);
+    if (validationResult instanceof NoConstraintViolation) {
+      this._description = description;
+    } else {
+      throw validationResult;
+    }
+  };
 }
+
 
 
 Job.instances = {};  // initially an empty associative array
@@ -38,19 +245,55 @@ Job.instances = {};  // initially an empty associative array
  ***  Class-level ("static") storage management methods **
  *********************************************************/
 /**
+ * Conversion between a Job object and a corresponding Firestore document
+ * @type {{toFirestore: (function(*): {year: number,
+* jobId: (Document.jobId|*), jobName}), fromFirestore: (function(*, *=): Job)}}
+*/
+Job.converter = {
+ toFirestore: function (job) {
+   const data = {
+     jobId: job.jobId,
+     jobName: job.jobName,
+     location: job.location,
+     company: job.company,
+     salary: job.salary,
+     typeOfEmployment: job.typeOfEmployment,
+     jobFieldCategory: job.jobFieldCategory,
+   };
+   if (job.description) data.description = parseInt( job.description);
+   return data;
+ },
+ fromFirestore: function (snapshot, options) {
+   const data = snapshot.data( options);
+   return new Job( data);
+ },
+};
+
+/**
  * Create a Firestore document in the Firestore collection "jobs"
  * @param slots: {object}
  * @returns {Promise<void>}
  */
 Job.add = async function (slots) {
-  const jobsCollRef = fsColl( fsDb, "jobs"),
-    jobDocRef = fsDoc (jobsCollRef, slots.jobId.toString());
-  slots.salary = parseInt( slots.salary);  // convert from string to integer
+  let job = null;
   try {
-    await setDoc( jobDocRef, slots);
-    console.log(`Job record ${slots.jobId} created.`);
-  } catch( e) {
-    console.error(`Error when adding job record: ${e}`);
+    // validate data by creating Job instance
+    job = new Job( slots);
+    // invoke asynchronous ID/uniqueness check
+    let validationResult = await Job.checkJobIdAsId( job.jobId.toString());
+    if (!validationResult instanceof NoConstraintViolation) throw validationResult;
+  } catch (e) {
+    console.error(`${e.constructor.name}: ${e.message}`);
+    job = null;
+  }
+  if (job) {
+    try {
+      const jobDocRef = fsDoc( fsDb, "jobs", job.jobId).withConverter( Job.converter);
+      await setDoc( jobDocRef, job);
+      console.log(`Job record "${job.jobId}" created!`);
+    } catch (e) {
+      console.error(`${e.constructor.name}: ${e.message} + ${e}`);
+    }
   }
 };
 /**
@@ -58,35 +301,32 @@ Job.add = async function (slots) {
  * @param jobId: {object}
  * @returns {Promise<*>} jobRecord: {array}
  */
-Job.retrieve = async function (jobId) {
-  let jobDocSn = null;
+Job.retrieve = async function( jobId) {
   try {
-    const jobDocRef = fsDoc( fsDb, "jobs", jobId);
-    jobDocSn = await getDoc( jobDocRef);
-  } catch( e) {
-    console.error(`Error when retrieving job record: ${e}`);
-    return null;
+    const jobRec = (await getDoc( fsDoc(fsDb, "jobs", jobId.toString())
+      .withConverter( Job.converter))).data();
+    console.log(`Job record "${jobRec.jobId}" retrieved.`);
+    return jobRec;
+  } catch (e) {
+    console.error(`Error retrieving job record: ${e}`);
   }
-  const jobRec = jobDocSn.data();
-  return jobRec;
 };
 /**
  * Load all job records from Firestore
+ * @param order: {string}
  * @returns {Promise<*>} jobRecords: {array}
  */
-Job.retrieveAll = async function () {
-  let jobsQrySn = null;
+Job.retrieveAll = async function (order) {
+  if (!order) order = "jobId";
+  const jobsCollRef = fsColl( fsDb, "jobs"),
+    q = fsQuery( jobsCollRef, orderBy( order));
   try {
-    const jobsCollRef = fsColl( fsDb, "jobs");
-    jobsQrySn = await getDocs( jobsCollRef);
-  } catch( e) {
-    console.error(`Error when retrieving job records: ${e}`);
-    return null;
+    const jobRecs = (await getDocs( q.withConverter( Job.converter))).docs.map( d => d.data());
+    console.log(`${jobRecs.length} job records retrieved ${order ? "ordered by " + order : ""}`);
+    return jobRecs;
+  } catch (e) {
+    console.error(`Error retrieving job records: ${e}`);
   }
-  const jobDocs = jobsQrySn.docs,
-    jobRecs = jobDocs.map( d => d.data());
-  console.log(`${jobRecs.length} job records retrieved.`);
-  return jobRecs;
 };
 /**
  * Update a Firestore document in the Firestore collection "jobs"
@@ -94,29 +334,68 @@ Job.retrieveAll = async function () {
  * @returns {Promise<void>}
  */
 Job.update = async function (slots) {
-  const updSlots = {};
-  // retrieve up-to-date job record
-  const jobRec = await Job.retrieve( slots.jobId);
-  // convert from string to integer
-  if (slots.salary) slots.salary = parseInt( slots.salary);
-  // update only those slots that have changed
-  if (jobRec.jobName !== slots.jobName) updSlots.jobName = slots.jobName;
-  if (jobRec.salary !== slots.salary) updSlots.salary = slots.salary;
-  if (jobRec.location !== slots.location) updSlots.location = slots.location;
-  if (jobRec.company !== slots.company) updSlots.company = slots.company;
-  if (jobRec.typeOfEmployment !== slots.typeOfEmployment) updSlots.typeOfEmployment = slots.typeOfEmployment;
-  if (jobRec.jobFieldCategory !== slots.jobFieldCategory) updSlots.jobFieldCategory = slots.jobFieldCategory;
-  if (slots.description) {
-    if (jobRec.description !== slots.description) updSlots.description = slots.description;
+  let noConstraintViolated = true,
+    validationResult = null,
+    jobBeforeUpdate = null;
+  const jobDocRef = fsDoc(fsDb, "jobs", slots.jobId.toString()).withConverter(Job.converter),
+    updatedSlots = {};
+
+  try {
+    // retrieve up-to-date job record
+    const jobDocSn = await getDoc(jobDocRef);
+    jobBeforeUpdate = jobDocSn.data();
+  } catch (e) {
+    console.error(`${e.constructor.name}: ${e.message}`);
   }
 
-  if (Object.keys( updSlots).length > 0) {
-    try {
-      const jobDocRef = fsDoc( fsDb, "jobs", slots.jobId);
-      await updateDoc( jobDocRef, updSlots);
-      console.log(`Job record ${slots.jobId} modified.`);
-    } catch( e) {
-      console.error(`Error when updating job record: ${e}`);
+  try {
+    if (jobBeforeUpdate.jobName !== slots.jobName) {
+      validationResult = Job.checkJobName(slots.jobName);
+      if (validationResult instanceof NoConstraintViolation) updatedSlots.jobName = slots.jobName;
+      else throw validationResult;
+    }
+    if (jobBeforeUpdate.location !== slots.location) {
+      validationResult = Job.checkLocation(slots.location);
+      if (validationResult instanceof NoConstraintViolation) updatedSlots.location = slots.location;
+      else throw validationResult;
+    }
+    if (jobBeforeUpdate.company !== slots.company) {
+      validationResult = Job.checkCompany(slots.company);
+      if (validationResult instanceof NoConstraintViolation) updatedSlots.company = slots.company;
+      else throw validationResult;
+    }
+    if (jobBeforeUpdate.salary !== slots.salary) {
+      validationResult = Job.checkSalary(slots.salary);
+      if (validationResult instanceof NoConstraintViolation) updatedSlots.salary = slots.salary;
+      else throw validationResult;
+    }
+    if (jobBeforeUpdate.typeOfEmployment !== slots.typeOfEmployment) {
+      validationResult = Job.checkTypeOfEmployment(slots.typeOfEmployment);
+      if (validationResult instanceof NoConstraintViolation) updatedSlots.typeOfEmployment = slots.typeOfEmployment;
+      else throw validationResult;
+    }
+    if (jobBeforeUpdate.jobFieldCategory !== slots.jobFieldCategory) {
+      validationResult = Job.checkJobFieldCategory(slots.jobFieldCategory);
+      if (validationResult instanceof NoConstraintViolation) updatedSlots.jobFieldCategory = slots.jobFieldCategory;
+      else throw validationResult;
+    }
+    if (slots.description && jobBeforeUpdate.description !== slots.description) {
+      validationResult = Job.checkDescription(slots.description);
+      if (validationResult instanceof NoConstraintViolation) updatedSlots.description = slots.description;
+      else throw validationResult;
+    }
+  } catch (e) {
+    noConstraintViolated = false;
+    console.error(`${e.constructor.name}: ${e.message}`);
+  }
+
+  if (noConstraintViolated) {
+    const updatedProperties = Object.keys(updatedSlots);
+    if (updatedProperties.length) {
+      await updateDoc(jobDocRef, updatedSlots);
+      console.log(`Property(ies) "${updatedProperties.toString()}" modified for job record "${slots.jobId}"`);
+    } else {
+      console.log(`No property value changed for job record "${slots.jobId}"!`);
     }
   }
 };

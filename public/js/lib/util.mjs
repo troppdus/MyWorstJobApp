@@ -1,5 +1,5 @@
 /**
- * Verifies if a value represents an integer
+ * Verifies if a value represents a non-empty string
  * @param {string} x
  * @return {boolean}
  */
