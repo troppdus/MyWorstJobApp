@@ -270,7 +270,7 @@ Job.converter = {
       location: job.location,
       company: job.company,
       salary: job.salary,
-      typeOfEmployment: job.typeOfEmployment,
+      typeOfEmployment: parseInt(job.typeOfEmployment),
       jobFieldCategory: job.jobFieldCategory,
     };
     if (job.description) data.description = parseInt(job.description);
