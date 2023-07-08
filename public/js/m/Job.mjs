@@ -1,11 +1,15 @@
 import { fsDb } from "../initFirebase.mjs";
-import { collection as fsColl, deleteDoc, doc as fsDoc, getDoc, getDocs, orderBy, query as fsQuery,
-  setDoc, updateDoc, deleteField }
+import {
+  collection as fsColl, deleteDoc, doc as fsDoc, getDoc, getDocs, orderBy, query as fsQuery,
+  setDoc, updateDoc, deleteField
+}
   from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore-lite.js";
 import { isNonEmptyString, nextYear, isIntegerOrIntegerString }
   from "../../lib/util.mjs";
-import { NoConstraintViolation, MandatoryValueConstraintViolation, RangeConstraintViolation,
-  IntervalConstraintViolation, PatternConstraintViolation, UniquenessConstraintViolation }
+import {
+  NoConstraintViolation, MandatoryValueConstraintViolation, RangeConstraintViolation,
+  IntervalConstraintViolation, PatternConstraintViolation, UniquenessConstraintViolation
+}
   from "../../lib/errorTypes.mjs";
 
 //   «get/set» jobID[1] : number(int)
@@ -16,6 +20,13 @@ import { NoConstraintViolation, MandatoryValueConstraintViolation, RangeConstrai
 // - «get/set» typeOfEmployment[1] : String
 // - «get/set» jobFieldCategory[1] : String
 // - «get/set» description[0..1] : String
+
+/**
+ * Define three Enumerations
+ * @type {Enumeration}
+ */
+const typeOfEmploymentEL = new Enumeration(["Full Time", "Part Time"]);
+
 /**
  * Constructor function for the class Job
  * @constructor
@@ -25,7 +36,7 @@ import { NoConstraintViolation, MandatoryValueConstraintViolation, RangeConstrai
  */
 class Job {
   // record parameter with the ES6 syntax for function parameter destructuring
-  constructor({jobId, jobName, location, company, salary, typeOfEmployment, jobFieldCategory, description}) {
+  constructor({ jobId, jobName, location, company, salary, typeOfEmployment, jobFieldCategory, description }) {
     this.jobId = jobId;
     this.jobName = jobName;
     this.location = location;
@@ -40,27 +51,27 @@ class Job {
     return this._jobId;
   };
 
-  static checkJobId( jobId) {
+  static checkJobId(jobId) {
     if (!jobId) {
       return new MandatoryValueConstraintViolation("A job ID must be provided!");
-    } else if (!isIntegerOrIntegerString( jobId) || parseInt( jobId) < 1)  {
+    } else if (!isIntegerOrIntegerString(jobId) || parseInt(jobId) < 1) {
       return new RangeConstraintViolation("The job ID must be a positive integer!");
     } else {
       return new NoConstraintViolation();
     }
   };
 
-  static async checkJobIdAsId( jobId) {
-    let validationResult = Job.checkJobId( jobId);
+  static async checkJobIdAsId(jobId) {
+    let validationResult = Job.checkJobId(jobId);
     if ((validationResult instanceof NoConstraintViolation)) {
       if (!jobId) {
         validationResult = new MandatoryValueConstraintViolation(
           "A value for the job ID must be provided!");
       } else {
-        const jobDocSn = await getDoc( fsDoc( fsDb, "jobs", jobId));
+        const jobDocSn = await getDoc(fsDoc(fsDb, "jobs", jobId));
         if (jobDocSn.exists()) {
           validationResult = new UniquenessConstraintViolation(
-             "There is already a job record with this ID!");
+            "There is already a job record with this ID!");
         } else {
           validationResult = new NoConstraintViolation();
         }
@@ -69,8 +80,8 @@ class Job {
     return validationResult;
   };
 
-  set jobId( n) {
-    const validationResult = Job.checkJobId( n);
+  set jobId(n) {
+    const validationResult = Job.checkJobId(n);
     if (validationResult instanceof NoConstraintViolation) {
       this._jobId = n;
     } else {
@@ -82,18 +93,18 @@ class Job {
     return this._jobName;
   };
 
-  static checkJobName( n) {
+  static checkJobName(n) {
     if (!n) {
       return new MandatoryValueConstraintViolation("A job name must be provided!");
-    } else if (!isNonEmptyString( n)) {
+    } else if (!isNonEmptyString(n)) {
       return new RangeConstraintViolation("The job name must be a non-empty string!");
     } else {
       return new NoConstraintViolation();
     }
   };
 
-  set jobName( n) {
-    const validationResult = Job.checkJobName( n);
+  set jobName(n) {
+    const validationResult = Job.checkJobName(n);
     if (validationResult instanceof NoConstraintViolation) {
       this._jobName = n;
     } else {
@@ -154,7 +165,7 @@ class Job {
   static checkSalary(salary) {
     if (!salary) {
       return new MandatoryValueConstraintViolation("A salary must be provided!");
-    } else if (!isIntegerOrIntegerString( salary) || parseInt( salary) < 1) {
+    } else if (!isIntegerOrIntegerString(salary) || parseInt(salary) < 1) {
       return new RangeConstraintViolation("The salary must be a positive integer!");
     } else {
       return new NoConstraintViolation();
@@ -177,8 +188,10 @@ class Job {
   static checkTypeOfEmployment(type) {
     if (!type) {
       return new MandatoryValueConstraintViolation("A type of employment must be provided!");
-    } else if (!isNonEmptyString(type)) {
-      return new RangeConstraintViolation("The type of employment must be a non-empty string!");
+    } else if (!util.isIntegerOrIntegerString(ol) ||
+      parseInt(ol) < 1 || parseInt(ol) > typeOfEmploymentEL.MAX) {
+      return new RangeConstraintViolation(
+        "Invalid value for original language: " + ol);
     } else {
       return new NoConstraintViolation();
     }
@@ -250,23 +263,23 @@ Job.instances = {};  // initially an empty associative array
 * jobId: (Document.jobId|*), jobName}), fromFirestore: (function(*, *=): Job)}}
 */
 Job.converter = {
- toFirestore: function (job) {
-   const data = {
-     jobId: job.jobId,
-     jobName: job.jobName,
-     location: job.location,
-     company: job.company,
-     salary: job.salary,
-     typeOfEmployment: job.typeOfEmployment,
-     jobFieldCategory: job.jobFieldCategory,
-   };
-   if (job.description) data.description = parseInt( job.description);
-   return data;
- },
- fromFirestore: function (snapshot, options) {
-   const data = snapshot.data( options);
-   return new Job( data);
- },
+  toFirestore: function (job) {
+    const data = {
+      jobId: job.jobId,
+      jobName: job.jobName,
+      location: job.location,
+      company: job.company,
+      salary: job.salary,
+      typeOfEmployment: job.typeOfEmployment,
+      jobFieldCategory: job.jobFieldCategory,
+    };
+    if (job.description) data.description = parseInt(job.description);
+    return data;
+  },
+  fromFirestore: function (snapshot, options) {
+    const data = snapshot.data(options);
+    return new Job(data);
+  },
 };
 
 /**
@@ -278,9 +291,9 @@ Job.add = async function (slots) {
   let job = null;
   try {
     // validate data by creating Job instance
-    job = new Job( slots);
+    job = new Job(slots);
     // invoke asynchronous ID/uniqueness check
-    let validationResult = await Job.checkJobIdAsId( job.jobId.toString());
+    let validationResult = await Job.checkJobIdAsId(job.jobId.toString());
     if (!validationResult instanceof NoConstraintViolation) throw validationResult;
   } catch (e) {
     console.error(`${e.constructor.name}: ${e.message}`);
@@ -288,8 +301,8 @@ Job.add = async function (slots) {
   }
   if (job) {
     try {
-      const jobDocRef = fsDoc( fsDb, "jobs", job.jobId).withConverter( Job.converter);
-      await setDoc( jobDocRef, job);
+      const jobDocRef = fsDoc(fsDb, "jobs", job.jobId).withConverter(Job.converter);
+      await setDoc(jobDocRef, job);
       console.log(`Job record "${job.jobId}" created!`);
     } catch (e) {
       console.error(`${e.constructor.name}: ${e.message} + ${e}`);
@@ -301,10 +314,10 @@ Job.add = async function (slots) {
  * @param jobId: {object}
  * @returns {Promise<*>} jobRecord: {array}
  */
-Job.retrieve = async function( jobId) {
+Job.retrieve = async function (jobId) {
   try {
-    const jobRec = (await getDoc( fsDoc(fsDb, "jobs", jobId.toString())
-      .withConverter( Job.converter))).data();
+    const jobRec = (await getDoc(fsDoc(fsDb, "jobs", jobId.toString())
+      .withConverter(Job.converter))).data();
     console.log(`Job record "${jobRec.jobId}" retrieved.`);
     return jobRec;
   } catch (e) {
@@ -318,10 +331,10 @@ Job.retrieve = async function( jobId) {
  */
 Job.retrieveAll = async function (order) {
   if (!order) order = "jobId";
-  const jobsCollRef = fsColl( fsDb, "jobs"),
-    q = fsQuery( jobsCollRef, orderBy( order));
+  const jobsCollRef = fsColl(fsDb, "jobs"),
+    q = fsQuery(jobsCollRef, orderBy(order));
   try {
-    const jobRecs = (await getDocs( q.withConverter( Job.converter))).docs.map( d => d.data());
+    const jobRecs = (await getDocs(q.withConverter(Job.converter))).docs.map(d => d.data());
     console.log(`${jobRecs.length} job records retrieved ${order ? "ordered by " + order : ""}`);
     return jobRecs;
   } catch (e) {
@@ -406,9 +419,9 @@ Job.update = async function (slots) {
  */
 Job.destroy = async function (jobId) {
   try {
-    await deleteDoc( fsDoc( fsDb, "jobs", jobId.toString()));
+    await deleteDoc(fsDoc(fsDb, "jobs", jobId.toString()));
     console.log(`Job record ${jobId} deleted.`);
-  } catch( e) {
+  } catch (e) {
     console.error(`Error when deleting job record: ${e}`);
   }
 };
@@ -421,57 +434,57 @@ Job.destroy = async function (jobId) {
 Job.generateTestData = async function () {
   let jobRecs = [
     {
-      jobId: 1, 
-      jobName: 'Software Engineer', 
-      location: 'San Francisco', 
-      company: 'Google', 
-      salary: 120000, 
-      typeOfEmployment: 'Full Time', 
-      jobFieldCategory: 'Engineering', 
+      jobId: 1,
+      jobName: 'Software Engineer',
+      location: 'San Francisco',
+      company: 'Google',
+      salary: 120000,
+      typeOfEmployment: 'Full Time',
+      jobFieldCategory: 'Engineering',
       description: 'Design, develop, test, deploy, maintain and improve software.'
-    }, 
+    },
     {
-      jobId: 2, 
-      jobName: 'Data Analyst', 
-      location: 'New York', 
-      company: 'Facebook', 
-      salary: 95000, 
-      typeOfEmployment: 'Part Time', 
-      jobFieldCategory: 'Data Science', 
+      jobId: 2,
+      jobName: 'Data Analyst',
+      location: 'New York',
+      company: 'Facebook',
+      salary: 95000,
+      typeOfEmployment: 'Part Time',
+      jobFieldCategory: 'Data Science',
       description: 'Interpret data, analyze results using statistical techniques.'
     },
     {
-      jobId: 3, 
-      jobName: 'Product Manager', 
-      location: 'Seattle', 
-      company: 'Amazon', 
-      salary: 130000, 
-      typeOfEmployment: 'Full Time', 
+      jobId: 3,
+      jobName: 'Product Manager',
+      location: 'Seattle',
+      company: 'Amazon',
+      salary: 130000,
+      typeOfEmployment: 'Full Time',
       jobFieldCategory: 'Product'
-    }, 
+    },
     {
-      jobId: 4, 
-      jobName: 'UX Designer', 
-      location: 'Austin', 
-      company: 'Apple', 
-      salary: 90000, 
-      typeOfEmployment: 'Full Time', 
-      jobFieldCategory: 'Design', 
+      jobId: 4,
+      jobName: 'UX Designer',
+      location: 'Austin',
+      company: 'Apple',
+      salary: 90000,
+      typeOfEmployment: 'Full Time',
+      jobFieldCategory: 'Design',
       description: 'Designing user interactions on websites.'
-    }, 
+    },
     {
-      jobId: 5, 
-      jobName: 'Marketing Manager', 
-      location: 'Chicago', 
-      company: 'Microsoft', 
-      salary: 105000, 
-      typeOfEmployment: 'Full Time', 
+      jobId: 5,
+      jobName: 'Marketing Manager',
+      location: 'Chicago',
+      company: 'Microsoft',
+      salary: 105000,
+      typeOfEmployment: 'Full Time',
       jobFieldCategory: 'Marketing'
     }
   ];
   // save all job record/documents
-  await Promise.all( jobRecs.map( d => Job.add( d)));
-  console.log(`${Object.keys( jobRecs).length} job records saved.`);
+  await Promise.all(jobRecs.map(d => Job.add(d)));
+  console.log(`${Object.keys(jobRecs).length} job records saved.`);
 };
 /**
  * Clear database
@@ -481,9 +494,9 @@ Job.clearData = async function () {
     // retrieve all job documents from Firestore
     const jobRecs = await Job.retrieveAll();
     // delete all documents
-    await Promise.all( jobRecs.map( d => Job.destroy( d.jobId.toString())));
+    await Promise.all(jobRecs.map(d => Job.destroy(d.jobId.toString())));
     // ... and then report that they have been deleted
-    console.log(`${Object.values( jobRecs).length} job records deleted.`);
+    console.log(`${Object.values(jobRecs).length} job records deleted.`);
   }
 };
 
