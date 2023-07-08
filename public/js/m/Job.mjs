@@ -191,7 +191,7 @@ class Job {
     } else if (!util.isIntegerOrIntegerString(ol) ||
       parseInt(ol) < 1 || parseInt(ol) > typeOfEmploymentEL.MAX) {
       return new RangeConstraintViolation(
-        "Invalid value for original language: " + ol);
+        "Invalid value for type of employment: " + ol);
     } else {
       return new NoConstraintViolation();
     }
@@ -439,7 +439,7 @@ Job.generateTestData = async function () {
       location: 'San Francisco',
       company: 'Google',
       salary: 120000,
-      typeOfEmployment: 'Full Time',
+      typeOfEmployment: 1,
       jobFieldCategory: 'Engineering',
       description: 'Design, develop, test, deploy, maintain and improve software.'
     },
@@ -449,7 +449,7 @@ Job.generateTestData = async function () {
       location: 'New York',
       company: 'Facebook',
       salary: 95000,
-      typeOfEmployment: 'Part Time',
+      typeOfEmployment: '2',
       jobFieldCategory: 'Data Science',
       description: 'Interpret data, analyze results using statistical techniques.'
     },
@@ -459,7 +459,7 @@ Job.generateTestData = async function () {
       location: 'Seattle',
       company: 'Amazon',
       salary: 130000,
-      typeOfEmployment: 'Full Time',
+      typeOfEmployment: 1,
       jobFieldCategory: 'Product'
     },
     {
@@ -468,7 +468,7 @@ Job.generateTestData = async function () {
       location: 'Austin',
       company: 'Apple',
       salary: 90000,
-      typeOfEmployment: 'Full Time',
+      typeOfEmployment: 1,
       jobFieldCategory: 'Design',
       description: 'Designing user interactions on websites.'
     },
@@ -478,7 +478,7 @@ Job.generateTestData = async function () {
       location: 'Chicago',
       company: 'Microsoft',
       salary: 105000,
-      typeOfEmployment: 'Full Time',
+      typeOfEmployment: 1,
       jobFieldCategory: 'Marketing'
     }
   ];
