@@ -1,6 +1,6 @@
 import { fsDb } from "../initFirebase.mjs";
 import {
-  collection as fsColl, deleteDoc, doc as fsDoc, getDoc, getDocs, orderBy, query as fsQuery,
+  collection as fsColl, deleteDoc, doc as fsDoc, getDoc, getDocs, onSnapshot, orderBy, query as fsQuery,
   setDoc, updateDoc, deleteField
 }
   from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore-lite.js";

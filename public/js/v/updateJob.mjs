@@ -61,6 +61,11 @@ selectJobEl.addEventListener("change", async function () {
       formEl[field].value = jobRec[field] !== undefined ? jobRec[field] : "";
       // delete custom validation error message which may have been set before
       formEl[field].setCustomValidity("");
+          /** Setup listener on the selected book record synchronising DB with UI **/
+    // cancel record listener if a previous listener exists
+    if (cancelListener) cancelListener();
+    // add listener to selected job, returning the function to cancel listener
+    cancelListener = await Job.observeChanges( jobId);
     }
   } else {
     formEl.reset();
@@ -116,6 +121,8 @@ updateButton.addEventListener("click", async function () {
     });
   }
   if (formEl.checkValidity()) {
+        // cancel DB-UI sync listener
+        if (cancelListener) cancelListener();
     Job.update(slots);
     // update the selection list option
     selectJobEl.options[selectJobEl.selectedIndex].text = slots.jobName;
@@ -126,4 +133,8 @@ updateButton.addEventListener("click", async function () {
 // neutralize the submit event
 formEl.addEventListener("submit", function (e) {
   e.preventDefault();
+});
+// set event to cancel DB listener when the browser window/tab is closed
+window.addEventListener("beforeunload", function () {
+  if (cancelListener) cancelListener();
 });
