@@ -29,7 +29,8 @@
   },
   "dependencies": {
     "firebase": "^9.22.2",
-    "firebase-firestore-lite": "^1.0.3"
+    "firebase-firestore-lite": "^1.0.3",
+    "firebase-firestore": "^1.0.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

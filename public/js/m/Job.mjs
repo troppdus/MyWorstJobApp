@@ -1,10 +1,7 @@
 import { fsDb } from "../initFirebase.mjs";
-import {
-  collection as fsColl, deleteDoc, doc as fsDoc, 
-  getDoc, getDocs, onSnapshot, orderBy, query as fsQuery,
-  setDoc, updateDoc, deleteField
-}
-  from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
+import { collection as fsColl, deleteDoc, doc as fsDoc, getDoc, getDocs, onSnapshot,
+    orderBy, query as fsQuery, setDoc, updateDoc }
+    from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
 import { isNonEmptyString, isIntegerOrIntegerString }
   from "../lib/util.mjs";
 import {
@@ -341,8 +338,8 @@ Job.retrieve = async function (jobId) {
  */
 Job.retrieveAll = async function (order) {
   if (!order) order = "jobId";
-  const jobsCollRef = fsColl(fsDb, "jobs"),
-    q = fsQuery(jobsCollRef, orderBy(order));
+  const jobsCollRef = fsColl(fsDb, "jobs");
+  const q = fsQuery(jobsCollRef, orderBy(order));
   try {
     const jobRecs = (await getDocs(q.withConverter(Job.converter))).docs.map(d => d.data());
     console.log(`${jobRecs.length} job records retrieved ${order ? "ordered by " + order : ""}`);

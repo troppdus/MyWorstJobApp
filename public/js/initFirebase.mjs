@@ -1,6 +1,6 @@
 import { initializeApp, getApp, getApps }
   from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore-lite.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
 import { getAuth }
   from "https://www.gstatic.com/firebasejs/9.8.1/firebase-auth.js";
 
@@ -15,12 +15,14 @@ const firebaseConfig = {
 };
 
 // Initialize a Firebase App object
-initializeApp( firebaseConfig);
+// initializeApp( firebaseConfig);
+// Initialize a Firebase App object only if not already initialized
+const app = (!getApps().length) ? initializeApp( firebaseConfig ) : getApp();
 // Initialize Cloud Firestore interface
 const fsDb = getFirestore();
 
 // Initialize a Firebase App object only if not already initialized
-const app = (!getApps().length) ? initializeApp( firebaseConfig ) : getApp();
+// const app = (!getApps().length) ? initializeApp( firebaseConfig ) : getApp();
 // Initialize Firebase Authentication
 const auth = getAuth( app);
 
