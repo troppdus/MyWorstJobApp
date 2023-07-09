@@ -1,6 +1,7 @@
 // Import classes and data types
 import { handleAuthentication } from "./accessControl.mjs";
 import Job from "../m/Job.mjs";
+import { fillSelectWithOptions } from "../../lib/util.mjs";
 handleAuthentication();
 // Load data
 const jobRecords = await Job.retrieveAll();
