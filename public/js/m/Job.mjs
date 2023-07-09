@@ -166,6 +166,7 @@ class Job {
     if (!salary) {
       return new MandatoryValueConstraintViolation("A salary must be provided!");
     } else if (!isIntegerOrIntegerString(salary) || parseInt(salary) < 1) {
+      console.log(salary)
       return new RangeConstraintViolation("The salary must be a positive integer!");
     } else {
       return new NoConstraintViolation();
@@ -188,10 +189,10 @@ class Job {
   static checkTypeOfEmployment(type) {
     if (!type) {
       return new MandatoryValueConstraintViolation("A type of employment must be provided!");
-    } else if (!util.isIntegerOrIntegerString(ol) ||
-      parseInt(ol) < 1 || parseInt(ol) > typeOfEmploymentEL.MAX) {
+    } else if (!isIntegerOrIntegerString(type) ||
+      parseInt(type) < 1 || parseInt(type) > typeOfEmploymentEL.MAX) {
       return new RangeConstraintViolation(
-        "Invalid value for type of employment: " + ol);
+        "Invalid value for type of employment: " + type);
     } else {
       return new NoConstraintViolation();
     }
@@ -432,59 +433,17 @@ Job.destroy = async function (jobId) {
  * Create test data
  */
 Job.generateTestData = async function () {
-  let jobRecs = [
-    {
-      jobId: 1,
-      jobName: 'Software Engineer',
-      location: 'San Francisco',
-      company: 'Google',
-      salary: 120000,
-      typeOfEmployment: 1,
-      jobFieldCategory: 'Engineering',
-      description: 'Design, develop, test, deploy, maintain and improve software.'
-    },
-    {
-      jobId: 2,
-      jobName: 'Data Analyst',
-      location: 'New York',
-      company: 'Facebook',
-      salary: 95000,
-      typeOfEmployment: '2',
-      jobFieldCategory: 'Data Science',
-      description: 'Interpret data, analyze results using statistical techniques.'
-    },
-    {
-      jobId: 3,
-      jobName: 'Product Manager',
-      location: 'Seattle',
-      company: 'Amazon',
-      salary: 130000,
-      typeOfEmployment: 1,
-      jobFieldCategory: 'Product'
-    },
-    {
-      jobId: 4,
-      jobName: 'UX Designer',
-      location: 'Austin',
-      company: 'Apple',
-      salary: 90000,
-      typeOfEmployment: 1,
-      jobFieldCategory: 'Design',
-      description: 'Designing user interactions on websites.'
-    },
-    {
-      jobId: 5,
-      jobName: 'Marketing Manager',
-      location: 'Chicago',
-      company: 'Microsoft',
-      salary: 105000,
-      typeOfEmployment: 1,
-      jobFieldCategory: 'Marketing'
-    }
-  ];
-  // save all job record/documents
-  await Promise.all(jobRecs.map(d => Job.add(d)));
-  console.log(`${Object.keys(jobRecs).length} job records saved.`);
+  try {
+    console.log("Generating test data...");
+    const response = await fetch("../../test-data/jobs.json");
+    const jobRecs = await response.json();
+    // save all job record/documents
+    await Promise.all(jobRecs.map(d => Job.add(d)));
+    console.log(`${Object.keys(jobRecs).length} job records saved.`);
+  }
+  catch (e) {
+    console.error(`${e.constructor.name}: ${e.message}`);
+  }
 };
 /**
  * Clear database
@@ -501,4 +460,4 @@ Job.clearData = async function () {
 };
 
 export default Job;
-export {typeOfEmploymentEL};
+export { typeOfEmploymentEL };
