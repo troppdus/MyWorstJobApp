@@ -319,7 +319,7 @@ Job.add = async function (slots) {
  */
 Job.retrieve = async function (jobId) {
   try {
-    const jobRec = (await getDoc(fsDoc(fsDb, "jobs", jobId())
+    const jobRec = (await getDoc(fsDoc(fsDb, "jobs", jobId)
       .withConverter(Job.converter))).data();
     console.log(`Job record "${jobRec.jobId}" retrieved.`);
     return jobRec;
