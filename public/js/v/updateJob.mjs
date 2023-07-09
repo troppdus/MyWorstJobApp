@@ -58,9 +58,13 @@ selectJobEl.addEventListener("change", async function () {
     const jobRec = await Job.retrieve(jobId);
     for (const field of ["jobId", "jobName", "location", "company", 
     "salary", "typeOfEmployment", "jobFieldCategory", "description"]) {
-      formEl[field].value = jobRec[field] !== undefined ? jobRec[field] : "";
-      // delete custom validation error message which may have been set before
-      formEl[field].setCustomValidity("");
+      if (field in ["salary", "typeOfEmployment"]) {
+        formEl[field].value = jobRec[field] !== undefined ? parseInt(jobRec[field]) : "";
+      } else {
+        formEl[field].value = jobRec[field] !== undefined ? jobRec[field] : "";
+        // delete custom validation error message which may have been set before
+        formEl[field].setCustomValidity("");
+      }
           /** Setup listener on the selected book record synchronising DB with UI **/
     // cancel record listener if a previous listener exists
     if (cancelListener) cancelListener();

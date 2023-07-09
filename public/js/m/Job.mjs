@@ -272,13 +272,13 @@ Job.instances = {};  // initially an empty associative array
 Job.converter = {
   toFirestore: function (job) {
     const data = {
-      jobId: job.jobId,
+      jobId: parseInt(job.jobId),
       jobName: job.jobName,
       location: job.location,
       company: job.company,
-      salary: job.salary,
+      salary: parseInt(job.salary),
       typeOfEmployment: parseInt(job.typeOfEmployment),
-      jobFieldCategory: job.jobFieldCategory,
+      jobFieldCategory: job.jobFieldCategory
     };
     if (job.description) data.description = job.description;
     return data;
@@ -386,12 +386,12 @@ Job.update = async function (slots) {
     }
     if (jobBeforeUpdate.salary !== slots.salary) {
       validationResult = Job.checkSalary(slots.salary);
-      if (validationResult instanceof NoConstraintViolation) updatedSlots.salary = slots.salary;
+      if (validationResult instanceof NoConstraintViolation) updatedSlots.salary = parseInt(slots.salary);
       else throw validationResult;
     }
     if (jobBeforeUpdate.typeOfEmployment !== slots.typeOfEmployment) {
       validationResult = Job.checkTypeOfEmployment(slots.typeOfEmployment);
-      if (validationResult instanceof NoConstraintViolation) updatedSlots.typeOfEmployment = slots.typeOfEmployment;
+      if (validationResult instanceof NoConstraintViolation) updatedSlots.typeOfEmployment = parseInt(slots.typeOfEmployment);
       else throw validationResult;
     }
     if (jobBeforeUpdate.jobFieldCategory !== slots.jobFieldCategory) {
