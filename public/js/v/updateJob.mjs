@@ -48,8 +48,7 @@ formEl["jobFieldCategory"].addEventListener("input", function () {
 formEl["description"].addEventListener("input", function () {
   formEl["description"].setCustomValidity(Job.checkDescription(formEl["description"].value).message);
 });
-
-
+// fillSelectWithOptionsUpd(jobRecords, selectJobEl, "jobId", "jobName");
 
 // when a job is selected, fill the form with its data
 selectJobEl.addEventListener("change", async function () {

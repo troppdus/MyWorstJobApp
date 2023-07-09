@@ -124,6 +124,26 @@ function fillSelectWithOptions( selectEl, selectionRange, optPar) {
     selectEl.add( optionEl);
   }
 }
+
+function fillSelectWithOptionsUpd( objColl, selEl, stdIdProp, displayProp) {
+  if (Array.isArray(objColl)) {
+    for (const obj of objColl) {
+      const optionEl = document.createElement("option");
+      optionEl.value = obj[stdIdProp];
+      optionEl.text = displayProp ? obj[displayProp] : obj[stdIdProp];
+      selEl.add(optionEl, null)
+    }
+  } else {
+    for (const key of Object.keys( objColl)) {
+      const obj = objColl[key];
+      const optionEl = document.createElement("option");
+      optionEl.value = obj[stdIdProp];
+      optionEl.text = displayProp ? obj[displayProp] : obj[stdIdProp];
+      selEl.add(optionEl, null)
+    }
+  }
+}
+
 /**
  * * Create a choice control (radio button or checkbox) element
  * @param {string} t  The type of choice control ("radio" or "checkbox")
@@ -242,6 +262,6 @@ function createModalFromChange (change) {
 }
   
   export { isNonEmptyString, nextYear, isIntegerOrIntegerString, cloneObject,
-    fillSelectWithOptions, showProgressBar, hideProgressBar, createOption,
+    fillSelectWithOptions, fillSelectWithOptionsUpd, showProgressBar, hideProgressBar, createOption,
     createChoiceWidget, date2IsoDateString, createModalFromChange };
   
