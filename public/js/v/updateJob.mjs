@@ -1,6 +1,8 @@
 // Import classes and data types
+import { handleAuthentication } from "./accessControl.mjs";
 import Job from "../m/Job.mjs";
-
+import { fillSelectWithOptions } from "../../lib/util.mjs";
+handleAuthentication();
 // Load data
 const jobRecords = await Job.retrieveAll();
 
@@ -35,14 +37,10 @@ formEl["description"].addEventListener("input", function () {
   formEl["description"].setCustomValidity(Job.checkDescription(formEl["description"].value).message);
 });
 
-// Set up select element
-// fill select with options
-for (const jobRec of jobRecords) {
-  const optionEl = document.createElement("option");
-  optionEl.text = `${jobRec.jobName} at ${jobRec.company} (${jobRec.location}) - ${jobRec.jobFieldCategory}`;
-  optionEl.value = jobRec.jobId;
-  selectJobEl.add(optionEl, null);
-}
+/***************************************************************
+ Set up (choice) widgets
+ ***************************************************************/
+fillSelectWithOptions(jobRecords, selectJobEl, "jobId", "jobName");
 
 // when a job is selected, fill the form with its data
 selectJobEl.addEventListener("change", async function () {
@@ -56,14 +54,6 @@ selectJobEl.addEventListener("change", async function () {
       // delete custom validation error message which may have been set before
       formEl[field].setCustomValidity("");
     }
-    formEl["jobId"].value = jobRec.jobId;
-    formEl["jobName"].value = jobRec.jobName;
-    formEl["location"].value = jobRec.location;
-    formEl["company"].value = jobRec.company;
-    formEl["salary"].value = jobRec.salary;
-    formEl["typeOfEmployment"].value = jobRec.typeOfEmployment;
-    formEl["jobFieldCategory"].value = jobRec.jobFieldCategory;
-    formEl["description"].value = jobRec.description;
   } else {
     formEl.reset();
   }
@@ -72,6 +62,10 @@ selectJobEl.addEventListener("change", async function () {
 // Add event listeners for the update/submit button
 // set an event handler for the update button
 updateButton.addEventListener("click", async function () {
+  const formEl = document.forms["Job"],
+  selectJobEl = formEl["selectJob"],
+  jobIdRef = selectJobEl.value;
+  if (!jobIdRef) return;
   const slots = {
     jobId: formEl["jobId"].value,
     jobName: formEl["jobName"].value,
@@ -81,11 +75,9 @@ updateButton.addEventListener("click", async function () {
     typeOfEmployment: formEl["typeOfEmployment"].value,
     jobFieldCategory: formEl["jobFieldCategory"].value,
     description: formEl["description"].value
-  },
-  jobIdRef = selectJobEl.value;
-  if (!jobIdRef) return;
+  };
    // set error messages in case of constraint violations
-   formEl["jobName"].addEventListener("input", function () {
+  formEl["jobName"].addEventListener("input", function () {
     formEl["jobName"].setCustomValidity(
       Job.checkJobName(slots.jobName).message);
   });
