@@ -148,3 +148,5 @@ dist
 
 *.7z
 jsconfig.json
+./public/js/initFirebase.mjs
+public/js/initFirebase.mjs

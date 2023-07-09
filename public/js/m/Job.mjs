@@ -5,13 +5,13 @@ import {
 }
   from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore-lite.js";
 import { isNonEmptyString, nextYear, isIntegerOrIntegerString }
-  from "../../lib/util.mjs";
+  from "../lib/util.mjs";
 import {
   NoConstraintViolation, MandatoryValueConstraintViolation, RangeConstraintViolation,
   IntervalConstraintViolation, PatternConstraintViolation, UniquenessConstraintViolation
 }
-  from "../../lib/errorTypes.mjs";
-
+  from "../lib/errorTypes.mjs";
+import Enumeration from "../lib/Enumeration.mjs";
 //   «get/set» jobID[1] : number(int)
 // - «get/set» jobName[1] : String
 // - «get/set» location[1] : String
@@ -501,3 +501,4 @@ Job.clearData = async function () {
 };
 
 export default Job;
+export {typeOfEmploymentEL};
