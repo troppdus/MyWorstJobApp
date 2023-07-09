@@ -467,5 +467,34 @@ Job.clearData = async function () {
   }
 };
 
+/*******************************************
+ *** Non specific use case procedures ******
+ ********************************************/
+/**
+ * Handle DB-UI synchronization
+ * @param jobId {number}
+ * @returns {function}
+ */
+Job.observeChanges = async function (jobId) {
+  try {
+    // listen document changes, returning a snapshot (snapshot) on every change
+    const jobDocRef = fsDoc( fsDb, "jobs", jobId).withConverter( Job.converter);
+    const jobRec = (await getDoc( jobDocRef)).data();
+    return onSnapshot( jobDocRef, function (snapshot) {
+      // create object with original document data
+      const originalData = { itemName: "job", description: `${jobRec.title} (JobId: ${jobRec.jobId })`};
+      if (!snapshot.data()) { // removed: if snapshot has not data
+        originalData.type = "REMOVED";
+        createModalFromChange( originalData); // invoke modal window reporting change of original data
+      } else if (JSON.stringify( jobRec) !== JSON.stringify( snapshot.data())) {
+        originalData.type = "MODIFIED";
+        createModalFromChange( originalData); // invoke modal window reporting change of original data
+      }
+    });
+  } catch (e) {
+    console.error(`${e.constructor.name} : ${e.message}`);
+  }
+}
+
 export default Job;
 export { typeOfEmploymentEL };
