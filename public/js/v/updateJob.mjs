@@ -1,7 +1,7 @@
 // Import classes and data types
 import { handleAuthentication } from "./accessControl.mjs";
 import Job from "../m/Job.mjs";
-import { fillSelectWithOptions } from "../../lib/util.mjs";
+import { fillSelectWithOptionsUpd } from "../lib/util.mjs";
 handleAuthentication();
 // Load data
 const jobRecords = await Job.retrieveAll();
@@ -40,7 +40,7 @@ formEl["description"].addEventListener("input", function () {
 /***************************************************************
  Set up (choice) widgets
  ***************************************************************/
-fillSelectWithOptions(jobRecords, selectJobEl, "jobId", "jobName");
+fillSelectWithOptionsUpd(jobRecords, selectJobEl, "jobId", "jobName");
 
 // when a job is selected, fill the form with its data
 selectJobEl.addEventListener("change", async function () {
@@ -101,11 +101,12 @@ updateButton.addEventListener("click", async function () {
     formEl["jobFieldCategory"].setCustomValidity(
       Job.checkJobFieldCategory(slots.jobFieldCategory).message);
   });
-  formEl["description"].addEventListener("input", function () {
-    formEl["description"].setCustomValidity(
-      Job.checkDescription(slots.description).message);
-  });
-
+  if (formEl["description"].value) {
+    formEl["description"].addEventListener("input", function () {
+      formEl["description"].setCustomValidity(
+        Job.checkDescription(slots.description).message);
+    });
+  }
   if (formEl.checkValidity()) {
     Job.update(slots);
     // update the selection list option
