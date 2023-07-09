@@ -1,7 +1,7 @@
 // Import classes and data types
 import { handleAuthentication } from "./accessControl.mjs";
-import Job from "../m/Job.mjs";
-import { fillSelectWithOptionsUpd } from "../lib/util.mjs";
+import Job, { typeOfEmploymentEL } from "../m/Job.mjs";
+import { fillSelectWithOptions } from "../lib/util.mjs";
 handleAuthentication();
 // Load data
 const jobRecords = await Job.retrieveAll();
@@ -9,7 +9,19 @@ const jobRecords = await Job.retrieveAll();
 // Declare variables for accessing UI elements
 const formEl = document.forms["Job"],
   updateButton = formEl["commit"],
-  selectJobEl = formEl["selectJob"];
+  selectJobEl = formEl["selectJob"],
+  typeOfEmploymentEl = formEl["typeOfEmployment"];
+  ;
+
+/***************************************************************
+ Declare variable to cancel record changes listener, DB-UI sync
+ ***************************************************************/
+let cancelListener = null;
+
+/***************************************************************
+ Set up (choice) widgets
+ ***************************************************************/
+fillSelectWithOptions(selectJobEl, jobRecords, {valueProp:"jobId", displayProp:"jobId"});
 
 formEl["jobId"].addEventListener("input", function () {
   // do not yet check the ID constraint, only before commit
@@ -27,7 +39,7 @@ formEl["company"].addEventListener("input", function () {
 formEl["salary"].addEventListener("input", function () {
   formEl["salary"].setCustomValidity(Job.checkSalary(formEl["salary"].value).message);
 });
-formEl["typeOfEmployment"].addEventListener("input", function () {
+formEl["typeOfEmployment"].addEventListener("click", function () {
   formEl["typeOfEmployment"].setCustomValidity(Job.checkTypeOfEmployment(formEl["typeOfEmployment"].value).message);
 });
 formEl["jobFieldCategory"].addEventListener("input", function () {
@@ -36,15 +48,12 @@ formEl["jobFieldCategory"].addEventListener("input", function () {
 formEl["description"].addEventListener("input", function () {
   formEl["description"].setCustomValidity(Job.checkDescription(formEl["description"].value).message);
 });
-
-/***************************************************************
- Set up (choice) widgets
- ***************************************************************/
-fillSelectWithOptionsUpd(jobRecords, selectJobEl, "jobId", "jobName");
+// fillSelectWithOptionsUpd(jobRecords, selectJobEl, "jobId", "jobName");
 
 // when a job is selected, fill the form with its data
 selectJobEl.addEventListener("change", async function () {
   const jobId = selectJobEl.value;
+  fillSelectWithOptions(typeOfEmploymentEl, typeOfEmploymentEL.labels);
   if (jobId) {
     // retrieve up-to-date job record
     const jobRec = await Job.retrieve(jobId);
