@@ -11,7 +11,6 @@ const formEl = document.forms["Job"],
   updateButton = formEl["commit"],
   selectJobEl = formEl["selectJob"],
   typeOfEmploymentEl = formEl["typeOfEmployment"];
-  ;
 
 /***************************************************************
  Declare variable to cancel record changes listener, DB-UI sync
