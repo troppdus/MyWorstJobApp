@@ -70,22 +70,28 @@ class Job {
         validationResult = new MandatoryValueConstraintViolation(
           "A value for the job ID must be provided!");
       } else {
-        const jobDocSn = await getDoc(fsDoc(fsDb, "jobs", jobId));
-        if (jobDocSn.exists()) {
-          validationResult = new UniquenessConstraintViolation(
-            "There is already a job record with this ID!");
-        } else {
+        const jobDocReff = fsDoc(fsDb, "jobs", jobId);
+        try {
+          const jobDocSn = await getDoc( jobDocReff);
+          if (jobDocSn.exists()) {
+            validationResult = new UniquenessConstraintViolation(
+              "There is already a job record with this ID!");
+          } else {
+            validationResult = new NoConstraintViolation();
+          }
+        } catch (e) {
+          console.error(`Error when checking job ID uniqueness: ${e}`);
           validationResult = new NoConstraintViolation();
-        }
+        } 
       }
     }
     return validationResult;
   };
 
   set jobId( n) {
-    const validationResult = Job.checkJobId( parseInt( n));
+    const validationResult = Job.checkJobId(  n);
     if (validationResult instanceof NoConstraintViolation) {
-      this._jobId = parseInt(n);
+      this._jobId = n;
     } else {
       throw validationResult;
     }
@@ -168,7 +174,7 @@ class Job {
     if (!salary) {
       return new MandatoryValueConstraintViolation("A salary must be provided!");
     } else if (!isIntegerOrIntegerString(salary) || parseInt(salary) < 1) {
-      console.log(salary)
+      console.log(salary);
       return new RangeConstraintViolation("The salary must be a positive integer!");
     } else {
       return new NoConstraintViolation();
