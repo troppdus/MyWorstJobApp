@@ -1,5 +1,8 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js";
+import { initializeApp, getApp, getApps }
+  from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore-lite.js";
+import { getAuth }
+  from "https://www.gstatic.com/firebasejs/9.8.1/firebase-auth.js";
 
 // TODO: Replace the following with your web app's Firebase project configuration
 const firebaseConfig = {
@@ -10,6 +13,7 @@ const firebaseConfig = {
   messagingSenderId: "709200212587",
   appId: "1:709200212587:web:a6ee7b914480400e27372e"
 };
+
 // Initialize a Firebase App object
 initializeApp( firebaseConfig);
 // Initialize Cloud Firestore interface

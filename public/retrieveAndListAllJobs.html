@@ -11,11 +11,23 @@
   <h1>Retrieve and list all job records</h1>
 </header>
 <main>
-  <table id="jobs">
+  <a href="index.html">« Back to main menu</a>
+  <hr>
+  <div>
+    <label>Ordered by:
+      <select>
+        <option value="jobId">Job Id</option>
+        <option value="jobName">Job Name</option>
+        <option value="salary">Salary</option>
+      </select>
+    </label>
+  </div>
+  <progress hidden="hidden" max="100">%</progress>
+  <table id="jobs" border="">
     <thead>
       <tr>
         <th>Job Id</th>
-        <th>Title</th>
+        <th>Job Name</th>
         <th>Location</th>
         <th>Company</th>
         <th>Salary</th>

@@ -17,15 +17,15 @@
     import { handleAuthentication } from "./js/v/accessControl.mjs";
     import Job from "./js/m/Job.mjs";
     handleAuthentication();
-    window.addEventListener("load", function () {
-      const clearButton = document.getElementById("clearData"),
+    
+    const clearButton = document.getElementById("clearData"),
         generateTestDataButtons = document.querySelectorAll("button.generateTestData");
-      // set event handlers for the buttons "clearData" and "generateTestData"
-      clearButton.addEventListener("click", Job.clearData);
-      for (const btn of generateTestDataButtons) {
-        btn.addEventListener("click", Job.generateTestData);
-      }
-    });
+    
+        // set event handlers for the buttons "clearData" and "generateTestData"
+    clearButton.addEventListener("click", Job.clearData);
+    for (const btn of generateTestDataButtons) {
+      btn.addEventListener("click", Job.generateTestData);
+    }
   </script>
 </head>
 

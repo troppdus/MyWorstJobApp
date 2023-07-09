@@ -4,14 +4,16 @@ import {
   setDoc, updateDoc, deleteField
 }
   from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore-lite.js";
-import { isNonEmptyString, nextYear, isIntegerOrIntegerString }
+import { isNonEmptyString, isIntegerOrIntegerString }
   from "../lib/util.mjs";
 import {
   NoConstraintViolation, MandatoryValueConstraintViolation, RangeConstraintViolation,
-  IntervalConstraintViolation, PatternConstraintViolation, UniquenessConstraintViolation
+  UniquenessConstraintViolation
 }
   from "../lib/errorTypes.mjs";
 import Enumeration from "../lib/Enumeration.mjs";
+
+console.log("Job.mjs");
 //   «get/set» jobID[1] : number(int)
 // - «get/set» jobName[1] : String
 // - «get/set» location[1] : String
@@ -80,10 +82,10 @@ class Job {
     return validationResult;
   };
 
-  set jobId(n) {
-    const validationResult = Job.checkJobId(n);
+  set jobId( n) {
+    const validationResult = Job.checkJobId( parseInt( n));
     if (validationResult instanceof NoConstraintViolation) {
-      this._jobId = n;
+      this._jobId = parseInt(n);
     } else {
       throw validationResult;
     }
@@ -274,7 +276,7 @@ Job.converter = {
       typeOfEmployment: parseInt(job.typeOfEmployment),
       jobFieldCategory: job.jobFieldCategory,
     };
-    if (job.description) data.description = parseInt(job.description);
+    if (job.description) data.description = job.description;
     return data;
   },
   fromFirestore: function (snapshot, options) {
@@ -294,7 +296,7 @@ Job.add = async function (slots) {
     // validate data by creating Job instance
     job = new Job(slots);
     // invoke asynchronous ID/uniqueness check
-    let validationResult = await Job.checkJobIdAsId(job.jobId.toString());
+    let validationResult = await Job.checkJobIdAsId(job.jobId);
     if (!validationResult instanceof NoConstraintViolation) throw validationResult;
   } catch (e) {
     console.error(`${e.constructor.name}: ${e.message}`);
@@ -317,7 +319,7 @@ Job.add = async function (slots) {
  */
 Job.retrieve = async function (jobId) {
   try {
-    const jobRec = (await getDoc(fsDoc(fsDb, "jobs", jobId.toString())
+    const jobRec = (await getDoc(fsDoc(fsDb, "jobs", jobId())
       .withConverter(Job.converter))).data();
     console.log(`Job record "${jobRec.jobId}" retrieved.`);
     return jobRec;
@@ -351,7 +353,7 @@ Job.update = async function (slots) {
   let noConstraintViolated = true,
     validationResult = null,
     jobBeforeUpdate = null;
-  const jobDocRef = fsDoc(fsDb, "jobs", slots.jobId.toString()).withConverter(Job.converter),
+  const jobDocRef = fsDoc(fsDb, "jobs", slots.jobId).withConverter(Job.converter),
     updatedSlots = {};
 
   try {
@@ -420,7 +422,7 @@ Job.update = async function (slots) {
  */
 Job.destroy = async function (jobId) {
   try {
-    await deleteDoc(fsDoc(fsDb, "jobs", jobId.toString()));
+    await deleteDoc(fsDoc(fsDb, "jobs", jobId));
     console.log(`Job record ${jobId} deleted.`);
   } catch (e) {
     console.error(`Error when deleting job record: ${e}`);
@@ -438,7 +440,7 @@ Job.generateTestData = async function () {
     const response = await fetch("../../test-data/jobs.json");
     const jobRecs = await response.json();
     // save all job record/documents
-    await Promise.all(jobRecs.map(d => Job.add(d)));
+    await Promise.all(jobRecs.map(d => Job.add( d)));
     console.log(`${Object.keys(jobRecs).length} job records saved.`);
   }
   catch (e) {
@@ -453,7 +455,7 @@ Job.clearData = async function () {
     // retrieve all job documents from Firestore
     const jobRecs = await Job.retrieveAll();
     // delete all documents
-    await Promise.all(jobRecs.map(d => Job.destroy(d.jobId.toString())));
+    await Promise.all(jobRecs.map(d => Job.destroy(d.jobId)));
     // ... and then report that they have been deleted
     console.log(`${Object.values(jobRecs).length} job records deleted.`);
   }
