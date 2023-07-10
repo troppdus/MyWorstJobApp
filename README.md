@@ -42,6 +42,10 @@
 - **Ilia Karasev - ilia-karasev**: sign in and sign up
 - **Ishan Lamal - ishanism**: firebase deployment and reset password
 
+# Division of work for Assignment 7C-3
+- **Phong Vu Thanh - fontvu**: implemented DB-UI synchronization and Enumeration, created Test Data
+- **Ilia Karasev - ilia-karasev**: data validation in the model code and in the UI, update/delete Job
+- **Ishan Lamal - ishanism**: created firestore rules, create/retrieve Job
 
 
 
