@@ -426,7 +426,8 @@ Job.update = async function (slots) {
  */
 Job.destroy = async function (jobId) {
   try {
-    await deleteDoc(fsDoc(fsDb, "jobs", jobId));
+    const fsDocRefDelete = fsDoc(fsDb, "jobs", jobId);
+    await deleteDoc(fsDocRefDelete);
     console.log(`Job record ${jobId} deleted.`);
   } catch (e) {
     console.error(`Error when deleting job record: ${e}`);
@@ -459,7 +460,7 @@ Job.clearData = async function () {
     // retrieve all job documents from Firestore
     const jobRecs = await Job.retrieveAll();
     // delete all documents
-    await Promise.all(jobRecs.map(d => Job.destroy(d.jobId)));
+    await Promise.all(jobRecs.map(d => Job.destroy(d.jobId.toString())));
     // ... and then report that they have been deleted
     console.log(`${Object.values(jobRecs).length} job records deleted.`);
   }
