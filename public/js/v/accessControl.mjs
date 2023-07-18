@@ -61,7 +61,7 @@ function handleAuthorization(userStatus, currentPage, email) {
             break;
         case "Registered with verified email":
             // if current page is start page grant access to the four database operations
-            if (startPage.includes(currentPage)) {
+            if (startPage.includes(currentPage) || currentPage.includes("/index.html")) {
                 // declare variables for accessing UI elements
                 const clearDataBtn = document.getElementById("clearData"),
                     generateDataBtns = document.querySelectorAll(".generateTestData"),
