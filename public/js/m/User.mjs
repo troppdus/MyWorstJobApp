@@ -272,21 +272,24 @@ User.instances = {};  // initially an empty associative array
 */
 User.converter = {
   toFirestore: function (user) {
+    console.log("Converting user for Firestore:", JSON.stringify(user));
     const data = {
       userID: parseInt(user.userID),
       username: user.username,
       address: user.address,
-      dateOfBirth: Timestamp.fromDate( new Date(dateOfBirth)),
+      dateOfBirth: Timestamp.fromDate( new Date(user.dateOfBirth)),
       email: user.email,
       password: user.password,
       phoneNumber: parseInt(user.phoneNumber),
       userType: parseInt(user.userType)
     };
+    console.log("Converted user data:", JSON.stringify(data));
     return data;
   },
   fromFirestore: function (snapshot, options) {
-    const user = snapshot.data(options),
-      data = {
+    const user = snapshot.data(options);
+    console.log("Converting user from Firestore:", JSON.stringify(user));
+    const data = {
         userID: user.userID,
         username: user.username,
         address: user.address,
@@ -310,8 +313,10 @@ User.add = async function (slots) {
   try {
     // validate data by creating User instance
     user = new User(slots);
+    console.log("Validating user:", JSON.stringify(user));
     // invoke asynchronous ID/uniqueness check
     let validationResult = await User.checkUserIDAsId(user.userID);
+    console.log("Validation result:", validationResult);
     if (!validationResult instanceof NoConstraintViolation) throw validationResult;
   } catch (e) {
     console.error(`${e.constructor.name}: ${e.message}`);
@@ -320,6 +325,7 @@ User.add = async function (slots) {
   if (user) {
     try {
       const userDocRef = fsDoc(fsDb, "users", user.userID).withConverter(User.converter);
+      console.log("Uploading user to Firestore with ref:", userDocRef);
       await setDoc(userDocRef, user);
       console.log(`User record "${user.userID}" created!`);
     } catch (e) {
@@ -455,6 +461,10 @@ User.generateTestData = async function () {
     console.log("Generating test data...");
     const response = await fetch("../../test-data/users.json");
     const userRecs = await response.json();
+
+    console.log("userRecs type:", typeof userRecs);
+    console.log("userRecs value:", JSON.stringify(userRecs));
+
     // save all user record/documents
     await Promise.all(userRecs.map(d => User.add( d)));
     console.log(`${Object.keys(userRecs).length} user records saved.`);
