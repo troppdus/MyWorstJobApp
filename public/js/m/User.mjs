@@ -69,9 +69,12 @@ class User {
         validationResult = new MandatoryValueConstraintViolation(
           "A value for the user ID must be provided!");
       } else {
+        console.log("Before calling fsDoc");
         const userDocReff = fsDoc(fsDb, "users", userID);
+        console.log("After calling fsDoc, before getDoc");
         try {
           const userDocSn = await getDoc( userDocReff);
+          console.log("After getDoc");
           if (userDocSn.exists()) {
             validationResult = new UniquenessConstraintViolation(
               "There is already a user record with this ID!");
