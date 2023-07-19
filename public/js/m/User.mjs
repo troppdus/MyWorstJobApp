@@ -293,7 +293,7 @@ User.converter = {
         userID: user.userID,
         username: user.username,
         address: user.address,
-        dateOfBirth: date2IsoDateString( user.dateOfBirth.toDate()),
+        dateOfBirth: date2IsoDateString( user.dateOfBirth),
         email: user.email,
         password: user.password,
         phoneNumber: user.phoneNumber,
