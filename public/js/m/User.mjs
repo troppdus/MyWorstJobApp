@@ -46,9 +46,6 @@ class User {
   };
 
   static checkUserID(userID) {
-    console.log("Type of userID:", typeof userID);
-  console.log("Value of userID:", userID);
-    console.log("In checkUserID with userID:", userID);
     if (!userID) {
       return new MandatoryValueConstraintViolation("A user ID must be provided!");
     } else if (!isIntegerOrIntegerString(userID) || parseInt(userID) < 1) {
@@ -278,7 +275,6 @@ User.instances = {};  // initially an empty associative array
 */
 User.converter = {
   toFirestore: function (user) {
-    console.log("Converting user for Firestore:", JSON.stringify(user));
     const data = {
       userID: parseInt(user.userID),
       username: user.username,
@@ -289,12 +285,10 @@ User.converter = {
       phoneNumber: parseInt(user.phoneNumber),
       userType: parseInt(user.userType)
     };
-    console.log("Converted user data:", JSON.stringify(data));
     return data;
   },
   fromFirestore: function (snapshot, options) {
     const user = snapshot.data(options);
-    console.log("Converting user from Firestore:", JSON.stringify(user));
     const data = {
         userID: user.userID,
         username: user.username,
@@ -319,10 +313,8 @@ User.add = async function (slots) {
   try {
     // validate data by creating User instance
     user = new User(slots);
-    console.log("Validating user:", JSON.stringify(user));
     // invoke asynchronous ID/uniqueness check
     let validationResult = await User.checkUserIDAsId(user.userID);
-    console.log("Validation result:", validationResult);
     if (!validationResult instanceof NoConstraintViolation) throw validationResult;
   } catch (e) {
     console.error(`${e.constructor.name}: ${e.message}`);
@@ -467,9 +459,6 @@ User.generateTestData = async function () {
     console.log("Generating test data...");
     const response = await fetch("../../test-data/users.json");
     const userRecs = await response.json();
-
-    console.log("userRecs type:", typeof userRecs);
-    console.log("userRecs value:", JSON.stringify(userRecs));
 
     // save all user record/documents
     await Promise.all(userRecs.map(d => User.add( d)));
