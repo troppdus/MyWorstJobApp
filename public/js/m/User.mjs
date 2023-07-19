@@ -46,6 +46,9 @@ class User {
   };
 
   static checkUserID(userID) {
+    console.log("Type of userID:", typeof userID);
+  console.log("Value of userID:", userID);
+    console.log("In checkUserID with userID:", userID);
     if (!userID) {
       return new MandatoryValueConstraintViolation("A user ID must be provided!");
     } else if (!isIntegerOrIntegerString(userID) || parseInt(userID) < 1) {
@@ -56,7 +59,11 @@ class User {
   };
 
   static async checkUserIDAsId(userID) {
+    console.log("Type of userID:", typeof userID);
+    console.log("Value of userID:", userID);
+    console.log("In checkUserIDAsId with userID:", userID);
     let validationResult = User.checkUserID(userID);
+    console.log("After checkUserID with result:", validationResult);
     if ((validationResult instanceof NoConstraintViolation)) {
       if (!userID) {
         validationResult = new MandatoryValueConstraintViolation(
