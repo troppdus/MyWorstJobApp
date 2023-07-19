@@ -204,7 +204,7 @@ class User {
   };
 
   set password(pass) {
-    const validationResult = User.checkTypeOfEmployment(pass);
+    const validationResult = User.checkPassword(pass);
     if (validationResult instanceof NoConstraintViolation) {
       this._password = pass;
     } else {
@@ -396,22 +396,22 @@ User.update = async function (slots) {
       else throw validationResult;
     }
     if (userBeforeUpdate.email !== slots.email) {
-      validationResult = User.checkSalary(slots.email);
+      validationResult = User.checkEmail(slots.email);
       if (validationResult instanceof NoConstraintViolation) updatedSlots.email = parseInt(slots.email);
       else throw validationResult;
     }
     if (userBeforeUpdate.password !== slots.password) {
-      validationResult = User.checkTypeOfEmployment(slots.password);
+      validationResult = User.checkPassword(slots.password);
       if (validationResult instanceof NoConstraintViolation) updatedSlots.password = parseInt(slots.password);
       else throw validationResult;
     }
     if (userBeforeUpdate.phoneNumber !== slots.phoneNumber) {
-      validationResult = User.checkUserFieldCategory(slots.phoneNumber);
+      validationResult = User.checkPhoneNumber(slots.phoneNumber);
       if (validationResult instanceof NoConstraintViolation) updatedSlots.phoneNumber = slots.phoneNumber;
       else throw validationResult;
     }
     if (userBeforeUpdate.userType !== slots.userType) {
-      validationResult = User.checkUserFieldCategory(slots.userType);
+      validationResult = User.checkUserType(slots.userType);
       if (validationResult instanceof NoConstraintViolation) updatedSlots.userType = slots.userType;
       else throw validationResult;
     }
