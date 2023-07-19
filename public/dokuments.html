@@ -11,7 +11,16 @@
   <link rel="manifest" href="manifest.json"/>
   <link rel="stylesheet" href="css/normalize.min.css"/>
   <link rel="stylesheet" href="css/main.css"/>
-  <script src="js/v/dokuments.mjs" type="module"></script>
+  <script src="js/v/dokuments.mjs" type="module">
+    import { generateTestData, clearData } from "./js/auxDataMngtOps_Phong_classes.mjs";
+    const clearButton = document.getElementById("clearData"),
+      generateTestDataButtons = document.querySelectorAll("button.generateTestData");
+    // Set event handlers for the buttons "clearData" and "generateTestData"
+    clearButton.addEventListener("click", clearData);
+    for (let btn of generateTestDataButtons) {
+      btn.addEventListener("click", generateTestData);
+    }
+  </script>
 </head>
 <body>
 <header>
@@ -39,6 +48,8 @@
       <!-- ======================================================= -->
       <h1>Manage Dokuments Data</h1>
       <ul class="menu">
+        <li><button type="button" class="generateTestData" disabled="disabled">Generate test data</button></li>
+        <li><button type="button" id="clearData" disabled="disabled">Clear data</button></li>
         <li><button type="button" id="RetrieveAndListAll">Retrieve/list all dokument records</button></li>
         <li><button type="button" id="Create" disabled="disabled">Create a new dokument record</button></li>
         <li><button type="button" id="Update" disabled="disabled">Update an dokument record</button></li>

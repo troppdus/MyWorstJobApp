@@ -6,9 +6,9 @@
 /***************************************************************
  Import classes, data types and utility procedures
  ***************************************************************/
- import { handleAuthentication } from "./accessControl.mjs";
+ import { handleAuthentication } from "./accessControl_Phong.mjs";
  import Dokument from "../m/Dokument.mjs";
- import { showProgressBar, hideProgressBar, createListFromMap } from "../../lib/util.mjs";
+ import { showProgressBar, hideProgressBar, createListFromMap } from "../lib/util_Phong.mjs";
  
  /***************************************************************
   Setup and handle UI Access Control

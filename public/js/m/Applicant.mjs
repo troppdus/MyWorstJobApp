@@ -9,7 +9,7 @@
  */
 import { fsDb } from "../initFirebase.mjs";
 import {
-  collection as fsColl, doc as fsDoc, getDoc, getDocs, orderBy, query as fsQuery,
+  collection as fsColl, doc as fsDoc, setDoc, getDoc, getDocs, orderBy, query as fsQuery,
   Timestamp, startAt, limit, deleteField, writeBatch, arrayUnion, arrayRemove
 }
   from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
