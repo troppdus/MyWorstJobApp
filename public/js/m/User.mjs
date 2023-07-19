@@ -140,7 +140,7 @@ class User {
   };
 
   static checkDateOfBirth (dateOfBirth) {
-    y = new Date( dateOfBirth).getFullYear();
+    let y = new Date( dateOfBirth).getFullYear();
     if (!dateOfBirth) {
       return new MandatoryValueConstraintViolation(
         "Date of birth must be provided!");
