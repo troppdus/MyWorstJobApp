@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>JS/Firebase Web App with Bidirectional Associations: Manage Dokuments</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="theme-color" content="#ffffff"/>
+  <link rel="icon" href="favicon.svg"/>
+  <link rel="mask-icon" href="mask-icon.svg" color="#000000"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="stylesheet" href="css/normalize.min.css"/>
+  <link rel="stylesheet" href="css/main.css"/>
+  <script src="js/v/dokuments.mjs" type="module"></script>
+</head>
+<body>
+<header>
+  <div id="login-management"></div>
+  <div class="wrapper clearfix">
+    <div class="title">
+      <figure><a href="https://web-engineering.info">
+        <img alt="" title="Icon made by Lorc under CC BY 3.0. Available on https://game-icons.net"
+             src="favicon.svg"/></a></figure>
+      <h1>Public Library</h1>
+      <h2>JS/Firebase Web App with Bidirectional Associations</h2>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="dokuments.html">Dokuments</a></li>
+        <li><a href="applicants.html">Applicants</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="wrapper clearfix">
+    <!-- ======================================================= -->
+    <section id="Dokument-M" class="UI-Page" hidden="hidden">
+      <!-- ======================================================= -->
+      <h1>Manage Dokuments Data</h1>
+      <ul class="menu">
+        <li><button type="button" id="RetrieveAndListAll">Retrieve/list all dokument records</button></li>
+        <li><button type="button" id="Create" disabled="disabled">Create a new dokument record</button></li>
+        <li><button type="button" id="Update" disabled="disabled">Update an dokument record</button></li>
+        <li><button type="button" id="Delete" disabled="disabled">Delete an dokument record</button></li>
+      </ul>
+      <div class="button"><a href="index.html">« Back to Main menu</a></div>
+    </section>
+    <!-- ======================================================= -->
+    <section id="Dokument-R" class="UI-Page" hidden="hidden">
+      <!-- ======================================================= -->
+      <h1>Retrieve and list all Dokument Records</h1>
+      <div class="button">
+        <button type="button" class="back-to-menu">« Back to menu</button>
+      </div>
+      <hr>
+      <progress hidden="hidden" max="100">%</progress>
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Applicants</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="button">
+        <button type="button" class="back-to-menu">« Back to menu</button>
+      </div>
+    </section>
+    <!-- ======================================================= -->
+    <section id="Dokument-C" class="UI-Page" hidden="hidden">
+      <!-- ======================================================= -->
+      <h1>Create a new Dokument Record</h1>
+      <form>
+        <div class="field">
+          <label>ID: <input type="text" name="dokumentId"/></label>
+        </div>
+        <div class="field">
+          <label>Name: <input type="text" name="name"/></label>
+        </div>
+        <div class="button-group">
+          <button type="button" class="back-to-menu">« Back to menu</button>
+          <button type="submit" name="commit">Create</button>
+          <progress hidden="hidden" max="100">%</progress>
+        </div>
+      </form>
+    </section>
+    <!-- ======================================================= -->
+    <section id="Dokument-U" class="UI-Page" hidden="hidden">
+      <!-- ======================================================= -->
+      <h1>Update an Dokument Record</h1>
+      <form>
+        <div class="field">
+          <label>ID: <input type="text" name="dokumentId"/></label>
+        </div>
+        <div class="field">
+          <label>Name: <input type="text" name="name"/></label>
+        </div>
+        <div class="button-group">
+          <button type="button" class="back-to-menu">« Back to menu</button>
+          <button type="submit" name="commit">Update</button>
+          <progress hidden="hidden" max="100">%</progress>
+        </div>
+      </form>
+    </section>
+    <!-- ======================================================= -->
+    <section id="Dokument-D" class="UI-Page" hidden="hidden">
+      <!-- ======================================================= -->
+      <h1>Delete an Dokument Record</h1>
+      <form>
+        <div class="field">
+          <label>ID: <input type="text" name="dokumentId"/></label>
+        </div>
+        <div class="button-group">
+          <button type="button" class="back-to-menu">« Back to menu</button>
+          <button type="submit" name="commit">Delete</button>
+          <progress hidden="hidden" max="100">%</progress>
+        </div>
+      </form>
+    </section>
+  </div>
+</main>
+<footer>
+  <div class="foot-content wrapper">
+    Copyright © 2020-2022 Gerd Wagner and Juan-Francisco Reyes. <a href="credits.html">Credits and License</a>
+  </div>
+</footer>
+</body>
+</html>
