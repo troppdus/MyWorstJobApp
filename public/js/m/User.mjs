@@ -141,11 +141,13 @@ class User {
 
   static checkDateOfBirth (dateOfBirth) {
     let y = new Date( dateOfBirth).getFullYear();
+    var reg = new RegExp ('\\d{1,2}(\\/|-)\\d{1,2}(\\/|-)\\d{2,4}');
+                                
     if (!dateOfBirth) {
       return new MandatoryValueConstraintViolation(
         "Date of birth must be provided!");
     } else if (!(typeof dateOfBirth === "string" &&
-      /\d{4}-(0\d|1[0-2])-([0-2]\d|3[0-1])/.test( dateOfBirth) &&
+      reg.test( dateOfBirth) &&
       !isNaN( Date.parse( dateOfBirth)))) {
       return new PatternConstraintViolation(
         "Date of birth is not well formed");
