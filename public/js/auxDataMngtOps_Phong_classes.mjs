@@ -15,14 +15,15 @@ import Applicant from "./m/Applicant.mjs";
 /**
  *  Load and save test data
  */
-async function generateTestData () {
+async function generateData () {
   try {
     let response;
-    console.log("Generating Dokument records...");
-    response = await fetch( "../test-data/dokument.json");
-    const publisherRecs = await response.json();
-    await Promise.all( publisherRecs.map( d => Publisher.add( d)));
-    console.log(`${publisherRecs.length} publisher records saved.`);
+    console.log("Generating dokuments records...");
+    response = await fetch( "../test-data/dokuments.json");
+    const dokumentRecs = await response.json();
+    await Promise.all( dokumentRecs.map( d => Dokument.add( d)));
+    console.log(`${dokumentRecs.length} dokument records saved.`);
+
     console.log("Generating applicants records...");
     response = await fetch( "../test-data/applicants.json");
     const applicantRecs = await response.json();
@@ -43,6 +44,7 @@ async function clearData () {
       const applicantQrySns = (await getDocs( applicantsCollRef, orderBy( "applicantID")));
       await Promise.all( applicantQrySns.docs.map( d => Applicant.destroy( d.id)))
       console.log(`${applicantQrySns.docs.length} applicant records deleted.`);
+
       console.log("Clearing dokument records...");
       const dokumentsCollRef = fsColl( fsDb, "dokuments");
       const dokumentQrySns = (await getDocs( dokumentsCollRef, orderBy( "dokumentId")));
@@ -54,4 +56,4 @@ async function clearData () {
   }
 }
 
-export { generateTestData, clearData };
+export { generateData, clearData };

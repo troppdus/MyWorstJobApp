@@ -12,13 +12,13 @@
   <link rel="stylesheet" href="css/normalize.min.css"/>
   <link rel="stylesheet" href="css/main.css"/>
   <script src="./js/v/applicants.mjs" type="module">
-    import { generateTestData, clearData } from "./js/auxDataMngtOps_Phong_classes.mjs";
+    import { generateData, clearData } from "./js/auxDataMngtOps_Phong_classes.mjs";
     const clearButton = document.getElementById("clearData"),
       generateTestDataButtons = document.querySelectorAll("button.generateTestData");
     // Set event handlers for the buttons "clearData" and "generateTestData"
     clearButton.addEventListener("click", clearData);
     for (let btn of generateTestDataButtons) {
-      btn.addEventListener("click", generateTestData);
+      btn.addEventListener("click", generateData);
     }
   </script>
 </head>
@@ -68,8 +68,7 @@
         <label>Ordered by:
           <select>
             <option value="applicantID">APPLICANTID</option>
-            <option value="title">Title</option>
-            <option value="address">Publication date</option>
+            <option value="applicantName">Title</option>
           </select>
         </label>
         <span>
@@ -81,11 +80,12 @@
       <table class="full-width">
         <thead>
         <tr>
-          <th>APPLICANTID</th>
-          <th>Title</th>
-          <th>Publication date</th>
-          <th>Dokuments</th>
-          <th>Publisher</th>
+          <th>APPLICANT ID</th>
+          <th>Applicant Name</th>
+          <th>Address</th>
+          <th>Email</th>
+          <th>Phone Number</th>
+          <th>Resume</th>
         </tr>
         </thead>
         <tbody></tbody>

@@ -12,13 +12,13 @@
   <link rel="stylesheet" href="css/normalize.min.css"/>
   <link rel="stylesheet" href="css/main.css"/>
   <script src="js/v/dokuments.mjs" type="module">
-    import { generateTestData, clearData } from "./js/auxDataMngtOps_Phong_classes.mjs";
+    import { generateData, clearData } from "./js/auxDataMngtOps_Phong_classes.mjs";
     const clearButton = document.getElementById("clearData"),
       generateTestDataButtons = document.querySelectorAll("button.generateTestData");
     // Set event handlers for the buttons "clearData" and "generateTestData"
     clearButton.addEventListener("click", clearData);
     for (let btn of generateTestDataButtons) {
-      btn.addEventListener("click", generateTestData);
+      btn.addEventListener("click", generateData);
     }
   </script>
 </head>

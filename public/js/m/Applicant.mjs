@@ -19,6 +19,7 @@ import {
   NoConstraintViolation, PatternConstraintViolation, RangeConstraintViolation,
   UniquenessConstraintViolation
 } from "../lib/errorTypes.mjs";
+import { isIntegerOrIntegerString } from "../lib/util.mjs";
 
 /**
  * Constructor function for the class Applicant
@@ -127,17 +128,13 @@ class Applicant {
   get email() {
     return this._email;
   };
-  static checkEmail(n) {
-    let pattern = "^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$";
-    if (!n) {
-      return new NoConstraintViolation();  // not mandatory
+  static checkEmail(email) {
+    if (!email) {
+      return new MandatoryValueConstraintViolation("An email must be provided!");
+    } else if (!( /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+      return new PatternConstraintViolation("The email is not well formed");
     } else {
-      if (typeof n !== "string" || n.trim() === "") {
-        return new RangeConstraintViolation(
-          "The email must be a non-empty string!");
-      } else if (!pattern.test(n)) {
-        return new PatternConstraintViolation("The email address is not valid!");
-      } else return new NoConstraintViolation();
+      return new NoConstraintViolation();
     }
   };
   set email(d) {
@@ -148,17 +145,13 @@ class Applicant {
   get phone() {
     return this._phone;
   };
-  static checkPhone(n) {
-    let pattern = "^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$"
-    if (!n) {
-      return new NoConstraintViolation();  // not mandatory
+  static checkPhone(number) {
+    if (!number) {
+      return new MandatoryValueConstraintViolation("A phone number must be provided!");
+    } else if (!isIntegerOrIntegerString(number) || parseInt(number) < 1) {
+      return new RangeConstraintViolation("The phone number must be a positive integer!");
     } else {
-      if (typeof n !== "string" || n.trim() === "") {
-        return new RangeConstraintViolation(
-          "The phone number must be a non-empty string!");
-      } else if (!pattern.test(n)) {
-        return new PatternConstraintViolation("The email address is not valid!");
-      } else return new NoConstraintViolation();
+      return new NoConstraintViolation();
     }
   };
   set phone(d) {
@@ -226,6 +219,7 @@ Applicant.add = async function (slots) {
     validationResult = await Applicant.checkApplicantIDAsId(applicant.applicantID);
     if (!validationResult instanceof NoConstraintViolation) throw validationResult;
     for (const a of applicant.resumeIdRefs) {
+      console.log("a.id",a.id);
       const validationResult = await Dokument.checkDokumentIDAsIdRef(String(a.id));
       if (!validationResult instanceof NoConstraintViolation) throw validationResult;
     }
@@ -234,11 +228,10 @@ Applicant.add = async function (slots) {
     applicant = null;
   }
   if (applicant) {
-    const applicantDocRef = fsDoc(fsDb, "applicants", applicant.applicantID)
-      .withConverter(Applicant.converter),
-      dokumentsCollRef = fsColl(fsDb, "dokuments")
-        .withConverter(Dokument.converter);
-    const applicantInverseRef = { applicantID: applicant.applicantID, applicantName: applicant.applicantName }; ``
+    console.log("applicant",applicant);
+    const applicantDocRef = fsDoc(fsDb, "applicants", String(applicant.applicantID)).withConverter(Applicant.converter);
+    const dokumentsCollRef = fsColl(fsDb, "dokuments").withConverter(Dokument.converter);
+    const applicantInverseRef = { applicantID: String(applicant.applicantID), applicantName: applicant.applicantName };
     try {
       const batch = writeBatch(fsDb); // initiate batch write object
       await batch.set(applicantDocRef, applicant); // create applicant record (master)
@@ -246,7 +239,7 @@ Applicant.add = async function (slots) {
       // create derived inverse reference properties to master class object (applicant)
       // Dokuments::dokumentOwner
       await Promise.all(applicant.resumeIdRefs.map(a => {
-        const dokumentDocRef = fsDoc(authorsCollRef, String(a.id));
+        const dokumentDocRef = fsDoc(dokumentsCollRef, String(a.id));
         batch.update(dokumentDocRef, { dokumentOwner: arrayUnion(applicantInverseRef) });
       }));
       batch.commit(); // commit batch write

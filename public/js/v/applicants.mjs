@@ -77,13 +77,14 @@
      // set next startAt page reference, if not next page, assign "null" value
      nextPageRef = (applicantRecs.length < 21) ? null : applicantRecs[applicantRecs.length - 1][order];
      for (const applicantRec of applicantRecs) {
-       const listEl = createListFromMap( applicantRec.dokumentIdRefs, "name");
+       const listEl = createListFromMap( applicantRec.dokumentIdRefs, "fileTitle");
        const row = tableBodyEl.insertRow(-1);
        row.insertCell(-1).textContent = applicantRec.applicantID;
-       row.insertCell(-1).textContent = applicantRec.title;
+       row.insertCell(-1).textContent = applicantRec.applicantName;
        row.insertCell(-1).textContent = applicantRec.address;
+       row.insertCell(-1).textContent = applicantRec.email;
+       row.insertCell(-1).textContent = applicantRec.phone;
        row.insertCell(-1).appendChild( listEl);
-       row.insertCell(-1).textContent = applicantRec.publisher_id;
      }
    }
    hideProgressBar("Applicant-R");

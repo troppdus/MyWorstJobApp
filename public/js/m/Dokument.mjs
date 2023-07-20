@@ -39,7 +39,7 @@ class Dokument {
         }
     };
     static async checkDokumentIDAsId(id) {
-        let constraintViolation = Author.checkDokumentID(id);
+        let constraintViolation = Dokument.checkDokumentID(id);
         if ((constraintViolation instanceof NoConstraintViolation)) {
             id = parseInt(id);  // convert to integer
             if (isNaN(id)) {
@@ -56,7 +56,7 @@ class Dokument {
         return constraintViolation;
     };
     static async checkDokumentIDAsIdRef(id) {
-        let constraintViolation = Author.checkDokumentID(id);
+        let constraintViolation = Dokument.checkDokumentID(id);
         if ((constraintViolation instanceof NoConstraintViolation) && id) {
             const dokumentDocSn = await getDoc(fsDoc(fsDb, "dokuments", String(id)));
             if (!dokumentDocSn.exists()) {
@@ -67,9 +67,9 @@ class Dokument {
         return constraintViolation;
     };
     set dokumentID(id) {
-        const constraintViolation = Author.checkDokumentID(id);
+        const constraintViolation = Dokument.checkDokumentID(id);
         if (constraintViolation instanceof NoConstraintViolation) {
-            this._dokumentId = id;
+            this._dokumentID = id;
         } else throw constraintViolation;
     };
     static checkFileTitle(n) {
@@ -126,7 +126,7 @@ class Dokument {
 Dokument.converter = {
     toFirestore: function (dokument) { // setter
         return {
-            dokumentID: dokument.dokumentID,
+            dokumentID: parseInt(dokument._dokumentID),
             fileTitle: dokument.fileTitle,
             filePath: dokument.filePath
         };
@@ -151,12 +151,19 @@ Dokument.add = async function (slots) {
         if (!validationResult instanceof NoConstraintViolation) throw validationResult;
         validationResult = Dokument.checkDokumentIDAsIdRef(slots.dokumentID);
         if (!validationResult instanceof NoConstraintViolation) throw validationResult;
-        const dokumentDocRef = fsDoc(fsDb, "dokuments", slots.dokumentID)
-            .withConverter(Dokument.converter);
-        await setDoc(dokumentDocRef, dokument);
-        console.log(`Dokument record "${dokument.dokumentID}" created!`);
     } catch (e) {
-        console.error(`Error when adding dokument record: ${e}`);
+        console.error(`${e.constructor.name}: ${e.message}`);
+        dokument = null;
+    }
+    try {
+        if(dokument) {
+            const dokumentDocRef = fsDoc(fsDb, "dokuments", String(dokument.dokumentID)).withConverter(Dokument.converter);
+            await setDoc(dokumentDocRef, dokument);
+            console.log(`Dokument record "${dokument.dokumentID}" created!`);
+        }
+    }
+    catch (e) {
+            console.error(`Error when adding dokument record: ${e}`);
     }
 };
 /**
@@ -210,13 +217,13 @@ Dokument.update = async function (slots) {
     }
     try {
         if (dokumentBeforeUpdate.fileTitle !== slots.fileTitle) {
-            const constraintViolation = Dokument.checkFileTitle(a);
+            const constraintViolation = Dokument.checkFileTitle(slots.fileTitle);
             if (constraintViolation instanceof NoConstraintViolation) {
                 updatedSlots.fileTitle = slots.fileTitle;
             } else throw constraintViolation;
         }
         if (dokumentBeforeUpdate.filePath !== slots.filePath) {
-            const constraintViolation = Dokument.checkFilePath(a);
+            const constraintViolation = Dokument.checkFilePath(slots.filePath);
             if (constraintViolation instanceof NoConstraintViolation) {
                 updatedSlots.filePath = slots.filePath;
             } else throw constraintViolation;
