@@ -16,7 +16,7 @@ const formEl = document.forms["User"],
  Declare variable to cancel record changes listener, DB-UI sync
  ***************************************************************/
 let cancelListener = null;
-
+ 
 /***************************************************************
  Set up (choice) widgets
  ***************************************************************/
