@@ -51,11 +51,12 @@
    const dokumentRecs = await Dokument.retrieveAll();
    for (const dokument of dokumentRecs) {
      const row = tableBodyEl.insertRow();
-     row.insertCell().textContent = dokument.dokumentId;
-     row.insertCell().textContent = dokument.name;
+     row.insertCell().textContent = dokument.dokumentID;
+     row.insertCell().textContent = dokument.fileTitle;
+      row.insertCell().textContent = dokument.filePath;
      // create list of applicants dokumented by this dokument
-     if (dokument.dokumentedApplicants && dokument.dokumentedApplicants.length) {
-       const listEl = createListFromMap( dokument.dokumentedApplicants, "title", "applicantID");
+     if (dokument.dokumentOwner && dokument.dokumentOwner.length) {
+       const listEl = createListFromMap( dokument.dokumentOwner, "fileTitle", "applicantID");
        row.insertCell().appendChild(listEl);
      }
    }

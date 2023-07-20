@@ -243,7 +243,6 @@ async function createMultiSelectionWidget(formEl, idRefs, inputEl,
   }
   /** get references of associated objects from list **/
   function getListOfIdRefs(listEl) {
-    console.log("listEl", listEl);
     const listItemEls = Array.from(listEl.children);
     return listItemEls.map(a => JSON.parse(a.getAttribute("data-value")));
   }

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>JS/Firebase Web App with Bidirectional Associations: Manage Dokuments</title>
+  <title>JS/Firebase Web App with Bidirectional Associations: Manage Documents</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="theme-color" content="#ffffff"/>
   <link rel="icon" href="favicon.svg"/>
@@ -35,7 +35,6 @@
     </div>
     <nav>
       <ul>
-        <li><a href="dokuments.html">Dokuments</a></li>
         <li><a href="applicants.html">Applicants</a></li>
       </ul>
     </nav>
@@ -46,14 +45,14 @@
     <!-- ======================================================= -->
     <section id="Dokument-M" class="UI-Page" hidden="hidden">
       <!-- ======================================================= -->
-      <h1>Manage Dokuments Data</h1>
+      <h1>Manage Documents Data</h1>
       <ul class="menu">
         <li><button type="button" class="generateTestData" disabled="disabled">Generate test data</button></li>
         <li><button type="button" id="clearData" disabled="disabled">Clear data</button></li>
-        <li><button type="button" id="RetrieveAndListAll">Retrieve/list all dokument records</button></li>
-        <li><button type="button" id="Create" disabled="disabled">Create a new dokument record</button></li>
-        <li><button type="button" id="Update" disabled="disabled">Update an dokument record</button></li>
-        <li><button type="button" id="Delete" disabled="disabled">Delete an dokument record</button></li>
+        <li><button type="button" id="RetrieveAndListAll">Retrieve/list all document records</button></li>
+        <li><button type="button" id="Create" disabled="disabled">Create a new document record</button></li>
+        <li><button type="button" id="Update" disabled="disabled">Update an document record</button></li>
+        <li><button type="button" id="Delete" disabled="disabled">Delete an document record</button></li>
       </ul>
       <div class="button"><a href="index.html">« Back to Main menu</a></div>
     </section>
@@ -70,7 +69,8 @@
         <thead>
         <tr>
           <th>ID</th>
-          <th>Name</th>
+          <th>File Title</th>
+          <th>File Path</th>
           <th>Applicants</th>
         </tr>
         </thead>
