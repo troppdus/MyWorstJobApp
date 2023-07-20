@@ -72,13 +72,12 @@
    showProgressBar( "Applicant-R");
    const applicantRecs = await Applicant.retrieveBlock({"order": order, "cursor": startAt});
    if (applicantRecs.length) {
-    console.log("applicantRecs: " + applicantRecs)
      // set page references for current (cursor) page
      cursor = applicantRecs[0][order];
      // set next startAt page reference, if not next page, assign "null" value
      nextPageRef = (applicantRecs.length < 6) ? null : applicantRecs[applicantRecs.length - 1][order];
      for (const applicantRec of applicantRecs) {
-       const listEl = createListFromMap( applicantRec.dokumentIdRefs, "name");
+       const listEl = createListFromMap( applicantRec.resumeIdRefs, "name");
        const row = tableBodyEl.insertRow(-1);
        row.insertCell(-1).textContent = applicantRec.applicantID;
        row.insertCell(-1).textContent = applicantRec.applicantName;
