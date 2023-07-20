@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <title>MyWorstJob: Retrieve and List Applications</title>
-  <script src="js/v/retrieveAndListAllApplications.mjs" type="module"></script>
+  <script src="js/v/Application/retrieveAndListAllApplication.mjs" type="module"></script>
 </head>
 <body>
 <header>
@@ -13,13 +13,17 @@
 <main>
   <a href="index.html">« Back to main menu</a>
   <hr>
-  <div>
+  <div class="nav-options">
     <label>Ordered by:
       <select>
         <option value="applicationID">Application ID</option>
-        <option value="applicationname">Application Name</option>
+        <option value="applicationName">Application Name</option>
       </select>
     </label>
+    <span>
+      <button type="button" id="previousPage">« Previous</button>
+      <button type="button" id="nextPage">Next »</button>
+    </span>
   </div>
   <progress hidden="hidden" max="100">%</progress>
   <table id="applications" border="">

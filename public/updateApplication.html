@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>MyWorstJob: Update</title>
+  <script src="js/v/Application/updateApplication.mjs" type="module"></script>
+</head>
+<body>
+<header>
+  <div id="login-management"></div>
+  <h1>Update a application record</h1>
+</header>
+<main>
+  <progress hidden="hidden" max="100">%</progress>
+
+  <form id="Application">
+    <div>
+      <label>Enter application Id:
+        <input type="text" name="applicationID"/>
+      </label>
+    </div>
+    <!-- <div><label>Application ID: <output name="applicationID"/></label></div> -->
+    <div><label>Application Name: <input name="applicationName"/></label></div>
+    <div><label>Application Email: <input name="applicationEmail"/></label></div>
+    <div><label>Application Phone Number: <input name="applicationPhoneNumber"/></label></div>
+    <div><label>Description: <textarea name="description"></textarea></label></div>
+    <div>
+      <label>Status:
+        <select name="status">
+        </select>
+      </label>
+    </div>
+    <div><label>Applicant: <output name="applicantID"/></label></div>
+    <div><label>Job: <output name="jobID"/></label></div>
+    <div>
+      <button name="commit" type="submit">Create</button>
+    </div>
+  </form>
+</main>
+<br>
+<footer>
+  <a href="index.html">« Back to main menu</a>
+</footer>
+</body>
+</html>

@@ -17,6 +17,7 @@
     import { handleAuthentication } from "./js/v/accessControl.mjs";
     import Job from "./js/m/Job.mjs";
     import User from "./js/m/User.mjs";
+    import Application from "./js/m/Application.mjs";
     import { generateData } from "./js/auxDataMngtOps_Phong_classes.mjs";
     handleAuthentication();
     
@@ -30,6 +31,7 @@
       btn.addEventListener("click", Job.generateTestData);
       btn.addEventListener("click", User.generateTestData);
       btn.addEventListener("click", generateData);
+      btn.addEventListener("click", Application.generateTestData);
     }
   </script>
 </head>

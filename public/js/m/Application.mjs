@@ -66,6 +66,7 @@ class Application {
       } else return new NoConstraintViolation();
     }
   };
+
   static async checkApplicationIDAsId(applicationID) {
     let validationResult = Application.checkApplicationID(applicationID);
     if ((validationResult instanceof NoConstraintViolation)) {
@@ -82,6 +83,7 @@ class Application {
     }
     return validationResult;
   };
+
   static async checkApplicationIDAsIdRef(applicationID) {
     let validationResult = Application.checkApplicationID(applicationID);
     if ((validationResult instanceof NoConstraintViolation)) {
@@ -98,6 +100,7 @@ class Application {
     }
     return validationResult;
   };
+
   set applicationID(n) {
     const validationResult = Application.checkApplicationID(n);
     if (validationResult instanceof NoConstraintViolation) this._applicationID = n;
@@ -266,11 +269,11 @@ Application.converter = {
       applicationID: parseInt(application.applicationID),
       applicationName: application.applicationName,
       applicationEmail: application.applicationEmail,
-      applicationPhoneNumber: application.applicationPhoneNumber,
-      jobID: application.jobID,
+      applicationPhoneNumber: parseInt(application.applicationPhoneNumber),
+      jobID: parseInt(application.jobID),
       description: application.description,      
-      status: application.status,
-      applicantID: application.applicantID
+      status: parseInt(application.status),
+      applicantID: parseInt(application.applicantID)
     };
     if (application.description) data.description = application.description;
     return data;
@@ -362,9 +365,10 @@ Application.retrieve = async function (applicationID) {
  */
 Application.retrieveBlock = async function (params) {
   try {
+    if (!params) params = {order};
     let applicationsCollRef = fsColl(fsDb, "applications");
     // set limit and order in query
-    applicationsCollRef = fsQuery(applicationsCollRef, limit(6));
+    applicationsCollRef = fsQuery(applicationsCollRef, limit(10));
     if (params.order) applicationsCollRef = fsQuery(applicationsCollRef, orderBy(params.order));
     // set pagination "startAt" cursor
     if (params.cursor) {
@@ -395,7 +399,7 @@ Application.update = async function ({ applicationID, applicationName, applicati
   applicationPhoneNumber, description, status }) {
   let validationResult = null,
     applicationBeforeUpdate = null;
-  const applicationDocRef = fsDoc(fsDb, "applications", applicationID).withConverter(Application.converter),
+  const applicationDocRef = fsDoc(fsDb, "applications", applicationID.toString()).withConverter(Application.converter),
     updatedSlots = {};
   try {
     // retrieve up-to-date application record
@@ -403,6 +407,7 @@ Application.update = async function ({ applicationID, applicationName, applicati
   } catch (e) {
     console.error(`${e.constructor.name}: ${e.message}`);
   }
+  console.log("Update apps 1");
   // evaluate if slots contains updates, while building "updatedSlots" object
   if (applicationBeforeUpdate) {
     if (applicationBeforeUpdate.applicationName !== applicationName) updatedSlots.applicationName = applicationName;
@@ -413,11 +418,12 @@ Application.update = async function ({ applicationID, applicationName, applicati
   }
   // if there are updates, run checkers while updating master object (application)
   // in a batch write transaction
+  console.log("Update apps 2");
   const updatedProperties = Object.keys(updatedSlots);
   if (updatedProperties.length) {
     try {
-      const applicantsCollRef = fsColl(fsDb, "applicants")
-        .withConverter(Applicant.converter)
+      // const applicantsCollRef = fsColl(fsDb, "applicants")
+      //   .withConverter(Applicant.converter)
       // initialize (before and after update) inverse ID references
       const inverseRefBefore = { applicationID: applicationID, applicationName: applicationBeforeUpdate.applicationName };
       const inverseRefAfter = { applicationID: applicationID, applicationName: applicationName };
@@ -484,16 +490,41 @@ Application.destroy = async function (applicationID) {
       .withConverter(Application.converter))).data();
     const inverseRef = { applicationID: applicationRec.applicationID, applicationName: applicationRec.applicationName };
     const batch = writeBatch(fsDb); // initiate batch write object
-    // delete derived inverse reference properties, Authors::/authoredApplications
-    await Promise.all(applicationRec.resumeIdRefs.map(aId => {
-      const applicantCollRef = fsDoc(applicantsCollRef, String(aId.id));
-      batch.update(applicantCollRef, { applicantOwner: arrayRemove(inverseRef) });
-    }));
+    // // delete derived inverse reference properties, Authors::/authoredApplications
+    // await Promise.all(applicationRec.resumeIdRefs.map(aId => {
+    //   const applicantCollRef = fsDoc(applicantsCollRef, String(aId.id));
+    //   batch.update(applicantCollRef, { applicantOwner: arrayRemove(inverseRef) });
+    // }));
     batch.delete(applicationDocRef); // create application record (master)
     batch.commit(); // commit batch write
     console.log(`Application record "${applicationID}" deleted!`);
   } catch (e) {
     console.error(`Error deleting application record: ${e}`);
+  }
+};
+
+Application.generateTestData = async function () {
+  try {
+    console.log("Generating test data...");
+    const response = await fetch("../../test-data/applications_test.json");
+    const appRecs = await response.json();
+    // save all job record/documents
+    await Promise.all(appRecs.map(d => Application.add( d)));
+    console.log(`${Object.keys(appRecs).length} job records saved.`);
+  }
+  catch (e) {
+    console.error(`${e.constructor.name}: ${e.message}`);
+  }
+};
+
+Application.clearData = async function () {
+  if (confirm("Do you really want to delete all Application records?")) {
+    // retrieve all app documents from Firestore
+    const appRecs = await Job.retrieveAll();
+    // delete all documents
+    await Promise.all(appRecs.map(d => Application.destroy(d.applicationID.toString())));
+    // ... and then report that they have been deleted
+    console.log(`${Object.values(jobRecs).length} job records deleted.`);
   }
 };
 
