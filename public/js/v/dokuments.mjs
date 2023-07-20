@@ -56,7 +56,7 @@
       row.insertCell().textContent = dokument.filePath;
      // create list of applicants dokumented by this dokument
      if (dokument.dokumentOwner && dokument.dokumentOwner.length) {
-       const listEl = createListFromMap( dokument.dokumentOwner, "fileTitle", "applicantID");
+       const listEl = createListFromMap( dokument.dokumentOwner, "applicantName", "applicantID");
        row.insertCell().appendChild(listEl);
      }
    }

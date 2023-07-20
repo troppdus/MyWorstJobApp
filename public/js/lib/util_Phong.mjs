@@ -104,6 +104,7 @@ function createListFromMap(et, displayProp) {
  * @param {string} displayProp  The object property to be displayed in the list
  */
 function fillListFromMap(listEl, et, displayProp) {
+  console.log(listEl, et, displayProp)
   const keys = Object.keys(et);
   // delete old contents
   listEl.innerHTML = "";
