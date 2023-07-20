@@ -24,8 +24,8 @@ async function generateData () {
     await Promise.all( dokumentRecs.map( d => Dokument.add( d)));
     console.log(`${dokumentRecs.length} dokument records saved.`);
 
-    console.log("Generating applicants records...");
-    response = await fetch( "../test-data/applicants.json");
+    console.log("Generating test applicants records...");
+    response = await fetch( "../test-data/applicants_test.json");
     const applicantRecs = await response.json();
     await Promise.all( applicantRecs.map( d => Applicant.add( d)));
     console.log(`${applicantRecs.length} applicant records saved.`);

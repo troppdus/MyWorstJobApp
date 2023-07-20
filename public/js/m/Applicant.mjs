@@ -217,11 +217,10 @@ Applicant.add = async function (slots) {
     applicant = await new Applicant(slots);
     // invoke asynchronous ID/uniqueness check
     validationResult = await Applicant.checkApplicantIDAsId(applicant.applicantID);
-    if (!validationResult instanceof NoConstraintViolation) throw validationResult;
+    if (!(validationResult instanceof NoConstraintViolation)) throw validationResult;
     for (const a of applicant.resumeIdRefs) {
-      console.log("a.id",a.id);
       const validationResult = await Dokument.checkDokumentIDAsIdRef(String(a.id));
-      if (!validationResult instanceof NoConstraintViolation) throw validationResult;
+      if (!(validationResult instanceof NoConstraintViolation)) throw validationResult;
     }
   } catch (e) {
     console.error(`${e.constructor.name}: ${e.message}`);
@@ -238,7 +237,9 @@ Applicant.add = async function (slots) {
       // iterate ID references (foreign keys) of slave class objects (dokuments) and
       // create derived inverse reference properties to master class object (applicant)
       // Dokuments::dokumentOwner
+      console.log("batch applicant",applicant);
       await Promise.all(applicant.resumeIdRefs.map(a => {
+        console.log("a.id",a.id);
         const dokumentDocRef = fsDoc(dokumentsCollRef, String(a.id));
         batch.update(dokumentDocRef, { dokumentOwner: arrayUnion(applicantInverseRef) });
       }));
@@ -273,7 +274,7 @@ Applicant.retrieveBlock = async function (params) {
   try {
     let applicantsCollRef = fsColl(fsDb, "applicants");
     // set limit and order in query
-    applicantsCollRef = fsQuery(applicantsCollRef, limit(21));
+    applicantsCollRef = fsQuery(applicantsCollRef, limit(6));
     if (params.order) applicantsCollRef = fsQuery(applicantsCollRef, orderBy(params.order));
     // set pagination "startAt" cursor
     if (params.cursor) {
