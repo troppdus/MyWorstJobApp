@@ -222,11 +222,10 @@ updateFormEl["applicantID"].addEventListener("blur", async function () {
     updateFormEl["applicantID"].value = applicantRec.applicantID;
     updateFormEl["applicantName"].value = applicantRec.applicantName;
     updateFormEl["address"].value = applicantRec.address;
-    if (applicantRec.publisher_id) updateFormEl["publisher"].value = applicantRec.publisher_id;
+    updateFormEl["email"].value = applicantRec.email;
+    updateFormEl["phone"].value = applicantRec.phone;
     updateDokumentWidget.innerHTML = "";
-    await createMultiSelectionWidget(updateFormEl, applicantRec.resumeIdRefs,
-      "dokuments", "id", "dokumentId",
-      Dokument.checkDokumentIdAsIdRef, Dokument.retrieve);
+    await createMultiSelectionWidget(updateFormEl, applicantRec.resumeIdRefs,"dokuments", "id", "dokumentID",Dokument.checkDokumentIDAsIdRef, Dokument.retrieve);
   } else {
     updateFormEl.reset();
   }
@@ -239,21 +238,26 @@ updateFormEl["commit"].addEventListener("click", async function () {
       applicantID: updateFormEl["applicantID"].value,
       applicantName: updateFormEl["applicantName"].value,
       address: updateFormEl["address"].value,
-      publisher_id: updateFormEl["publisher"].value,
+      email: updateFormEl["email"].value,
+      phone: updateFormEl["phone"].value
     };
   // check all input fields and show error messages
-  /* SIMPLIFIED CODE: no before-submit validation of applicantName */
+  updateFormEl["applicantName"].setCustomValidity(
+    Applicant.checkApplicantName(slots.applicantName).message);
   updateFormEl["address"].setCustomValidity(
-    Applicant.checkPublicationDate(slots.address).message);
-  const responseValidation = await Publisher.checkNameAsIdRef(slots.publisher_id);
-  updateFormEl["publisher"].setCustomValidity(responseValidation.message);
+    Applicant.checkAddress(slots.address).message);
+  updateFormEl["email"].setCustomValidity(
+    Applicant.checkEmail(slots.email).message);
+  updateFormEl["phone"].setCustomValidity(
+    Applicant.checkPhone(slots.phone).message);
+
   if (addedDokumentsListEl.children.length) {
     // construct resumeIdRefs-ToAdd/ToRemove lists
     const resumeIdRefsToAdd = [], resumeIdRefsToRemove = [];
     for (const dokumentItemEl of addedDokumentsListEl.children) {
       if (dokumentItemEl.classList.contains("added")) {
         const dokument = JSON.parse(dokumentItemEl.getAttribute("data-value"));
-        const responseValidation = await Dokument.checkDokumentIdAsIdRef(dokument.id);
+        const responseValidation = await Dokument.checkDokumentIDAsIdRef(dokument.id);
         if (responseValidation.message) {
           updateFormEl["dokuments"].setCustomValidity(responseValidation.message);
           break;

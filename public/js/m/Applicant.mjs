@@ -129,7 +129,6 @@ class Applicant {
     return this._email;
   };
   static checkEmail(email) {
-    console.log("email",email);
     if (!email) {
       return new MandatoryValueConstraintViolation("An email must be provided!");
     } else if (!(/\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/.test(email))) {
