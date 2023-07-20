@@ -175,7 +175,7 @@ Dokument.retrieve = async function (dokumentID) {
     try {
         const dokumentRec = (await getDoc(fsDoc(fsDb, "dokuments", dokumentID)
             .withConverter(Dokument.converter))).data();
-        console.log(`Dokument record "${dokumentRec.dokumentID}" retrieved!`);
+        console.log(`Dokument record "${dokumentRec.fileTitle}" retrieved!`);
         return dokumentRec;
     } catch (e) {
         console.error(`Error retrieving dokument record: ${e}`);
