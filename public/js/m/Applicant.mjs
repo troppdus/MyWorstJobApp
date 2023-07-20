@@ -129,9 +129,10 @@ class Applicant {
     return this._email;
   };
   static checkEmail(email) {
+    console.log("email",email);
     if (!email) {
       return new MandatoryValueConstraintViolation("An email must be provided!");
-    } else if (!( /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+    } else if (!(/\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/.test(email))) {
       return new PatternConstraintViolation("The email is not well formed");
     } else {
       return new NoConstraintViolation();

@@ -175,11 +175,11 @@ function isNonEmptyString (x) {
     const listEl = document.createElement("ul");
     inputNumEl.setAttribute("type", "number");
     inputNumEl.setAttribute("placeholder", "Enter ID");
-    inputNumEl.setAttribute("name", "authors");
+    inputNumEl.setAttribute("name", "dokuments");
     btnEl.textContent = "add";
     labelEl.appendChild( inputNumEl);
     labelEl.appendChild( btnEl);
-    labelEl.prepend("Authors: ");
+    labelEl.prepend("Documents: ");
     widgetEl.appendChild( labelEl);
     widgetEl.appendChild( listEl);
     // setup event handler for adding a new ID reference
@@ -304,9 +304,9 @@ function isNonEmptyString (x) {
     const listItemEl = document.createElement("li"),
       removeBtn = createPushButton("x");
     // add first 18 chars in list item
-    listItemEl.innerText = `${targetObjt[idRefTargetName]}: ${targetObjt.name}`.substring(0, 16);
+    listItemEl.innerText = `${targetObjt[idRefTargetName]}: ${targetObjt.fileTitle}`.substring(0, 16);
     // convert target object into text
-    const targetObjText = JSON.stringify({id: targetObjt[idRefTargetName], name: targetObjt.name});
+    const targetObjText = JSON.stringify({id: targetObjt[idRefTargetName], name: targetObjt.fileTitle});
     // embed target object in list item (li element)
     listItemEl.setAttribute("data-value", targetObjText);
     if (classValue) listItemEl.classList.add( classValue);
