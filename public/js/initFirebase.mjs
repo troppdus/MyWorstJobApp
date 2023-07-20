@@ -1,7 +1,7 @@
 import { initializeApp, getApp, getApps }
   from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
-import { getAuth }
+import { getFirestore, connectFirestoreEmulator } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
+import { getAuth, connectAuthEmulator }
   from "https://www.gstatic.com/firebasejs/9.8.1/firebase-auth.js";
 
 // TODO: Replace the following with your web app's Firebase project configuration
@@ -25,5 +25,14 @@ const fsDb = getFirestore();
 // const app = (!getApps().length) ? initializeApp( firebaseConfig ) : getApp();
 // Initialize Firebase Authentication
 const auth = getAuth( app);
+
+if (window.location.hostname === "localhost") {
+  // Point to the RTDB emulator running on localhost.
+  connectFirestoreEmulator( fsDb, "localhost", 8080);
+  // Point to the Auth emulator running on localhost.
+  connectAuthEmulator( auth, "http://localhost:9099");
+}
+
+
 
 export { auth, fsDb };
