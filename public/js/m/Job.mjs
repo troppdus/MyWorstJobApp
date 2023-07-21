@@ -441,21 +441,6 @@ Job.update = async function (slots) {
  */
 Job.destroy = async function (jobId) {
   try {
-    const fsDocRefDelete = fsDoc(fsDb, "jobs", jobId);
-    await deleteDoc(fsDocRefDelete);
-    console.log(`Job record ${jobId} deleted.`);
-  } catch (e) {
-    console.error(`Error when deleting job record: ${e}`);
-  }
-};
-/*******************************************
- *** Auxiliary methods for testing **********
- ********************************************/
-/**
- * Create test data
- */
-Job.generateTestData = async function () {
-  try {
     const jobDocRef = fsDoc(fsDb, "jobs", jobId);
     const jobDocSn = await getDoc(jobDocRef);
     const jobData = jobDocSn.data();
@@ -481,6 +466,25 @@ Job.generateTestData = async function () {
     console.log(`Job ${jobId} removed from all postedJobs attributes of companies.`);
   } catch (e) {
     console.error(`Error when deleting job record: ${e}`);
+  }
+};
+/*******************************************
+ *** Auxiliary methods for testing **********
+ ********************************************/
+/**
+ * Create test data
+ */
+Job.generateTestData = async function () {
+  try {
+    console.log("Generating test data...");
+    const response = await fetch("../../test-data/jobs.json");
+    const jobRecs = await response.json();
+    // save all job record/documents
+    await Promise.all(jobRecs.map(d => Job.add( d)));
+    console.log(`${Object.keys(jobRecs).length} job records saved.`);
+  }
+  catch (e) {
+    console.error(`${e.constructor.name}: ${e.message}`);
   }
 };
 /**
