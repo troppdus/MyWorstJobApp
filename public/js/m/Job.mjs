@@ -31,7 +31,7 @@ const typeOfEmploymentEL = new Enumeration(["Full Time", "Part Time"]);
 /**
  * Constructor function for the class Job
  * @constructor
- * @param {{jobId: number, jobName: string, location: string, company: string, 
+ * @param {{jobId: number, jobName: string, location: string, company: number, 
  *    salary: number, typeOfEmployment: string,
  *    jobFieldCategory: string, description: string}} slots - Object creation slots.
  */
@@ -161,10 +161,12 @@ class Job {
   static checkCompany(company) {
     if (!company) {
       return new MandatoryValueConstraintViolation("A company must be provided!");
-    } else if (!(company instanceof Company)) {
-      return new RangeConstraintViolation("The company must be an instance of the Company class!");
-    } else {
+    } 
+    let validationResult = Company.checkCompanyIDAsIdRef(company)
+    if (validationResult instanceof NoConstraintViolation) {
       return new NoConstraintViolation();
+    } else {
+      throw validationResult;
     }
   };
 
