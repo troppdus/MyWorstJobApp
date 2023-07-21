@@ -1,6 +1,6 @@
 import { fsDb } from "../initFirebase.mjs";
 import { collection as fsColl, deleteDoc, doc as fsDoc, getDoc, getDocs, onSnapshot,
-    orderBy, query as fsQuery, setDoc, updateDoc }
+    orderBy, query as fsQuery, setDoc, updateDoc, where }
     from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
 import { isNonEmptyString, isIntegerOrIntegerString }
   from "../lib/util.mjs";
@@ -462,7 +462,7 @@ Job.destroy = async function (jobId) {
 
     // Remove the job from all postedJobs attributes of companies
     const companiesCollRef = fsColl(fsDb, "companies");
-    const companiesQuery = fsQuery(companiesCollRef.where("postedJobs", "array-contains", jobId));
+    const companiesQuery = fsQuery(companiesCollRef, where("postedJobs", "array-contains", jobId));
     const companiesSnaps = await getDocs(companiesQuery);
 
     const batch = writeBatch(fsDb); // Initiate batch write

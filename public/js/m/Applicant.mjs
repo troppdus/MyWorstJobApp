@@ -10,7 +10,7 @@
 import { fsDb } from "../initFirebase.mjs";
 import {
   collection as fsColl, doc as fsDoc, setDoc, getDoc, getDocs, orderBy, query as fsQuery,
-  Timestamp, startAt, limit, deleteField, writeBatch, arrayUnion, arrayRemove
+  Timestamp, startAt, limit, deleteField, writeBatch, arrayUnion, arrayRemove, where
 }
   from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
 import Dokument from "./Dokument.mjs";
@@ -334,14 +334,14 @@ Applicant.update = async function ( slots){
   // evaluate if slots contains updates, while building "updatedSlots" object
   if (applicantBeforeUpdate) {
     if (applicantBeforeUpdate.applicantName !== slots.applicantName) updatedSlots.applicantName = slots.applicantName;
-    if (applicantBeforeUpdate.address !== address) updatedSlots.address = slots.address;
-    if (applicantBeforeUpdate.email !== email) updatedSlots.email = slots.email;
-    if (applicantBeforeUpdate.phone !== phone) updatedSlots.phone = slots.phone;
-    if (resumeIdRefsToAdd) for (const resumeIdRef of resumeIdRefsToAdd)
+    if (applicantBeforeUpdate.address !== slots.address) updatedSlots.address = slots.address;
+    if (applicantBeforeUpdate.email !== slots.email) updatedSlots.email = slots.email;
+    if (applicantBeforeUpdate.phone !== slots.phone) updatedSlots.phone = slots.phone;
+    if (slots.resumeIdRefsToAdd) for (const resumeIdRef of slots.resumeIdRefsToAdd)
       applicantBeforeUpdate.addResume(resumeIdRef);
-    if (resumeIdRefsToRemove) for (const resumeIdRef of resumeIdRefsToRemove)
+    if (slots.resumeIdRefsToRemove) for (const resumeIdRef of slots.resumeIdRefsToRemove)
       applicantBeforeUpdate.removeResume(resumeIdRef);
-    if (resumeIdRefsToAdd || resumeIdRefsToRemove)
+    if (slots.resumeIdRefsToAdd || slots.resumeIdRefsToRemove)
       updatedSlots.resumeIdRefs = applicantBeforeUpdate.resumeIdRefs;
   }
   // if there are updates, run checkers while updating master object (applicant)
@@ -367,16 +367,16 @@ Applicant.update = async function ( slots){
       
       // remove old derived inverse references properties from slave
       // objects (dokuments) Dokument::dokumentOwner
-      if (resumeIdRefsToRemove) {
-        await Promise.all(resumeIdRefsToRemove.map(a => {
+      if (slots.resumeIdRefsToRemove) {
+        await Promise.all(slots.resumeIdRefsToRemove.map(a => {
           const dokumentCollRef = fsDoc(dokumentsCollRef, String(a.id));
           batch.update(dokumentCollRef, { dokumentOwner: arrayRemove(inverseRefBefore) });
         }));
       }
       // add new derived inverse references properties from slave objects
       // (dokuments) Dokument::dokumentOwner, while checking constraint violations
-      if (resumeIdRefsToAdd) {
-        await Promise.all(resumeIdRefsToAdd.map(async a => {
+      if (slots.resumeIdRefsToAdd) {
+        await Promise.all(slots.resumeIdRefsToAdd.map(async a => {
           const dokumentCollRef = fsDoc(dokumentsCollRef, String(a.id));
           validationResult = await Dokument.checkDokumentIDAsIdRef(a.id);
           if (!validationResult instanceof NoConstraintViolation) throw validationResult;
@@ -386,8 +386,8 @@ Applicant.update = async function ( slots){
       // if applicantName changes, update applicantName in ID references (array of maps) in
       // unchanged author objects
       if (updatedSlots.applicantName) {
-        const NoChangedResumeIdRefs = resumeIdRefsToAdd ?
-          applicantBeforeUpdate.resumeIdRefs.filter(d => !resumeIdRefsToAdd.includes(d))
+        const NoChangedResumeIdRefs = slots.resumeIdRefsToAdd ?
+          applicantBeforeUpdate.resumeIdRefs.filter(d => !slots.resumeIdRefsToAdd.includes(d))
           : applicantBeforeUpdate.resumeIdRefs;
         await Promise.all(NoChangedResumeIdRefs.map(a => {
           const dokumentCollRef = fsDoc(dokumentsCollRef, String(a.id));
@@ -404,7 +404,7 @@ Applicant.update = async function ( slots){
     } catch (e) {
       console.error(`${e.constructor.name}: ${e.message}`);
     }
-    console.log(`Property(ies) "${updatedProperties.toString()}" modified for applicant record "${applicantID}"`);
+    console.log(`Property(ies) "${updatedProperties.toString()}" modified for applicant record "${slots.applicantID}"`);
   } else {
     console.log(`No property value changed for applicant record "${slots.applicantID}"!`);
   }
