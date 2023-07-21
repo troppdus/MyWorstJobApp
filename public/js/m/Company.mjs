@@ -252,4 +252,32 @@ Company.destroy = async function (companyID) {
   }
 };
 
+Company.generateTestData = async function () {
+  try {
+    console.log("Generating test data...");
+    const response = await fetch("../../test-data/companies.json");
+    const compRecs = await response.json();
+
+    // save all company record/documents
+    await Promise.all(compRecs.map(d => Company.add( d)));
+    console.log(`${Object.keys(compRecs).length} company records saved.`);
+  }
+  catch (e) {
+    console.error(`${e.constructor.name}: ${e.message}`);
+  }
+};
+/**
+ * Clear database
+ */
+Company.clearData = async function () {
+  if (confirm("Do you really want to delete all company records?")) {
+    // retrieve all company documents from Firestore
+    const compRecs = await Company.retrieveAll();
+    // delete all documents
+    await Promise.all(compRecs.map(d => Company.destroy(d.companyID.toString())));
+    // ... and then report that they have been deleted
+    console.log(`${Object.values(compRecs).length} company records deleted.`);
+  }
+};
+
 export default Company;
