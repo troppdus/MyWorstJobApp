@@ -14,6 +14,7 @@ import {
 }
   from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
 import Dokument from "./Dokument.mjs";
+import Application from "./Application.mjs";
 import {
   IntervalConstraintViolation, MandatoryValueConstraintViolation,
   NoConstraintViolation, PatternConstraintViolation, RangeConstraintViolation,
@@ -21,13 +22,14 @@ import {
 } from "../lib/errorTypes.mjs";
 import { isIntegerOrIntegerString } from "../lib/util.mjs";
 
-/**
- * Constructor function for the class Applicant
- * @constructor
- * @param {applicantID: number, applicantName: string, address: string, address: string, email: string, phone: string, resumeIdRefs: array} slots - Object creation slots.
- */
+
 class Applicant {
   // using a single record parameter with ES6 function parameter destructuring
+  /**
+ * Constructor function for the class Applicant
+ * @constructor
+ * @param { applicantID: number, applicantName: string, address: string, email: string, phone: string, resumeIdRefs: array} slots - Object creation slots.
+ */
   constructor({ applicantID, applicantName, address, email, phone, resumeIdRefs }) {
     // assign properties by invoking implicit setters
     this.applicantID = applicantID;
@@ -67,6 +69,7 @@ class Applicant {
     }
     return validationResult;
   };
+
   static async checkApplicantIDAsIdRef(applicantID) {
     let validationResult = Applicant.checkApplicantID(applicantID);
     if ((validationResult instanceof NoConstraintViolation)) {
@@ -74,7 +77,7 @@ class Applicant {
         validationResult = new MandatoryValueConstraintViolation(
           "A value for the Applicant ID must be provided!");
       } else {
-        const applicantDocSn = await getDoc(fsDoc(fsDb, "applicants", applicantID));
+        const applicantDocSn = await getDoc(fsDoc(fsDb, "applicants", String(applicantID)));
         if (!applicantDocSn.exists()) {
           validationResult = new UniquenessConstraintViolation(
             `There is no applicant record with this Applicant ID ${applicantID}!`);
@@ -171,6 +174,9 @@ class Applicant {
   set resumeIdRefs(a) {
     this._resumeIdRefs = a;
   };
+  get applications() {
+    return this._applications;
+  }
 }
 /*********************************************************
  ***  Class-level ("static") storage management methods ***
@@ -193,16 +199,18 @@ Applicant.converter = {
     return data;
   },
   fromFirestore: function (snapshot, options) {
-    const applicant = snapshot.data(options),
-      data = {
-        applicantID: applicant.applicantID,
-        applicantName: applicant.applicantName,
-        address: applicant.address,
-        email: applicant.email,
-        phone: applicant.phone,
-        resumeIdRefs: applicant.resumeIdRefs
-      };
-    return new Applicant(data);
+    const data = snapshot.data(options);
+    const applicant = new Applicant(data);
+      // data = {
+      //   applicantID: applicant.applicantID,
+      //   applicantName: applicant.applicantName,
+      //   address: applicant.address,
+      //   email: applicant.email,
+      //   phone: applicant.phone,
+      //   resumeIdRefs: applicant.resumeIdRefs
+      // };
+    applicant._applications = data.applications;
+    return applicant;
   },
 };
 /**
@@ -214,10 +222,14 @@ Applicant.add = async function (slots) {
   let applicant = null, validationResult = null;
   try {
     // validate data by creating Applicant instance
-    applicant = await new Applicant(slots);
+    applicant = new Applicant(slots);
     // invoke asynchronous ID/uniqueness check
     validationResult = await Applicant.checkApplicantIDAsId(applicant.applicantID);
     if (!(validationResult instanceof NoConstraintViolation)) throw validationResult;
+
+    if (!(validationResult instanceof NoConstraintViolation)) throw validationResult;
+    validationResult = Applicant.checkApplicantIDAsIdRef(slots.applicantID);
+
     for (const a of applicant.resumeIdRefs) {
       const validationResult = await Dokument.checkDokumentIDAsIdRef(String(a.id));
       if (!(validationResult instanceof NoConstraintViolation)) throw validationResult;
@@ -255,9 +267,9 @@ Applicant.add = async function (slots) {
  * @param applicantID: {string}
  * @returns {Promise<*>} applicantRec: {object}
  */
-Applicant.retrieve = async function (applicantID) {
+Applicant.retrieve = async function ( applicantID) {
   try {
-    const applicantRec = (await getDoc(fsDoc(fsDb, "applicants", applicantID)
+    const applicantRec = (await getDoc(fsDoc(fsDb, "applicants", String(applicantID))
       .withConverter(Applicant.converter))).data();
     if (applicantRec) console.log(`Applicant record "${applicantID}" retrieved.`);
     return applicantRec;
@@ -305,12 +317,14 @@ Applicant.retrieveBlock = async function (params) {
  * @param resumeIdRefsToRemove {array?}
  * @returns {Promise<void>}
  */
-Applicant.update = async function ({ applicantID, applicantName, address,
-  email, phone, resumeIdRefsToAdd, resumeIdRefsToRemove }) {
+Applicant.update = async function ( slots){
+  // { slots.applicantID, applicantName, address,
+  // email, phone, resumeIdRefsToAdd, resumeIdRefsToRemove }) {
   let validationResult = null,
     applicantBeforeUpdate = null;
-  const applicantDocRef = fsDoc(fsDb, "applicants", applicantID).withConverter(Applicant.converter),
-    updatedSlots = {};
+  const applicantDocRef = fsDoc(fsDb, "applicants", String(slots.applicantID)).withConverter(Applicant.converter),
+    applicationsCollRef = fsColl(fsDb, "applications"),
+     updatedSlots = {};
   try {
     // retrieve up-to-date applicant record
     applicantBeforeUpdate = (await getDoc(applicantDocRef)).data();
@@ -319,10 +333,10 @@ Applicant.update = async function ({ applicantID, applicantName, address,
   }
   // evaluate if slots contains updates, while building "updatedSlots" object
   if (applicantBeforeUpdate) {
-    if (applicantBeforeUpdate.applicantName !== applicantName) updatedSlots.applicantName = applicantName;
-    if (applicantBeforeUpdate.address !== address) updatedSlots.address = address;
-    if (applicantBeforeUpdate.email !== email) updatedSlots.email = email;
-    if (applicantBeforeUpdate.phone !== phone) updatedSlots.phone = phone;
+    if (applicantBeforeUpdate.applicantName !== slots.applicantName) updatedSlots.applicantName = slots.applicantName;
+    if (applicantBeforeUpdate.address !== address) updatedSlots.address = slots.address;
+    if (applicantBeforeUpdate.email !== email) updatedSlots.email = slots.email;
+    if (applicantBeforeUpdate.phone !== phone) updatedSlots.phone = slots.phone;
     if (resumeIdRefsToAdd) for (const resumeIdRef of resumeIdRefsToAdd)
       applicantBeforeUpdate.addResume(resumeIdRef);
     if (resumeIdRefsToRemove) for (const resumeIdRef of resumeIdRefsToRemove)
@@ -338,10 +352,19 @@ Applicant.update = async function ({ applicantID, applicantName, address,
       const dokumentsCollRef = fsColl(fsDb, "dokuments")
         .withConverter(Dokument.converter)
       // initialize (before and after update) inverse ID references
-      const inverseRefBefore = { applicantID: applicantID, applicantName: applicantBeforeUpdate.applicantName };
-      const inverseRefAfter = { applicantID: applicantID, applicantName: applicantName };
+      const inverseRefBefore = { applicantID: parseInt(slots.applicantID), applicantName: applicantBeforeUpdate.applicantName };
+      const inverseRefAfter = { applicantID: parseInt(slots.applicantID), applicantName: slots.applicantName };
+      const q = fsQuery( applicationsCollRef, where("applicantIDRefs", "array-contains", inverseRefBefore)),
+        applicationQrySns = (await getDocs(q));
       const batch = writeBatch(fsDb); // initiate batch write
 
+
+      await Promise.all(applicationQrySns.docs.map(a => {
+        const applicationDocRef = fsDoc(applicationsCollRef, a.id);
+        batch.update(applicationDocRef, { applicantIDRefs: arrayRemove(inverseRefBefore) });
+        batch.update(applicationDocRef, { applicantIDRefs: arrayUnion(inverseRefAfter) });
+      }));
+      
       // remove old derived inverse references properties from slave
       // objects (dokuments) Dokument::dokumentOwner
       if (resumeIdRefsToRemove) {
@@ -383,7 +406,7 @@ Applicant.update = async function ({ applicantID, applicantName, address,
     }
     console.log(`Property(ies) "${updatedProperties.toString()}" modified for applicant record "${applicantID}"`);
   } else {
-    console.log(`No property value changed for applicant record "${applicantID}"!`);
+    console.log(`No property value changed for applicant record "${slots.applicantID}"!`);
   }
 };
 /**
@@ -391,24 +414,36 @@ Applicant.update = async function ({ applicantID, applicantName, address,
  * @param applicantID: {string}
  * @returns {Promise<void>}
  */
-Applicant.destroy = async function (applicantID) {
+Applicant.destroy = async function ( applicantID) {
   const applicantDocRef = fsDoc(fsDb, "applicants", applicantID)
     .withConverter(Applicant.converter),
     dokumentsCollRef = fsColl(fsDb, "dokuments")
-      .withConverter(Dokument.converter);
+      .withConverter(Dokument.converter),
+    applicationsCollRef = fsColl(fsDb, "applications")
+      .withConverter(Application.converter);
+  
   try {
     // delete master class object (applicant) while updating derived inverse
     // properties in objects from slave classes (authors and publishers)
     const applicantRec = (await getDoc(applicantDocRef
       .withConverter(Applicant.converter))).data();
     const inverseRef = { applicantID: applicantRec.applicantID, applicantName: applicantRec.applicantName };
-    const batch = writeBatch(fsDb); // initiate batch write object
+    const q = fsQuery(applicationsCollRef, where("applicantIDRefs", "array-contains", inverseRef)),
+      applicationQrySns = (await getDocs(q));
+    const batch = writeBatch(fsDb); // initiate batch write
     // delete derived inverse reference properties, Authors::/authoredApplicants
+    
     await Promise.all(applicantRec.resumeIdRefs.map(aId => {
       const dokumentCollRef = fsDoc(dokumentsCollRef, String(aId.id));
       batch.update(dokumentCollRef, { dokumentOwner: arrayRemove(inverseRef) });
     }));
-    batch.delete(applicantDocRef); // create applicant record (master)
+    // delete applicant from applications.
+    await Promise.all(applicationQrySns.docs.map(a => {
+      const applicationDocRef = fsDoc(applicationsCollRef, a.id);
+      batch.update(applicationDocRef, { applicantIDRefs: arrayRemove(inverseRef) });
+    }));
+
+    batch.delete(applicantDocRef);
     batch.commit(); // commit batch write
     console.log(`Applicant record "${applicantID}" deleted!`);
   } catch (e) {

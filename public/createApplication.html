@@ -11,7 +11,7 @@
   <h1>Create a new user record</h1>
 </header>
 <main>
-  <progress hidden="hidden" max="100">%</progress>
+  
   <form id="Application">
     <div><label>Application ID: <input name="applicationID"/></label></div>
     <div><label>Application Name: <input name="applicationName"/></label></div>
@@ -24,10 +24,12 @@
         </select>
       </label>
     </div>
-    <div><label>Applicant: <input name="applicantID"/></label></div>
+    <!-- <div><label>Applicant: <input name="applicantID"/></label></div> -->
+    <div class="MultiSelectionWidget"></div>
     <div><label>Job: <input name="jobID"/></label></div>
     <div>
       <button name="commit" type="button">Create</button>
+      <progress hidden="hidden" max="100">%</progress>
     </div>
   </form>
 </main>

@@ -86,6 +86,27 @@ class Job {
     return validationResult;
   };
 
+  static async checkJobIdAsIdRef(jobId) {
+    let validationResult = Job.checkJobId(jobId);
+    if ((validationResult instanceof NoConstraintViolation)) {
+      if (!jobId) {
+        validationResult = new MandatoryValueConstraintViolation(
+          "A value for the job ID must be provided!");
+      } else {
+        const jobDocReff = await getDoc(fsDoc(fsDb, "jobs", jobId));
+        if (!jobDocReff.exists()) {
+          validationResult = new UniquenessConstraintViolation(
+            `There is no job record with this ID ${jobId} !`);
+        } else {
+          validationResult = new NoConstraintViolation();
+        }
+      }
+    }
+    return validationResult;
+  };
+
+
+
   set jobId( n) {
     const validationResult = Job.checkJobId(  n);
     if (validationResult instanceof NoConstraintViolation) {
@@ -285,7 +306,9 @@ Job.converter = {
   },
   fromFirestore: function (snapshot, options) {
     const data = snapshot.data(options);
-    return new Job(data);
+    const job = new Job(data);
+    
+    return job;
   },
 };
 
