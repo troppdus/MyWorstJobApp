@@ -54,9 +54,9 @@
      row.insertCell().textContent = dokument.dokumentID;
      row.insertCell().textContent = dokument.fileTitle;
       row.insertCell().textContent = dokument.filePath;
-     // create list of applicants dokumented by this dokument
+     // create list of applicant (owner) of the dokument
      if (dokument.dokumentOwner && dokument.dokumentOwner.length) {
-       const listEl = createListFromMap( dokument.dokumentOwner, "fileTitle", "applicantID");
+       const listEl = createListFromMap( dokument.dokumentOwner, "applicantName", "applicantID");
        row.insertCell().appendChild(listEl);
      }
    }
@@ -74,7 +74,7 @@
  });
  // set up event handlers for responsive constraint validation
  createFormEl["dokumentId"].addEventListener("input", async function () {
-   const responseValidation = await Dokument.checkDokumentIdAsId( createFormEl["dokumentId"].value);
+   const responseValidation = await Dokument.checkDokumentIDAsId( createFormEl["dokumentId"].value);
    createFormEl["dokumentId"].setCustomValidity( responseValidation.message);
  });
  /* SIMPLIFIED CODE: no responsive validation of name */
@@ -83,13 +83,17 @@
  createFormEl["commit"].addEventListener("click", async function () {
    if (!createFormEl["dokumentId"].value) return;
    const slots = {
-     dokumentId: createFormEl["dokumentId"].value,
-     name: createFormEl["name"].value
+     dokumentID: createFormEl["dokumentId"].value,
+     fileTitle: createFormEl["fileTitle"].value,
+      filePath: createFormEl["filePath"].value
    };
    // check all input fields and show error messages
    createFormEl["dokumentId"].setCustomValidity((
-     await Dokument.checkDokumentIdAsId( slots.dokumentId)).message);
-   /* SIMPLIFIED CODE: no before-submit validation of name */
+     await Dokument.checkDokumentIDAsId( slots.dokumentID)).message);
+    createFormEl["fileTitle"].setCustomValidity((
+      await Dokument.checkFileTitle( slots.fileTitle)).message);
+    createFormEl["filePath"].setCustomValidity((
+      await Dokument.checkFilePath( slots.filePath)).message);
    // save the input data only if all form fields are valid
    if (createFormEl.checkValidity()) {
      showProgressBar( "Dokument-C");

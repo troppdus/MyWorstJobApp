@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>JS/Firebase Web App with Bidirectional Associations: Manage Documents</title>
+  <title>JS/Firebase Web App with Bidirectional Associations: Manage Applicants</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="theme-color" content="#ffffff"/>
   <link rel="icon" href="favicon.svg"/>
@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.json"/>
   <link rel="stylesheet" href="css/normalize.min.css"/>
   <link rel="stylesheet" href="css/main.css"/>
-  <script src="js/v/dokuments.mjs" type="module">
+  <script src="./js/v/applicants.mjs" type="module">
     import { generateData, clearData } from "./js/auxDataMngtOps_Phong_classes.mjs";
     const clearButton = document.getElementById("clearData"),
       generateTestDataButtons = document.querySelectorAll("button.generateTestData");
@@ -35,7 +35,7 @@
     </div>
     <nav>
       <ul>
-        <li><a href="applicants.html">Applicants</a></li>
+        <li><a href="dokuments.html">Dokuments</a></li>
       </ul>
     </nav>
   </div>
@@ -43,35 +43,49 @@
 <main>
   <div class="wrapper clearfix">
     <!-- ======================================================= -->
-    <section id="Dokument-M" class="UI-Page" hidden="hidden">
+    <section id="Applicant-M" class="UI-Page" hidden="hidden">
       <!-- ======================================================= -->
-      <h1>Manage Documents Data</h1>
+      <h1>Manage Applicant Data</h1>
       <ul class="menu">
         <li><button type="button" class="generateTestData" disabled="disabled">Generate test data</button></li>
         <li><button type="button" id="clearData" disabled="disabled">Clear data</button></li>
-        <li><button type="button" id="RetrieveAndListAll">Retrieve/list all document records</button></li>
-        <li><button type="button" id="Create" disabled="disabled">Create a new document record</button></li>
-        <li><button type="button" id="Update" disabled="disabled">Update an document record</button></li>
-        <li><button type="button" id="Delete" disabled="disabled">Delete an document record</button></li>
+        <li><button type="button" id="RetrieveAndListAll">Retrieve/list all applicant records</button></li>
+        <li><button type="button" id="Create" disabled="disabled">Create a new applicant record</button></li>
+        <li><button type="button" id="Update" disabled="disabled">Update a applicant record</button></li>
+        <li><button type="button" id="Delete" disabled="disabled">Delete a applicant record</button></li>
       </ul>
       <div class="button"><a href="index.html">« Back to Main menu</a></div>
     </section>
     <!-- ======================================================= -->
-    <section id="Dokument-R" class="UI-Page" hidden="hidden">
+    <section id="Applicant-R" class="UI-Page" hidden="hidden">
       <!-- ======================================================= -->
-      <h1>Retrieve and list all Document Records</h1>
+      <h1>Retrieve and list all Applicant Records</h1>
       <div class="button">
         <button type="button" class="back-to-menu">« Back to menu</button>
       </div>
-      <hr>
+      <hr/>
+      <div class="nav-options">
+        <label>Ordered by:
+          <select>
+            <option value="applicantID">APPLICANTID</option>
+            <option value="applicantName">Title</option>
+          </select>
+        </label>
+        <span>
+          <button type="button" id="previousPage">« Previous</button>
+          <button type="button" id="nextPage">Next »</button>
+        </span>
+      </div>
       <progress hidden="hidden" max="100">%</progress>
-      <table>
+      <table class="full-width">
         <thead>
         <tr>
-          <th>ID</th>
-          <th>File Title</th>
-          <th>File Path</th>
-          <th>Applicants</th>
+          <th>APPLICANT ID</th>
+          <th>Applicant Name</th>
+          <th>Address</th>
+          <th>Email</th>
+          <th>Phone Number</th>
+          <th>Resume</th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -81,19 +95,23 @@
       </div>
     </section>
     <!-- ======================================================= -->
-    <section id="Dokument-C" class="UI-Page" hidden="hidden">
+    <section id="Applicant-C" class="UI-Page" hidden="hidden">
       <!-- ======================================================= -->
-      <h1>Create a new Document Record</h1>
+      <h1>Create a new Applicant Record</h1>
       <form>
         <div class="field">
-          <label>ID: <input type="text" name="dokumentId"/></label>
+          <label>APPLICANTID: <input type="text" name="applicantID"/></label>
         </div>
         <div class="field">
-          <label>File Name: <input type="text" name="fileTitle"/></label>
+          <label>Title: <input type="text" name="title"/></label>
         </div>
         <div class="field">
-          <label>File Path: <input type="text" name="filePath"/></label>
+          <label>Publication date: <input type="date" name="address"/></label>
         </div>
+        <div class="field">
+          <label>Publisher ID: <input type="text" name="publisher"/></label>
+        </div>
+        <div class="MultiSelectionWidget"></div>
         <div class="button-group">
           <button type="button" class="back-to-menu">« Back to menu</button>
           <button type="submit" name="commit">Create</button>
@@ -102,16 +120,23 @@
       </form>
     </section>
     <!-- ======================================================= -->
-    <section id="Dokument-U" class="UI-Page" hidden="hidden">
+    <section id="Applicant-U" class="UI-Page" hidden="hidden">
       <!-- ======================================================= -->
-      <h1>Update an Document Record</h1>
+      <h1>Update a Applicant Record</h1>
       <form>
         <div class="field">
-          <label>ID: <input type="text" name="dokumentId"/></label>
+          <label>Enter APPLICANTID: <input type="text" name="applicantID"/></label>
         </div>
         <div class="field">
-          <label>Name: <input type="text" name="name"/></label>
+          <label>Title: <input type="text" name="title"/></label>
         </div>
+        <div class="field">
+          <label>Publication date: <input type="date" name="address"/></label>
+        </div>
+        <div class="field">
+          <label>Publisher ID: <input type="text" name="publisher"/></label>
+        </div>
+        <div class="MultiSelectionWidget"></div>
         <div class="button-group">
           <button type="button" class="back-to-menu">« Back to menu</button>
           <button type="submit" name="commit">Update</button>
@@ -120,12 +145,12 @@
       </form>
     </section>
     <!-- ======================================================= -->
-    <section id="Dokument-D" class="UI-Page" hidden="hidden">
+    <section id="Applicant-D" class="UI-Page" hidden="hidden">
       <!-- ======================================================= -->
-      <h1>Delete an Document Record</h1>
-      <form>
+      <h1>Delete a Applicant Record</h1>
+      <form id="deleteApplicantForm">
         <div class="field">
-          <label>ID: <input type="text" name="dokumentId"/></label>
+          <label>APPLICANTID: <input type="text" name="applicantID"/></label>
         </div>
         <div class="button-group">
           <button type="button" class="back-to-menu">« Back to menu</button>

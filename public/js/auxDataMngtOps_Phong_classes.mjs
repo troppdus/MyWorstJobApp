@@ -47,7 +47,7 @@ async function clearData () {
 
       console.log("Clearing dokument records...");
       const dokumentsCollRef = fsColl( fsDb, "dokuments");
-      const dokumentQrySns = (await getDocs( dokumentsCollRef, orderBy( "dokumentId")));
+      const dokumentQrySns = (await getDocs( dokumentsCollRef, orderBy( "dokumentID")));
       await Promise.all( dokumentQrySns.docs.map( d => Dokument.destroy( d.data())))
       console.log(`${dokumentQrySns.docs.length} dokument records deleted.`);
     }
