@@ -285,10 +285,6 @@ Applicant.retrieveBlock = async function (params) {
     if (applicantRecs.length) {
       console.log(`Block of applicant records retrieved! (cursor: ${applicantRecs[0][params.order]})`);
     }
-    for (const applicantRec of applicantRecs)
-    {
-      console.log("applicantRec",applicantRec);
-    }
     return applicantRecs;
   } catch (e) {
     console.error(`Error retrieving all applicant records: ${e}`);

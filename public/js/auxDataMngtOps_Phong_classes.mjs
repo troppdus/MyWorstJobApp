@@ -36,7 +36,7 @@ async function generateData () {
 /**
  * Clear data
  */
-async function clearData () {
+async function clearDataApplicant_Dokument () {
   try {
     if (confirm("Do you really want to delete all test data?")) {
       console.log("Clearing applicants records...");
@@ -56,4 +56,4 @@ async function clearData () {
   }
 }
 
-export { generateData, clearData };
+export { generateData, clearDataApplicant_Dokument };

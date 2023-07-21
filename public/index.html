@@ -18,7 +18,7 @@
     import Job from "./js/m/Job.mjs";
     import User from "./js/m/User.mjs";
     import Application from "./js/m/Application.mjs";
-    import { generateData } from "./js/auxDataMngtOps_Phong_classes.mjs";
+    import { generateData, clearDataApplicant_Dokument } from "./js/auxDataMngtOps_Phong_classes.mjs";
     handleAuthentication();
     
     const clearButton = document.getElementById("clearData"),
@@ -27,6 +27,7 @@
         // set event handlers for the buttons "clearData" and "generateTestData"
     clearButton.addEventListener("click", Job.clearData);
     clearButton.addEventListener("click", User.clearData);
+    clearButton.addEventListener("click", clearDataApplicant_Dokument);
     for (const btn of generateTestDataButtons) {
       btn.addEventListener("click", Job.generateTestData);
       btn.addEventListener("click", User.generateTestData);
