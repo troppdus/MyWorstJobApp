@@ -10,7 +10,6 @@ import {
 }
   from "../lib/errorTypes.mjs";
 import Enumeration from "../lib/Enumeration.mjs";
-import Company from "./Company.mjs";
 
 console.log("Job.mjs");
 //   «get/set» jobID[1] : number(int)
@@ -31,7 +30,7 @@ const typeOfEmploymentEL = new Enumeration(["Full Time", "Part Time"]);
 /**
  * Constructor function for the class Job
  * @constructor
- * @param {{jobId: number, jobName: string, location: string, company: number, 
+ * @param {{jobId: number, jobName: string, location: string, company: string, 
  *    salary: number, typeOfEmployment: string,
  *    jobFieldCategory: string, description: string}} slots - Object creation slots.
  */
@@ -85,18 +84,6 @@ class Job {
       }
     }
     return validationResult;
-  };
-
-  static async checkJobIDAsIdRef(id) {
-    let constraintViolation = Job.checkJobId(id);
-    if ((constraintViolation instanceof NoConstraintViolation) && id) {
-        const jobDocSn = await getDoc(fsDoc(fsDb, "jobs", String(id)));
-        if (!jobDocSn.exists()) {
-            constraintViolation = new ReferentialIntegrityConstraintViolation(
-                `There is no job record with this job ID ${id}!`);
-        }
-    }
-    return constraintViolation;
   };
 
   set jobId( n) {
@@ -158,15 +145,13 @@ class Job {
     return this._company;
   };
 
-  static async checkCompany(company) {
+  static checkCompany(company) {
     if (!company) {
-      return new MandatoryValueConstraintViolation("A company must be provided!");
-    } 
-    let validationResult = await Company.checkCompanyIDAsIdRef(company)
-    if (validationResult instanceof NoConstraintViolation) {
-      return new NoConstraintViolation();
+      return new MandatoryValueConstraintViolation("A company name must be provided!");
+    } else if (!isNonEmptyString(company)) {
+      return new RangeConstraintViolation("The company name must be a non-empty string!");
     } else {
-      throw validationResult;
+      return new NoConstraintViolation();
     }
   };
 
@@ -441,29 +426,9 @@ Job.update = async function (slots) {
  */
 Job.destroy = async function (jobId) {
   try {
-    const jobDocRef = fsDoc(fsDb, "jobs", jobId);
-    const jobDocSn = await getDoc(jobDocRef);
-    const jobData = jobDocSn.data();
-
-    // Delete the job document
-    await deleteDoc(jobDocRef);
+    const fsDocRefDelete = fsDoc(fsDb, "jobs", jobId);
+    await deleteDoc(fsDocRefDelete);
     console.log(`Job record ${jobId} deleted.`);
-
-    // Remove the job from all postedJobs attributes of companies
-    const companiesCollRef = fsColl(fsDb, "companies");
-    const companiesQuery = fsQuery(companiesCollRef.where("postedJobs", "array-contains", jobId));
-    const companiesSnaps = await getDocs(companiesQuery);
-
-    const batch = writeBatch(fsDb); // Initiate batch write
-
-    companiesSnaps.forEach((companySnap) => {
-      const companyRef = fsDoc(companiesCollRef, companySnap.id);
-      const updatedPostedJobs = companySnap.data().postedJobs.filter((job) => job !== jobId);
-      batch.update(companyRef, { postedJobs: updatedPostedJobs });
-    });
-
-    await batch.commit();
-    console.log(`Job ${jobId} removed from all postedJobs attributes of companies.`);
   } catch (e) {
     console.error(`Error when deleting job record: ${e}`);
   }

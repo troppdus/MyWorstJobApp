@@ -17,6 +17,8 @@
    createButton = formEl["commit"],
    progressEl = document.querySelector("progress"),
    typeOfEmploymentEl = formEl["typeOfEmployment"];
+
+Job.retrieveAll();
  /***************************************************************
   Set up (choice) widgets
   ***************************************************************/
@@ -25,7 +27,7 @@
  
  
  formEl["jobId"].addEventListener("input", function () {
-   formEl["jobId"].setCustomValidity(Job.checkJobId(formEl["jobId"].value).message);
+   formEl["jobId"].setCustomValidity(Job.checkJobIdAsId(formEl["jobId"].value).message);
  });
  formEl["jobName"].addEventListener("input", function () {
    formEl["jobName"].setCustomValidity(Job.checkJobName(formEl["jobName"].value).message);
@@ -34,8 +36,7 @@
    formEl["location"].setCustomValidity(Job.checkLocation(formEl["location"].value).message);
  });
  formEl["company"].addEventListener("input", async function () {
-  let validationResult = await Job.checkCompany(formEl["company"].value);
-  formEl["company"].setCustomValidity(validationResult.message);
+  formEl["company"].setCustomValidity(Job.checkCompany(formEl["company"].value).message);
  });
  formEl["salary"].addEventListener("input", function () {
    formEl["salary"].setCustomValidity(Job.checkSalary(formEl["salary"].value).message);
@@ -56,10 +57,7 @@
  /******************************************************************
   Add event listeners for the create/submit button
   ******************************************************************/
-  function triggerInputEvent(element) {
-    element.dispatchEvent(new Event('input', { 'bubbles': true }));
-}
-  formEl.addEventListener("submit", async function (event) {
+createButton.addEventListener("click", async function (event) {
     event.preventDefault();
     const formEl = document.forms["Job"],
      slots = {
@@ -72,16 +70,9 @@
      jobFieldCategory: formEl["jobFieldCategory"].value,
      description: formEl["description"].value
    };
-   triggerInputEvent(formEl["jobId"]);
-   triggerInputEvent(formEl["jobName"]);
-   triggerInputEvent(formEl["location"]);
-   triggerInputEvent(formEl["company"]);
-   triggerInputEvent(formEl["salary"]);
-   triggerInputEvent(formEl["typeOfEmployment"]);
-   triggerInputEvent(formEl["jobFieldCategory"]);
-   triggerInputEvent(formEl["description"]);
+
    showProgressBar( progressEl);
-   formEl["jobId"].setCustomValidity(( await Job.checkJobIdAsId( slots.jobId)).message);
+   formEl["jobId"].setCustomValidity(( Job.checkJobIdAsId( slots.jobId)).message);
    formEl["jobName"].setCustomValidity( Job.checkJobName( slots.jobName).message);
    formEl["location"].setCustomValidity( Job.checkLocation( slots.location).message);
    formEl["company"].setCustomValidity( Job.checkCompany( slots.company).message);
