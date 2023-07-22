@@ -13,12 +13,12 @@
 <main>
   
   <form id="Application">
-    <div><label>Application ID: <input name="applicationID"/></label></div>
-    <div><label>Application Name: <input name="applicationName"/></label></div>
-    <div><label>Application Email: <input name="applicationEmail"/></label></div>
-    <div><label>Application Phone Number: <input name="applicationPhoneNumber"/></label></div>
-    <div><label>Description: <textarea name="description"></textarea></label></div>
-    <div>
+    <div class="field"><label>Application ID: <input name="applicationID"/></label></div>
+    <div class="field"><label>Application Name: <input name="applicationName"/></label></div>
+    <div class="field"><label>Application Email: <input name="applicationEmail"/></label></div>
+    <div class="field"><label>Application Phone Number: <input name="applicationPhoneNumber"/></label></div>
+    <div class="field"><label>Description: <textarea name="description"></textarea></label></div>
+    <div class="field">
       <label>Status:
         <select name="status">
         </select>
@@ -26,7 +26,7 @@
     </div>
     <!-- <div><label>Applicant: <input name="applicantID"/></label></div> -->
     <div class="MultiSelectionWidget"></div>
-    <div><label>Job: <input name="jobID"/></label></div>
+    <div class="field"><label>Job: <input name="jobID"/></label></div>
     <div>
       <button name="commit" type="button">Create</button>
       <section id="progress"><progress hidden="hidden" max="100">%</progress></section>
