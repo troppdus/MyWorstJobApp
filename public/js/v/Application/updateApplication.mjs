@@ -1,7 +1,9 @@
 // Import classes and data types
 import { handleAuthentication } from "../accessControl.mjs";
 import Application, {ApplicationStatusEL} from "../../m/Application.mjs";
-import { fillSelectWithOptions, showProgressBar, hideProgressBar  } from "../../lib/util.mjs";
+import Applicant from "../../m/Applicant.mjs";
+import { fillSelectWithOptions, showProgressBar, hideProgressBar} from "../../lib/util.mjs";
+import { createMultiSelectionWidget } from "../../lib/util_2.mjs";
 
 handleAuthentication();
 
@@ -13,16 +15,16 @@ const updateFormEl = document.forms["Application"],
   updateButton = updateFormEl["commit"],
   selectApplicationEl = updateFormEl["applicationID"],
   progressEl = document.querySelector("progress"),
-  selectStatusEl = updateFormEl["status"];
-
+  selectStatusEl = updateFormEl["status"],
+  updateApplicantWidgetEl = updateFormEl.querySelector(".MultiSelectionWidget");
 /***************************************************************
  Declare variable to cancel record changes listener, DB-UI sync
  ***************************************************************/
 updateFormEl.reset();
 // fillSelectWithOptions(selectUserEl, userRecords, {valueProp:"userID", displayProp:"username"});
+updateApplicantWidgetEl.innerHTML = "";
 fillSelectWithOptions(selectStatusEl, ApplicationStatusEL.labels);
 
- 
 
 /***************************************************************
   Add event listeners for input validation
@@ -58,8 +60,11 @@ fillSelectWithOptions(selectStatusEl, ApplicationStatusEL.labels);
    if (responseValidation) updateFormEl["applicationID"].setCustomValidity(responseValidation.message);
    if (!updateFormEl["applicationID"].value) {
      updateFormEl.reset();
+     updateApplicantWidgetEl.innerHTML = "";
    }
  });
+
+ 
  
  updateFormEl["applicationID"].addEventListener("blur", async function () {
    if (updateFormEl["applicationID"].checkValidity() && updateFormEl["applicationID"].value) {
@@ -70,7 +75,10 @@ fillSelectWithOptions(selectStatusEl, ApplicationStatusEL.labels);
     updateFormEl["applicationPhoneNumber"].value = applicationRec.applicationPhoneNumber;
     updateFormEl["description"].value = applicationRec.description;
     updateFormEl["status"].value = applicationRec.status;
-    updateFormEl["applicantID"].value = applicationRec.applicantID;
+    // updateFormEl["applicantID"].value = applicationRec.applicantID;
+    updateApplicantWidgetEl.innerHTML = "";
+    await createMultiSelectionWidget(updateFormEl, applicationRec.applicantIDRefs, 
+      "applicants", "id", "applicantID", Applicant.checkApplicationIDAsIdRef, Applicant.retrieve);
     updateFormEl["jobID"].value = applicationRec.jobID;
    } else {
      updateFormEl.reset();
@@ -83,14 +91,15 @@ fillSelectWithOptions(selectStatusEl, ApplicationStatusEL.labels);
  
   //  applicationID, applicationName, applicationEmail,
   // applicationPhoneNumber, description, status
-   const slots = {
+   const addedApplicantsListEl = updateApplicantWidgetEl.children[1], // ul
+    slots = {
       applicationID: updateFormEl["applicationID"].value,
       applicationName: updateFormEl["applicationName"].value,
       applicationEmail: updateFormEl["applicationEmail"].value,
       applicationPhoneNumber: updateFormEl["applicationPhoneNumber"].value,
       description: updateFormEl["description"].value,
       status: updateFormEl["status"].value,
-      applicantID: updateFormEl["applicantID"].value,
+      // applicantID: updateFormEl["applicantID"].value,
       jobID: updateFormEl["jobID"].value
    };
  
@@ -99,7 +108,36 @@ fillSelectWithOptions(selectStatusEl, ApplicationStatusEL.labels);
    updateFormEl["applicationEmail"].setCustomValidity(Application.checkApplicationEmail(slots.applicationEmail).message);
    updateFormEl["applicationPhoneNumber"].setCustomValidity(Application.checkApplicationPhoneNumber(slots.applicationPhoneNumber).message);
 
- 
+   if (addedApplicantsListEl.children.length) {
+    const applicantIDRefsToAdd = [], applicantIDRefsToRemove = [];
+    for (const applicantItemEl of addedApplicantsListEl.children) {
+      if (applicantItemEl.classList.contains("added")) {
+        const applicant = JSON.parse(applicantItemEl.getAttribute("data-value"));
+        const responseValidation = await Applicant.checkApplicantIDAsIdRef(applicant.applicantID);
+        if (responseValidation.message) {
+          updateFormEl["applicants"].setCustomValidity(responseValidation.message);
+          break;
+        } else {
+          applicantIDRefsToAdd.push(applicant);
+          updateFormEl["applicants"].setCustomValidity("");
+        }
+      }
+      if (applicantItemEl.classList.contains("removed")) {
+        const applicant = JSON.parse(applicantItemEl.getAttribute("data-value"));
+        applicantIDRefsToRemove.push(applicant);
+      }
+    }
+    // if the add/remove list is non-empty, create a corresponding slot
+    if (applicantIDRefsToRemove.length > 0) {
+      slots.applicantIDRefsToRemove = applicantIDRefsToRemove;
+    }
+    if (applicantIDRefsToAdd.length > 0) {
+      slots.applicantIDRefsToAdd = applicantIDRefsToAdd;
+    }
+  } else {
+    updateFormEl["applicants"].setCustomValidity(
+      updateFormEl["applicants"].value ? "" : "Please add at least one applicant");
+    }
    // Commit the update only if all form field values are valid
    if (updateFormEl.checkValidity()) {
      showProgressBar(progressEl);
