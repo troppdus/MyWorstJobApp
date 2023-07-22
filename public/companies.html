@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>JS/Firebase Web App with Bidirectional Associations: Manage Applicants</title>
+  <title>JS/Firebase Web App with Bidirectional Associations: Manage Companies</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="theme-color" content="#ffffff"/>
   <link rel="icon" href="favicon.svg"/>
@@ -11,14 +11,14 @@
   <link rel="manifest" href="manifest.json"/>
   <link rel="stylesheet" href="css/normalize.min.css"/>
   <link rel="stylesheet" href="css/main.css"/>
-  <script src="./js/v/applicants.mjs" type="module">
-    import { generateData, clearData } from "./js/auxDataMngtOps_Phong_classes.mjs";
+  <script src="./js/v/companies.mjs" type="module">
+    import { generateTestData, clearData } from "./js/m/Company.mjs";
     const clearButton = document.getElementById("clearData"),
       generateTestDataButtons = document.querySelectorAll("button.generateTestData");
     // Set event handlers for the buttons "clearData" and "generateTestData"
     clearButton.addEventListener("click", clearData);
     for (let btn of generateTestDataButtons) {
-      btn.addEventListener("click", generateData);
+      btn.addEventListener("click", generateTestData);
     }
   </script>
 </head>
@@ -35,7 +35,7 @@
     </div>
     <nav>
       <ul>
-        <li><a href="dokuments.html">Dokuments</a></li>
+        <li><a href="jobs.html">Jobs</a></li>
       </ul>
     </nav>
   </div>
@@ -43,23 +43,23 @@
 <main>
   <div class="wrapper clearfix">
     <!-- ======================================================= -->
-    <section id="Applicant-M" class="UI-Page" hidden="hidden">
+    <section id="Company-M" class="UI-Page" hidden="hidden">
       <!-- ======================================================= -->
-      <h1>Manage Applicant Data</h1>
+      <h1>Manage Company Data</h1>
       <ul class="menu">
         <li><button type="button" class="generateTestData" disabled="disabled">Generate test data</button></li>
         <li><button type="button" id="clearData" disabled="disabled">Clear data</button></li>
-        <li><button type="button" id="RetrieveAndListAll">Retrieve/list all applicant records</button></li>
-        <li><button type="button" id="Create" disabled="disabled">Create a new applicant record</button></li>
-        <li><button type="button" id="Update" disabled="disabled">Update a applicant record</button></li>
-        <li><button type="button" id="Delete" disabled="disabled">Delete a applicant record</button></li>
+        <li><button type="button" id="RetrieveAndListAll">Retrieve/list all company records</button></li>
+        <li><button type="button" id="Create" disabled="disabled">Create a new company record</button></li>
+        <li><button type="button" id="Update" disabled="disabled">Update a company record</button></li>
+        <li><button type="button" id="Delete" disabled="disabled">Delete a company record</button></li>
       </ul>
       <div class="button"><a href="index.html">« Back to Main menu</a></div>
     </section>
     <!-- ======================================================= -->
-    <section id="Applicant-R" class="UI-Page" hidden="hidden">
+    <section id="Company-R" class="UI-Page" hidden="hidden">
       <!-- ======================================================= -->
-      <h1>Retrieve and list all Applicant Records</h1>
+      <h1>Retrieve and list all Company Records</h1>
       <div class="button">
         <button type="button" class="back-to-menu">« Back to menu</button>
       </div>
@@ -67,8 +67,8 @@
       <div class="nav-options">
         <label>Ordered by:
           <select>
-            <option value="applicantID">APPLICANTID</option>
-            <option value="applicantName">Title</option>
+            <option value="companyID">COMPANYID</option>
+            <option value="companyName">Title</option>
           </select>
         </label>
         <span>
@@ -80,8 +80,8 @@
       <table class="full-width">
         <thead>
         <tr>
-          <th>APPLICANT ID</th>
-          <th>Applicant Name</th>
+          <th>COMPANY ID</th>
+          <th>Company Name</th>
           <th>Address</th>
           <th>Email</th>
           <th>Phone Number</th>
@@ -95,21 +95,18 @@
       </div>
     </section>
     <!-- ======================================================= -->
-    <section id="Applicant-C" class="UI-Page" hidden="hidden">
+    <section id="Company-C" class="UI-Page" hidden="hidden">
       <!-- ======================================================= -->
-      <h1>Create a new Applicant Record</h1>
+      <h1>Create a new Company Record</h1>
       <form>
         <div class="field">
-          <label>APPLICANTID: <input type="text" name="applicantID"/></label>
+          <label>Company ID: <input type="text" name="companyID"/></label>
         </div>
         <div class="field">
-          <label>Title: <input type="text" name="title"/></label>
+          <label>Company Name: <input type="text" name="companyName"/></label>
         </div>
         <div class="field">
-          <label>Publication date: <input type="date" name="address"/></label>
-        </div>
-        <div class="field">
-          <label>Publisher ID: <input type="text" name="publisher"/></label>
+          <label>Description: <input type="text" name="description"/></label>
         </div>
         <div class="MultiSelectionWidget"></div>
         <div class="button-group">
@@ -120,21 +117,18 @@
       </form>
     </section>
     <!-- ======================================================= -->
-    <section id="Applicant-U" class="UI-Page" hidden="hidden">
+    <section id="Company-U" class="UI-Page" hidden="hidden">
       <!-- ======================================================= -->
-      <h1>Update a Applicant Record</h1>
+      <h1>Update a Company Record</h1>
       <form>
         <div class="field">
-          <label>Enter APPLICANTID: <input type="text" name="applicantID"/></label>
+          <label>Enter Company ID: <input type="text" name="companyID"/></label>
         </div>
         <div class="field">
-          <label>Title: <input type="text" name="title"/></label>
+          <label>Company Name: <input type="text" name="companyName"/></label>
         </div>
         <div class="field">
-          <label>Publication date: <input type="date" name="address"/></label>
-        </div>
-        <div class="field">
-          <label>Publisher ID: <input type="text" name="publisher"/></label>
+          <label>Description: <input type="text" name="description"/></label>
         </div>
         <div class="MultiSelectionWidget"></div>
         <div class="button-group">
@@ -145,12 +139,12 @@
       </form>
     </section>
     <!-- ======================================================= -->
-    <section id="Applicant-D" class="UI-Page" hidden="hidden">
+    <section id="Company-D" class="UI-Page" hidden="hidden">
       <!-- ======================================================= -->
-      <h1>Delete a Applicant Record</h1>
-      <form id="deleteApplicantForm">
+      <h1>Delete a Company Record</h1>
+      <form id="deleteCompanyForm">
         <div class="field">
-          <label>APPLICANTID: <input type="text" name="applicantID"/></label>
+          <label>COMPANYID: <input type="text" name="companyID"/></label>
         </div>
         <div class="button-group">
           <button type="button" class="back-to-menu">« Back to menu</button>
@@ -162,9 +156,6 @@
   </div>
 </main>
 <footer>
-  <div class="foot-content wrapper">
-    Copyright © 2020-2022 Gerd Wagner and Juan-Francisco Reyes. <a href="credits.html">Credits and License</a>
-  </div>
 </footer>
 </body>
 </html>

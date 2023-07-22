@@ -117,7 +117,7 @@
   * and the user changes focus the dokument data is populated
   */
  updateFormEl["dokumentId"].addEventListener("input", async function () {
-   const responseValidation = await Dokument.checkDokumentIdAsIdRef( updateFormEl["dokumentId"].value);
+   const responseValidation = await Dokument.checkDokumentIDAsIdRef( updateFormEl["dokumentId"].value);
    updateFormEl["dokumentId"].setCustomValidity( responseValidation.message);
    updateFormEl["commit"].disabled = responseValidation.message;
    if (!updateFormEl["dokumentId"].value) updateFormEl.reset();
@@ -125,7 +125,8 @@
  updateFormEl["dokumentId"].addEventListener("blur", async function () {
    if (updateFormEl["dokumentId"].checkValidity() && updateFormEl["dokumentId"].value) {
      const dokumentRec = await Dokument.retrieve( updateFormEl["dokumentId"].value);
-     updateFormEl["name"].value = dokumentRec.name;
+     updateFormEl["fileTitle"].value = dokumentRec.fileTitle;
+     updateFormEl["filePath"].value = dokumentRec.filePath;
    } else updateFormEl.reset();
  });
  
@@ -133,11 +134,15 @@
  updateFormEl["commit"].addEventListener("click", async function () {
    if (!updateFormEl["dokumentId"].value) return;
    const slots = {
-     dokumentId: updateFormEl["dokumentId"].value,
-     name: updateFormEl["name"].value
+    dokumentID: updateFormEl["dokumentId"].value,
+    fileTitle: updateFormEl["fileTitle"].value,
+     filePath: updateFormEl["filePath"].value
    }
-   // check all property constraints
-   /* SIMPLIFIED CODE: no before-save validation of name */
+   // check all property constraints and show error messages
+   updateFormEl["fileTitle"].setCustomValidity((
+     await Dokument.checkFileTitle( slots.fileTitle)).message);
+   updateFormEl["filePath"].setCustomValidity((
+     await Dokument.checkFilePath( slots.filePath)).message);
    // save the input data only if all the form fields are valid
    if (updateFormEl.checkValidity()) {
      showProgressBar( "Dokument-U");
@@ -161,7 +166,7 @@
   * and the user changes focus the dokument data is populated
   */
  deleteFormEl["dokumentId"].addEventListener("input", async function () {
-   const responseValidation = await Dokument.checkDokumentIdAsIdRef( deleteFormEl["dokumentId"].value);
+   const responseValidation = await Dokument.checkDokumentIDAsIdRef( deleteFormEl["dokumentId"].value);
    deleteFormEl["dokumentId"].setCustomValidity( responseValidation.message);
  });
  // commit delete only if all form field values are valid

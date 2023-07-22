@@ -36,7 +36,7 @@ async function generateData () {
 /**
  * Clear data
  */
-async function clearData () {
+async function clearDataApplicant_Dokument () {
   try {
     if (confirm("Do you really want to delete all test data?")) {
       console.log("Clearing applicants records...");
@@ -48,7 +48,7 @@ async function clearData () {
       console.log("Clearing dokument records...");
       const dokumentsCollRef = fsColl( fsDb, "dokuments");
       const dokumentQrySns = (await getDocs( dokumentsCollRef, orderBy( "dokumentID")));
-      await Promise.all( dokumentQrySns.docs.map( d => Dokument.destroy( d.data())))
+      await Promise.all( dokumentQrySns.docs.map( d => Dokument.destroy( d.id)))
       console.log(`${dokumentQrySns.docs.length} dokument records deleted.`);
     }
   } catch (e) {
@@ -56,4 +56,4 @@ async function clearData () {
   }
 }
 
-export { generateData, clearData };
+export { generateData, clearDataApplicant_Dokument };

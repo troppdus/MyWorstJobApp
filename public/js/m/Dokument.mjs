@@ -203,45 +203,62 @@ Dokument.retrieveAll = async function () {
  * @returns {Promise<void>}
  */
 Dokument.update = async function (slots) {
-    let noConstraintViolated = true,
-        dokumentBeforeUpdate = null;
-    const dokumentDocRef = fsDoc(fsDb, "dokuments", slots.dokumentID)
-        .withConverter(Dokument.converter),
-        updatedSlots = {};
+    let dokumentBeforeUpdate = null;
+    const applicantsCollRef = fsColl (fsDb, "applicants"),
+      dokumentDocRef = fsDoc( fsDb, "dokuments", slots.dokumentID)
+        .withConverter( Dokument.converter),
+      updatedSlots = {};
     try {
-        // retrieve up-to-date dokument record
-        const dokumentDocSn = await getDoc(dokumentDocRef);
-        dokumentBeforeUpdate = dokumentDocSn.data();
+      // retrieve up-to-date dokument record
+      const dokumentDocSn = await getDoc( dokumentDocRef);
+      dokumentBeforeUpdate = dokumentDocSn.data();
     } catch (e) {
-        console.error(`${e.constructor.dokumentID}: ${e.message}`);
+      console.error(`${e.constructor.name}: ${e.message}`);
     }
-    try {
-        if (dokumentBeforeUpdate.fileTitle !== slots.fileTitle) {
-            const constraintViolation = Dokument.checkFileTitle(slots.fileTitle);
-            if (constraintViolation instanceof NoConstraintViolation) {
-                updatedSlots.fileTitle = slots.fileTitle;
-            } else throw constraintViolation;
-        }
-        if (dokumentBeforeUpdate.filePath !== slots.filePath) {
-            const constraintViolation = Dokument.checkFilePath(slots.filePath);
-            if (constraintViolation instanceof NoConstraintViolation) {
-                updatedSlots.filePath = slots.filePath;
-            } else throw constraintViolation;
-        }
-    } catch (e) {
-        noConstraintViolated = false;
-        console.error(`${e.constructor.dokumentID}: ${e.message}`);
+    if (dokumentBeforeUpdate) {
+      if (dokumentBeforeUpdate.fileTitle !== slots.fileTitle) {
+        const constraintViolation = Dokument.checkFileTitle(slots.fileTitle);
+        if (constraintViolation instanceof NoConstraintViolation) {
+            updatedSlots.fileTitle = slots.fileTitle;
+        } else throw constraintViolation;
     }
-    if (noConstraintViolated) {
-        const updatedProperties = Object.keys(updatedSlots);
-        if (updatedProperties.length) {
-            await updateDoc(dokumentDocRef, updatedSlots);
-            console.log(`Property(ies) "${updatedProperties.toString()}" modified for dokument record "${slots.dokumentID}"`);
-        } else {
-            console.log(`No property value changed for dokument record "${slots.dokumentID}"!`);
-        }
+    if (dokumentBeforeUpdate.filePath !== slots.filePath) {
+        const constraintViolation = Dokument.checkFilePath(slots.filePath);
+        if (constraintViolation instanceof NoConstraintViolation) {
+            updatedSlots.filePath = slots.filePath;
+        } else throw constraintViolation;
     }
-};
+    }
+    const updatedProperties = Object.keys(updatedSlots);
+    if (updatedProperties.length) { // execute only if there are updates
+      try {
+        const dokumentRefBefore
+            = {id: parseInt(slots.dokumentID), name: dokumentBeforeUpdate.fileTitle},
+          dokumentRefAfter = {id: String(slots.dokumentID), name: slots.fileTitle},
+          q = fsQuery( applicantsCollRef, where("resumeIdRefs", "array-contains",
+            dokumentRefBefore)),
+          applicantQrySns = (await getDocs(q)),
+          batch = writeBatch( fsDb); // initiate batch write
+          console.log(`Number of applicants found: ${applicantQrySns.docs.length}`);
+        // iterate ID references (foreign keys) of master class objects (applicants) and
+        // update derived inverse reference properties, remove/add
+        await Promise.all( applicantQrySns.docs.map( d => {
+          const applicantDocRef = fsDoc(applicantsCollRef, d.id);
+          console.log(`Updating applicant record "${d.id}" ...`)
+          batch.update(applicantDocRef, {resumeIdRefs: arrayRemove( dokumentRefBefore)});
+          batch.update(applicantDocRef, {resumeIdRefs: arrayUnion( dokumentRefAfter)});
+        }));
+        // update applicant object
+        batch.update(dokumentDocRef, updatedSlots);
+        batch.commit(); // commit batch write
+      } catch (e) {
+        console.error(`${e.constructor.name}: ${e.message}`);
+      }
+      console.log(`Property(ies) "${updatedProperties.toString()}" modified for dokument record "${slots.dokumentID}"`);
+    } else {
+      console.log(`No property value changed for dokument record "${slots.dokumentID}"!`);
+    }
+  };
 /**
  * Delete a Firestore document from the Firestore collection "dokuments"
  * @param dokumentID: {string}
