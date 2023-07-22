@@ -5,7 +5,7 @@
  import Company from "../m/Company.mjs";
  import Job from "../m/Job.mjs";
  import { createListFromMap, hideProgressBar, showProgressBar, createMultiSelectionWidget }
-   from "../lib/util_Phong.mjs";
+   from "../lib/util_companies.mjs";
  
  /***************************************************************
   Setup and handle UI Access Control
@@ -154,21 +154,24 @@
    createFormEl["companyName"].setCustomValidity(
      Company.checkCompanyName( slots.companyName).message);
 
-   if (addedJobsListEl.children.length) {
+    createFormEl["description"].setCustomValidity(
+      Company.checkDescription( slots.description).message);
+
+/*    if (addedJobsListEl.children.length) {
      for (const jobItemEl of addedJobsListEl.children) {
        const job = JSON.parse(jobItemEl.getAttribute("data-value"));
        const responseValidation = await Job.checkJobIdAsIdRef(job.id);
        if (responseValidation.message) {
-         createFormEl["jobs"].setCustomValidity(responseValidation.message);
+         createFormEl["postedJobs"].setCustomValidity(responseValidation.message);
          break;
        } else {
          slots.postedJobs.push(job);
-         createFormEl["jobs"].setCustomValidity("");
+         createFormEl["postedJobs"].setCustomValidity("");
        }
      }
-   } else createFormEl["jobs"].setCustomValidity(
-     createFormEl["jobs"].value ? "" : "No job selected!");
-   // save the input data only if all form fields are valid
+   } else createFormEl["postedJobs"].setCustomValidity(
+     createFormEl["postedJobs"].value ? "" : "No job selected!");
+   // save the input data only if all form fields are valid */
    if (createFormEl.checkValidity()) {
      showProgressBar("Company-C");
      await Company.add( slots);

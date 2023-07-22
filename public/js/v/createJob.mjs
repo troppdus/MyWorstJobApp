@@ -61,14 +61,6 @@
 }
   formEl.addEventListener("submit", async function (event) {
     event.preventDefault();
-    triggerInputEvent(formEl["jobId"]);
-    triggerInputEvent(formEl["jobName"]);
-    triggerInputEvent(formEl["location"]);
-    triggerInputEvent(formEl["company"]);
-    triggerInputEvent(formEl["salary"]);
-    triggerInputEvent(formEl["typeOfEmployment"]);
-    triggerInputEvent(formEl["jobFieldCategory"]);
-    triggerInputEvent(formEl["description"]);
     const formEl = document.forms["Job"],
      slots = {
      jobId: formEl["jobId"].value,
@@ -80,6 +72,14 @@
      jobFieldCategory: formEl["jobFieldCategory"].value,
      description: formEl["description"].value
    };
+   triggerInputEvent(formEl["jobId"]);
+   triggerInputEvent(formEl["jobName"]);
+   triggerInputEvent(formEl["location"]);
+   triggerInputEvent(formEl["company"]);
+   triggerInputEvent(formEl["salary"]);
+   triggerInputEvent(formEl["typeOfEmployment"]);
+   triggerInputEvent(formEl["jobFieldCategory"]);
+   triggerInputEvent(formEl["description"]);
    showProgressBar( progressEl);
    formEl["jobId"].setCustomValidity(( await Job.checkJobIdAsId( slots.jobId)).message);
    formEl["jobName"].setCustomValidity( Job.checkJobName( slots.jobName).message);

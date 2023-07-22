@@ -88,7 +88,7 @@ class Job {
   };
 
   static async checkJobIDAsIdRef(id) {
-    let constraintViolation = Job.checkJobID(id);
+    let constraintViolation = Job.checkJobId(id);
     if ((constraintViolation instanceof NoConstraintViolation) && id) {
         const jobDocSn = await getDoc(fsDoc(fsDb, "jobs", String(id)));
         if (!jobDocSn.exists()) {

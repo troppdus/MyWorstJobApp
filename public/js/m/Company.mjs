@@ -10,6 +10,7 @@ import {
   NoConstraintViolation, PatternConstraintViolation, RangeConstraintViolation,
   UniquenessConstraintViolation
 } from "../lib/errorTypes.mjs";
+import { isNonEmptyString } from "../lib/util.mjs";
 
 class Company {
   // using a single record parameter with ES6 function parameter destructuring
