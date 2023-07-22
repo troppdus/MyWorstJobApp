@@ -1,7 +1,7 @@
 /***************************************************************
  Import classes, data types and utility procedures
  ***************************************************************/
- import { handleAuthentication } from "./accessControl_Phong.mjs";
+ import { handleAuthentication } from "./accessControl.mjs";
  import Company from "../m/Company.mjs";
  import Job from "../m/Job.mjs";
  import { createListFromMap, hideProgressBar, showProgressBar, createMultiSelectionWidget }
