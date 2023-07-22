@@ -24,9 +24,10 @@
  fillSelectWithOptions(userTypeEl, userTypeEL.labels);
  
  
- formEl["userID"].addEventListener("input", function () {
-   formEl["userID"].setCustomValidity(User.checkUserID(formEl["userID"].value).message);
- });
+ formEl.userID.addEventListener("input", async function () {
+  const validationResult = await User.checkUserIDAsId(formEl.userID.value);
+  formEl.userID.setCustomValidity(validationResult.message);
+});
  formEl["username"].addEventListener("input", function () {
    formEl["username"].setCustomValidity(User.checkUsername(formEl["username"].value).message);
  });
@@ -77,8 +78,14 @@
    formEl["userType"].setCustomValidity( User.checkUserType( slots.userType).message);
  
    if (formEl.checkValidity()) {
-     await User.add(slots);
-     formEl.reset();
-   }
-   hideProgressBar( progressEl);
- });
+    await User.add(slots);
+    formEl.reset();
+  } else {
+   console.log("Form is not valid!");
+ }
+ hideProgressBar( progressEl);
+});
+formEl.addEventListener("submit", function (e) {
+ e.preventDefault();
+ formEl.reset();
+});

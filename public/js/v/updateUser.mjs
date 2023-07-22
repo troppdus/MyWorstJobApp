@@ -100,7 +100,7 @@ updateButton.addEventListener("click", async function () {
   });
   formEl["address"].addEventListener("input", function () {
     formEl["address"].setCustomValidity(
-      User.checkLocation(slots.address).message);
+      User.checkAddress(slots.address).message);
   });
   formEl["dateOfBirth"].addEventListener("input", function () {
     formEl["dateOfBirth"].setCustomValidity(

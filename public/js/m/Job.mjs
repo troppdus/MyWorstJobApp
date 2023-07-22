@@ -12,7 +12,6 @@ import {
 }
   from "../lib/errorTypes.mjs";
 import Enumeration from "../lib/Enumeration.mjs";
-import Company from "./Company.mjs";
 
 console.log("Job.mjs");
 //   «get/set» jobId[1] : number(int)
@@ -33,7 +32,7 @@ const typeOfEmploymentEL = new Enumeration(["Full Time", "Part Time"]);
 /**
  * Constructor function for the class Job
  * @constructor
- * @param {{jobId: number, jobName: string, location: string, company: number, 
+ * @param {{jobId: number, jobName: string, location: string, company: string, 
  *    salary: number, typeOfEmployment: string,
  *    jobFieldCategory: string, description: string}} slots - Object creation slots.
  */
@@ -162,17 +161,17 @@ class Job {
     return this._company;
   };
 
-  // static async checkCompany(company) {
-  //   if (!company) {
-  //     return new MandatoryValueConstraintViolation("A company must be provided!");
-  //   } 
-  //   let validationResult = await Company.checkCompanyIDAsIdRef(company)
-  //   if (validationResult instanceof NoConstraintViolation) {
-  //     return new NoConstraintViolation();
-  //   } else {
-  //     throw validationResult;
-  //   }
-  // };
+  static async checkCompany(company) {
+    if (!company) {
+      return new MandatoryValueConstraintViolation("A company must be provided!");
+    } 
+    let validationResult = await Company.checkCompanyIDAsIdRef(company)
+    if (validationResult instanceof NoConstraintViolation) {
+      return new NoConstraintViolation();
+    } else {
+      throw validationResult;
+    }
+  };
 
   set company(company) {
     this._company = company;
@@ -464,17 +463,13 @@ Job.update = async function (slots) {
  */
 Job.destroy = async function (jobId) {
   try {
-    const jobDocRef = fsDoc(fsDb, "jobs", jobId);
-    const jobDocSn = await getDoc(jobDocRef);
-    const jobData = jobDocSn.data();
-
-    // Delete the job document
-    await deleteDoc(jobDocRef);
+    const fsDocRefDelete = fsDoc(fsDb, "jobs", jobId);
+    await deleteDoc(fsDocRefDelete);
     console.log(`Job record ${jobId} deleted.`);
 
     // Remove the job from all postedJobs attributes of companies
     const companiesCollRef = fsColl(fsDb, "companies");
-    const companiesQuery = fsQuery(companiesCollRef, where("postedJobs", "array-contains", jobId));
+    const companiesQuery = fsQuery(companiesCollRef.where("postedJobs", "array-contains", jobId));
     const companiesSnaps = await getDocs(companiesQuery);
 
     const batch = writeBatch(fsDb); // Initiate batch write
