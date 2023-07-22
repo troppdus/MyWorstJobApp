@@ -4,6 +4,7 @@
 import Job, { typeOfEmploymentEL } from "../m/Job.mjs";
 import { handleAuthentication } from "./accessControl.mjs";
 import { showProgressBar, hideProgressBar } from "../lib/util.mjs";
+import Company from "../m/Company.mjs";
 
 console.log("retrieveAndListAllJobs.mjs");
 /***************************************************************
@@ -38,6 +39,7 @@ async function retrieveAndListAllJobs( order) {
   showProgressBar( progressEl);
   // Load data
   const jobRecords = await Job.retrieveAll( order);
+  // const companyRecords = await Company.retrieveBlock( order);
   // Render list of all job records
   // for each job, create a table row with a cell for each attribute
   for (const jobRec of jobRecords) {
@@ -45,7 +47,9 @@ async function retrieveAndListAllJobs( order) {
     row.insertCell().textContent = jobRec.jobId;
     row.insertCell().textContent = jobRec.jobName;
     row.insertCell().textContent = jobRec.location;
-    row.insertCell().textContent = jobRec.company;
+    let checkVar = await Company.retrieve(String(jobRec.company));
+    row.insertCell().textContent = checkVar.companyName;
+    // console.log(`${jobRec.company} is ${checkVar}}`)
     row.insertCell().textContent = jobRec.salary;
     row.insertCell().textContent = typeOfEmploymentEL.labels[jobRec.typeOfEmployment - 1];
     row.insertCell().textContent = jobRec.jobFieldCategory;

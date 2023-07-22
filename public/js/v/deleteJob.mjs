@@ -27,7 +27,7 @@ let cancelListener = null;
  ***************************************************************/
  for (const jobRec of jobRecords) {
   const optionEl = document.createElement("option");
-  optionEl.text = `${jobRec.jobName} at ${jobRec.company} (${jobRec.location}) - ${jobRec.jobFieldCategory}`;
+  optionEl.text = `${jobRec.jobName}. Ref: Company ID: ${jobRec.company} (Location: ${jobRec.location}) - ${jobRec.jobFieldCategory}`;
   optionEl.value = jobRec.jobId;
   selectJobEl.add(optionEl, null);
 }

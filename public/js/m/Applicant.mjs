@@ -60,7 +60,7 @@ class Applicant {
         validationResult = new MandatoryValueConstraintViolation(
           "A value for the applicant ID must be provided!");
       } else {
-        const applicantDocSn = await getDoc(fsDoc(fsDb, "applicants", applicantID));
+        const applicantDocSn = await getDoc(fsDoc(fsDb, "applicants", String(applicantID)));
         if (applicantDocSn.exists()) {
           validationResult = new UniquenessConstraintViolation(
             `There is already an applicant record with applicant ID ${applicantID}`);

@@ -162,7 +162,7 @@ Company.add = async function (slots) {
     await batch.set(companyDocRef, company); // create company record
 
     await batch.commit(); // commit batch write
-    console.log(`Company record "${company.companyID}" created!`);
+    console.log(`Company record "${company.companyID}", ${company} created!`);
   } catch (e) {
     console.error(`${e.constructor.name}: ${e.message}`);
   }

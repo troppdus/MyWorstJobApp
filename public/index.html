@@ -30,11 +30,12 @@
     clearButton.addEventListener("click", User.clearData);
     clearButton.addEventListener("click", clearDataApplicant_Dokument);
     for (const btn of generateTestDataButtons) {
+      btn.addEventListener("click", Company.generateTestData);
       btn.addEventListener("click", Job.generateTestData);
       btn.addEventListener("click", User.generateTestData);
       btn.addEventListener("click", generateData);
-      btn.addEventListener("click", Application.generateTestData);
-      btn.addEventListener("click", Company.generateTestData);
+      btn.addEventListener("click", Application.generateTestData); 
+      
     }
   </script>
 </head>

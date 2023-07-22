@@ -126,7 +126,7 @@
  const createFormEl = companyCSectionEl.querySelector("form"),
    createJobWidget = createFormEl.querySelector(".MultiSelectionWidget");
  await createMultiSelectionWidget (createFormEl, [], "jobs",
-   "id", "jobId", Job.checkJobIDAsIdRef, Job.retrieve);
+   "id", "jobId", Job.checkJobIdAsIdRef, Job.retrieve);
  document.getElementById("Create").addEventListener("click", async function () {
    createFormEl.reset();
    companyMSectionEl.hidden = true;
@@ -157,7 +157,7 @@
     createFormEl["description"].setCustomValidity(
       Company.checkDescription( slots.description).message);
 
-/*    if (addedJobsListEl.children.length) {
+   if (addedJobsListEl.children.length) {
      for (const jobItemEl of addedJobsListEl.children) {
        const job = JSON.parse(jobItemEl.getAttribute("data-value"));
        const responseValidation = await Job.checkJobIdAsIdRef(job.id);
@@ -169,8 +169,9 @@
          createFormEl["postedJobs"].setCustomValidity("");
        }
      }
-   } else createFormEl["postedJobs"].setCustomValidity(
-     createFormEl["postedJobs"].value ? "" : "No job selected!");
+    }
+  //  } else createFormEl["postedJobs"].setCustomValidity(
+  //    createFormEl["postedJobs"].value ? "" : "No job selected!");
    // save the input data only if all form fields are valid */
    if (createFormEl.checkValidity()) {
      showProgressBar("Company-C");

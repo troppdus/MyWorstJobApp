@@ -1,7 +1,7 @@
 import { fsDb } from "../initFirebase.mjs";
 import {
   collection as fsColl, doc as fsDoc, setDoc, getDoc, getDocs, orderBy, query as fsQuery,
-  Timestamp, startAt, limit, deleteField, writeBatch, arrayUnion, arrayRemove
+  Timestamp, startAt, limit, deleteField, writeBatch, arrayUnion, arrayRemove, deleteDoc, onSnapshot, where
 }
     from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
 import { isNonEmptyString, isIntegerOrIntegerString }
@@ -12,6 +12,7 @@ import {
 }
   from "../lib/errorTypes.mjs";
 import Enumeration from "../lib/Enumeration.mjs";
+import Company from "./Company.mjs";
 
 console.log("Job.mjs");
 //   «get/set» jobId[1] : number(int)
@@ -161,17 +162,17 @@ class Job {
     return this._company;
   };
 
-  static async checkCompany(company) {
-    if (!company) {
-      return new MandatoryValueConstraintViolation("A company must be provided!");
-    } 
-    let validationResult = await Company.checkCompanyIDAsIdRef(company)
-    if (validationResult instanceof NoConstraintViolation) {
-      return new NoConstraintViolation();
-    } else {
-      throw validationResult;
-    }
-  };
+  // static async checkCompany(company) {
+  //   if (!company) {
+  //     return new MandatoryValueConstraintViolation("A company must be provided!");
+  //   } 
+  //   let validationResult = await Company.checkCompanyIDAsIdRef(company)
+  //   if (validationResult instanceof NoConstraintViolation) {
+  //     return new NoConstraintViolation();
+  //   } else {
+  //     throw validationResult;
+  //   }
+  // };
 
   set company(company) {
     this._company = company;
@@ -334,7 +335,7 @@ Job.add = async function (slots) {
       const batch = writeBatch(fsDb);
       await batch.set(jobDocRef, job);
       // const jobDocRef = fsDoc(fsDb, "jobs", job.jobId).withConverter(Job.converter);
-      const companyDocRef = fsDoc(fsDb, "companies", job.company);
+      // const companyDocRef = fsDoc(fsDb, "companies", String(job.company));
       await setDoc(jobDocRef, job);
       console.log(`Job record "${job.jobId}" created!`);
       // if (application.jobId) {
@@ -469,7 +470,7 @@ Job.destroy = async function (jobId) {
 
     // Remove the job from all postedJobs attributes of companies
     const companiesCollRef = fsColl(fsDb, "companies");
-    const companiesQuery = fsQuery(companiesCollRef.where("postedJobs", "array-contains", jobId));
+    const companiesQuery = fsQuery(companiesCollRef, where("postedJobs", "array-contains", jobId));
     const companiesSnaps = await getDocs(companiesQuery);
 
     const batch = writeBatch(fsDb); // Initiate batch write

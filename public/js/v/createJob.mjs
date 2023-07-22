@@ -36,9 +36,9 @@ Job.retrieveAll();
  formEl["location"].addEventListener("input", function () {
    formEl["location"].setCustomValidity(Job.checkLocation(formEl["location"].value).message);
  });
- formEl["company"].addEventListener("input", async function () {
-  formEl["company"].setCustomValidity(Job.checkCompany(formEl["company"].value).message);
- });
+//  formEl["company"].addEventListener("input", async function () {
+//   formEl["company"].setCustomValidity(Job.checkCompany(formEl["company"].value).message);
+//  });
  formEl["salary"].addEventListener("input", function () {
    formEl["salary"].setCustomValidity(Job.checkSalary(formEl["salary"].value).message);
  });
@@ -75,7 +75,7 @@ createButton.addEventListener("click", async function () {
    formEl.jobId.setCustomValidity(( await Job.checkJobIdAsId( slots.jobId)).message);
    formEl["jobName"].setCustomValidity( Job.checkJobName( slots.jobName).message);
    formEl["location"].setCustomValidity( Job.checkLocation( slots.location).message);
-   formEl["company"].setCustomValidity( Job.checkCompany( slots.company).message);
+  //  formEl["company"].setCustomValidity( Job.checkCompany( slots.company).message);
    formEl["salary"].setCustomValidity( Job.checkSalary( slots.salary).message);
    formEl["typeOfEmployment"].setCustomValidity( Job.checkTypeOfEmployment( slots.typeOfEmployment).message);
    formEl["jobFieldCategory"].setCustomValidity( Job.checkJobFieldCategory( slots.jobFieldCategory).message);
