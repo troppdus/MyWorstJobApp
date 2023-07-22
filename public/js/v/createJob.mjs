@@ -26,9 +26,10 @@ Job.retrieveAll();
  fillSelectWithOptions(typeOfEmploymentEl, typeOfEmploymentEL.labels);
  
  
- formEl["jobId"].addEventListener("input", function () {
-   formEl["jobId"].setCustomValidity(Job.checkJobIdAsId(formEl["jobId"].value).message);
- });
+ formEl.jobId.addEventListener("input", async function () {
+  const validationResult = await Job.checkJobIdAsId(formEl.jobId.value);
+  formEl.jobId.setCustomValidity(validationResult.message);
+});
  formEl["jobName"].addEventListener("input", function () {
    formEl["jobName"].setCustomValidity(Job.checkJobName(formEl["jobName"].value).message);
  });
@@ -57,11 +58,10 @@ Job.retrieveAll();
  /******************************************************************
   Add event listeners for the create/submit button
   ******************************************************************/
-createButton.addEventListener("click", async function (event) {
-    event.preventDefault();
+createButton.addEventListener("click", async function () {
     const formEl = document.forms["Job"],
      slots = {
-     jobId: formEl["jobId"].value,
+     jobId: formEl.jobId.value,
      jobName: formEl["jobName"].value,
      location: formEl["location"].value,
      company: formEl["company"].value,
@@ -72,7 +72,7 @@ createButton.addEventListener("click", async function (event) {
    };
 
    showProgressBar( progressEl);
-   formEl["jobId"].setCustomValidity(( Job.checkJobIdAsId( slots.jobId)).message);
+   formEl.jobId.setCustomValidity(( await Job.checkJobIdAsId( slots.jobId)).message);
    formEl["jobName"].setCustomValidity( Job.checkJobName( slots.jobName).message);
    formEl["location"].setCustomValidity( Job.checkLocation( slots.location).message);
    formEl["company"].setCustomValidity( Job.checkCompany( slots.company).message);
@@ -89,3 +89,7 @@ createButton.addEventListener("click", async function (event) {
   }
   hideProgressBar( progressEl);
  });
+formEl.addEventListener("submit", function (e) {
+  e.preventDefault();
+  formEl.reset();
+});
