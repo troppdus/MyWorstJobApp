@@ -63,7 +63,6 @@
      location: formEl["location"].value,
      company: formEl["company"].value,
      salary: formEl["salary"].value,
-     // typeOfEmployment: typeOfEmploymentEl.value,
      typeOfEmployment: formEl["typeOfEmployment"].value,
      jobFieldCategory: formEl["jobFieldCategory"].value,
      description: formEl["description"].value
@@ -83,9 +82,4 @@
      formEl.reset();
    }
    hideProgressBar( progressEl);
- });
- 
- formEl.addEventListener("submit", function (e) {
-   alert("Submitting the form is not supported in this demo.");
-   e.preventDefault();
  });
