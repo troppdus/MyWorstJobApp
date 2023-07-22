@@ -55,8 +55,20 @@
  /******************************************************************
   Add event listeners for the create/submit button
   ******************************************************************/
- createButton.addEventListener("click", async function () {
-   const formEl = document.forms["Job"],
+  function triggerInputEvent(element) {
+    element.dispatchEvent(new Event('input', { 'bubbles': true }));
+}
+  formEl.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    triggerInputEvent(formEl["jobId"]);
+    triggerInputEvent(formEl["jobName"]);
+    triggerInputEvent(formEl["location"]);
+    triggerInputEvent(formEl["company"]);
+    triggerInputEvent(formEl["salary"]);
+    triggerInputEvent(formEl["typeOfEmployment"]);
+    triggerInputEvent(formEl["jobFieldCategory"]);
+    triggerInputEvent(formEl["description"]);
+    const formEl = document.forms["Job"],
      slots = {
      jobId: formEl["jobId"].value,
      jobName: formEl["jobName"].value,
@@ -80,6 +92,8 @@
    if (formEl.checkValidity()) {
      await Job.add(slots);
      formEl.reset();
-   }
-   hideProgressBar( progressEl);
+     hideProgressBar( progressEl);
+   } else {
+    console.log("Form is not valid!");
+}
  });
