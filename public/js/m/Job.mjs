@@ -158,11 +158,11 @@ class Job {
     return this._company;
   };
 
-  static checkCompany(company) {
+  static async checkCompany(company) {
     if (!company) {
       return new MandatoryValueConstraintViolation("A company must be provided!");
     } 
-    let validationResult = Company.checkCompanyIDAsIdRef(company)
+    let validationResult = await Company.checkCompanyIDAsIdRef(company)
     if (validationResult instanceof NoConstraintViolation) {
       return new NoConstraintViolation();
     } else {

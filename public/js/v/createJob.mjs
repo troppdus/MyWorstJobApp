@@ -33,8 +33,9 @@
  formEl["location"].addEventListener("input", function () {
    formEl["location"].setCustomValidity(Job.checkLocation(formEl["location"].value).message);
  });
- formEl["company"].addEventListener("input", function () {
-   formEl["company"].setCustomValidity(Job.checkCompany(formEl["company"].value).message);
+ formEl["company"].addEventListener("input", async function () {
+  let validationResult = await Job.checkCompany(formEl["company"].value);
+  formEl["company"].setCustomValidity(validationResult.message);
  });
  formEl["salary"].addEventListener("input", function () {
    formEl["salary"].setCustomValidity(Job.checkSalary(formEl["salary"].value).message);
@@ -92,8 +93,8 @@
    if (formEl.checkValidity()) {
      await Job.add(slots);
      formEl.reset();
-     hideProgressBar( progressEl);
    } else {
     console.log("Form is not valid!");
-}
+  }
+  hideProgressBar( progressEl);
  });
