@@ -11,15 +11,14 @@
   <link rel="manifest" href="manifest.json"/>
   <link rel="stylesheet" href="css/normalize.min.css"/>
   <link rel="stylesheet" href="css/main.css"/>
-  <script src="./js/v/companies.mjs" type="module">
+  <script src="./js/v/companies.mjs" type="module"></script>
+  <script>
     import { generateTestData, clearData } from "./js/m/Company.mjs";
-    const clearButton = document.getElementById("clearData"),
-      generateTestDataButtons = document.querySelectorAll("button.generateTestData");
+    const clearButton = document.getElementById("clearData");
+    const generateTestDataButton = document.getElementById("button.generateTestData");
     // Set event handlers for the buttons "clearData" and "generateTestData"
     clearButton.addEventListener("click", clearData);
-    for (let btn of generateTestDataButtons) {
-      btn.addEventListener("click", generateTestData);
-    }
+    generateTestDataButton.addEventListener("click", generateTestData);
   </script>
 </head>
 <body>
@@ -83,9 +82,7 @@
           <th>COMPANY ID</th>
           <th>Company Name</th>
           <th>Address</th>
-          <th>Email</th>
-          <th>Phone Number</th>
-          <th>Resume</th>
+          <th>Posted Jobs</th>
         </tr>
         </thead>
         <tbody></tbody>

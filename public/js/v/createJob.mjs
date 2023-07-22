@@ -33,8 +33,9 @@
  formEl["location"].addEventListener("input", function () {
    formEl["location"].setCustomValidity(Job.checkLocation(formEl["location"].value).message);
  });
- formEl["company"].addEventListener("input", function () {
-   formEl["company"].setCustomValidity(Job.checkCompany(formEl["company"].value).message);
+ formEl["company"].addEventListener("input", async function () {
+  let validationResult = await Job.checkCompany(formEl["company"].value);
+  formEl["company"].setCustomValidity(validationResult.message);
  });
  formEl["salary"].addEventListener("input", function () {
    formEl["salary"].setCustomValidity(Job.checkSalary(formEl["salary"].value).message);
@@ -55,19 +56,30 @@
  /******************************************************************
   Add event listeners for the create/submit button
   ******************************************************************/
- createButton.addEventListener("click", async function () {
-   const formEl = document.forms["Job"],
+  function triggerInputEvent(element) {
+    element.dispatchEvent(new Event('input', { 'bubbles': true }));
+}
+  formEl.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const formEl = document.forms["Job"],
      slots = {
      jobId: formEl["jobId"].value,
      jobName: formEl["jobName"].value,
      location: formEl["location"].value,
      company: formEl["company"].value,
      salary: formEl["salary"].value,
-     // typeOfEmployment: typeOfEmploymentEl.value,
      typeOfEmployment: formEl["typeOfEmployment"].value,
      jobFieldCategory: formEl["jobFieldCategory"].value,
      description: formEl["description"].value
    };
+   triggerInputEvent(formEl["jobId"]);
+   triggerInputEvent(formEl["jobName"]);
+   triggerInputEvent(formEl["location"]);
+   triggerInputEvent(formEl["company"]);
+   triggerInputEvent(formEl["salary"]);
+   triggerInputEvent(formEl["typeOfEmployment"]);
+   triggerInputEvent(formEl["jobFieldCategory"]);
+   triggerInputEvent(formEl["description"]);
    showProgressBar( progressEl);
    formEl["jobId"].setCustomValidity(( await Job.checkJobIdAsId( slots.jobId)).message);
    formEl["jobName"].setCustomValidity( Job.checkJobName( slots.jobName).message);
@@ -81,11 +93,8 @@
    if (formEl.checkValidity()) {
      await Job.add(slots);
      formEl.reset();
-   }
-   hideProgressBar( progressEl);
- });
- 
- formEl.addEventListener("submit", function (e) {
-   alert("Submitting the form is not supported in this demo.");
-   e.preventDefault();
+   } else {
+    console.log("Form is not valid!");
+  }
+  hideProgressBar( progressEl);
  });

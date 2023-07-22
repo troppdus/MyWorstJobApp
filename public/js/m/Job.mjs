@@ -87,21 +87,14 @@ class Job {
     return validationResult;
   };
 
-  static async checkJobIdAsIdRef(jobId) {
-    let validationResult = Job.checkJobId(jobId);
-    if ((validationResult instanceof NoConstraintViolation)) {
-      if (!jobId) {
-        validationResult = new MandatoryValueConstraintViolation(
-          "A value for the job ID must be provided!");
-      } else {
-        const jobDocReff = await getDoc(fsDoc(fsDb, "jobs", jobId));
-        if (!jobDocReff.exists()) {
-          validationResult = new UniquenessConstraintViolation(
-            `There is no job record with this ID ${jobId} !`);
-        } else {
-          validationResult = new NoConstraintViolation();
+  static async checkJobIDAsIdRef(id) {
+    let constraintViolation = Job.checkJobId(id);
+    if ((constraintViolation instanceof NoConstraintViolation) && id) {
+        const jobDocSn = await getDoc(fsDoc(fsDb, "jobs", String(id)));
+        if (!jobDocSn.exists()) {
+            constraintViolation = new ReferentialIntegrityConstraintViolation(
+                `There is no job record with this job ID ${id}!`);
         }
-      }
     }
     return validationResult;
   };
@@ -167,11 +160,11 @@ class Job {
     return this._company;
   };
 
-  static checkCompany(company) {
+  static async checkCompany(company) {
     if (!company) {
       return new MandatoryValueConstraintViolation("A company must be provided!");
     } 
-    let validationResult = Company.checkCompanyIDAsIdRef(company)
+    let validationResult = await Company.checkCompanyIDAsIdRef(company)
     if (validationResult instanceof NoConstraintViolation) {
       return new NoConstraintViolation();
     } else {
