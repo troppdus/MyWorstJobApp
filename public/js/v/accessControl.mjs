@@ -41,41 +41,43 @@ function handleAuthentication() {
  * Handle authorization by granting and restricting access to
  * database access operations via DOM operations on UI
  ***************************************************************/
-function handleAuthorization(userStatus, currentPage, email) {
+function handleAuthorization( userStatus, currentPage, email) {
     // declare variables for current page and for accessing UI elements
     const divLoginMgmtEl = document.getElementById("login-management"),
-        startPage = ["/", "/index.html"],
-        authorizedPages = startPage.concat(["/retrieveAndListAllJobs.html", "/credits.html","/companies.html"]);
+      startPage = ["/","/index.html"],
+      operationPages = ["/retrieveAndListAllJobs.html", "/credits.html","/companies.html"];
+    divLoginMgmtEl.innerHTML = "";
     switch (userStatus) {
-        case "Anonymous":
-            // if user is not authorized to current page, restrict access & redirect to sign up page
-            if (!authorizedPages.includes(currentPage)) window.location.pathname = "/signUp.html";
-            else divLoginMgmtEl.appendChild(createSignInAndSignUpUI());
-            console.log(`Authenticated as "${userStatus}"`);
-            break;
-        case "Registered with non-verified email":
-            // if user is not authorized to current page, restrict access & redirect to start page
-            if (!authorizedPages.includes(currentPage)) window.location.pathname = "/index.html";
-            else divLoginMgmtEl.appendChild(createSignOutUI(email, true));
-            console.log(`Authenticated as "${userStatus}" (${email})`);
-            break;
-        case "Registered with verified email":
-            // if current page is start page grant access to the four database operations
-            if (startPage.includes(currentPage) || currentPage.includes("/index.html")) {
-                // declare variables for accessing UI elements
-                const clearDataBtn = document.getElementById("clearData"),
-                    generateDataBtns = document.querySelectorAll(".generateTestData"),
-                    disabledEls = document.querySelectorAll(".disabled");
-                // perform DOM operations to enable menu items
-                for (const el of disabledEls) el.classList.remove("disabled");
-                clearDataBtn.disabled = false;
-                for (const btn of generateDataBtns) btn.disabled = false;
-            }
-            divLoginMgmtEl.appendChild(createSignOutUI(email));
-            console.log(`Authenticated as "${userStatus}" (${email})`);
-            break;
+      case "Anonymous":
+        divLoginMgmtEl.appendChild( createSignInAndSignUpUI());
+        console.log(`Authenticated as "${userStatus}"`);
+        break;
+      case "Registered with non-verified email":
+        divLoginMgmtEl.appendChild( createSignOutUI( email, true));
+        console.log(`Authenticated as "${userStatus}" (${email})`);
+        break;
+      case "Registered with verified email":
+        // if current page is start page grant access to the four database operations
+        if (startPage.includes( currentPage)) {
+          // declare variables for accessing UI elements
+          const clearDataBtn = document.getElementById("clearData"),
+            generateDataBtns = document.querySelectorAll(".generateTestData"),
+            disabledEls = document.querySelectorAll(".disabled");
+          // perform DOM operations to enable menu items
+          for (const el of disabledEls) el.classList.remove("disabled");
+          clearDataBtn.disabled = false;
+          for (const btn of generateDataBtns) btn.disabled = false;
+        } else if (operationPages.includes( currentPage)) {
+          const buttonEls = document.querySelectorAll("ul.menu > li > button");
+          for (const btn of buttonEls) {
+            btn.disabled = false;
+          }
+        }
+        divLoginMgmtEl.appendChild( createSignOutUI( email));
+        console.log(`Authenticated as "${userStatus}" (${email})`);
+        break;
     }
-}
+  }
 /***********************************************************
  Helper function to render sign in & sign up links
  **********************************************************/
