@@ -340,7 +340,7 @@ Application.add = async function (slots) {
     const jobsCollRef = fsColl(fsDb, "jobs")
         .withConverter(Job.converter);
 
-    const applicationInverseRef = { applicationID: String(application.applicationID), applicationName: application.applicationName };
+    const applicationInverseRef = { applicationID: application.applicationID, applicationName: application.applicationName };
 
     try {
       const batch = writeBatch(fsDb); // initiate batch write object
@@ -350,8 +350,8 @@ Application.add = async function (slots) {
       // // Applicants::applicantOwner
       // console.log("batch application",application);
       await Promise.all(application.applicantIDRefs.map(a => {
-        console.log("a.id",a.id);
-        const applicantDocRef = fsDoc(applicantsCollRef, String(a.id));
+        // console.log("a.id",a.id);
+        const applicantDocRef = fsDoc(applicantsCollRef, String(a.applicantID));
         batch.update(applicantDocRef, { applications: arrayUnion(applicationInverseRef) });
       }));
       if (application.jobID) {

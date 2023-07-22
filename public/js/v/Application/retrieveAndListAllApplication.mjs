@@ -3,7 +3,7 @@
  ***************************************************************/
  import Application, { ApplicationStatusEL } from "../../m/Application.mjs";
  import { handleAuthentication } from "../accessControl.mjs";
- import { showProgressBar, hideProgressBar } from "../../lib/util.mjs";
+ import { showProgressBar, hideProgressBar, createListFromMap } from "../../lib/util_2.mjs";
  
  console.log("retrieveAndListAllApplications.mjs");
  /***************************************************************
@@ -41,7 +41,7 @@
  
  async function retrieveAndListAllApplications( startAt) {
    tableBodyEl.innerHTML = "";
-   showProgressBar( progressEl);
+   showProgressBar( "progress");
    // Load data
    const applicationRecords = await Application.retrieveBlock( {"order": order, "cursor": startAt});
    // Render list of all application records
@@ -69,11 +69,14 @@
       row.insertCell().textContent = applicationRec.jobID;
       row.insertCell().textContent = applicationRec.description;
       row.insertCell().textContent = ApplicationStatusEL.labels[applicationRec.status - 1];
-      row.insertCell().textContent = applicationRec.applicantID;
+      if (applicationRec.applicantIDRefs && applicationRec.applicantIDRefs.length) {
+        const listEl = createListFromMap( applicationRec.applicantIDRefs, "applicantName", "applicantID");
+        row.insertCell().appendChild(listEl);
+      }
     }
 
    }
-   hideProgressBar( progressEl);
+   hideProgressBar( "progress");
  }
  
  previousBtnEl.addEventListener("click", async function () {

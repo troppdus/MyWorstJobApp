@@ -306,7 +306,7 @@ function addItemToListOfSelectedItems( targetObjt, idRefTargetName , classValue)
   // add first 18 chars in list item
   listItemEl.innerText = `${targetObjt[idRefTargetName]}: ${targetObjt.applicantName}`.substring(0, 16);
   // convert target object into text
-  const targetObjText = JSON.stringify({id: targetObjt[idRefTargetName], name: targetObjt.applicantName});
+  const targetObjText = JSON.stringify({applicantID: targetObjt[idRefTargetName], applicantName: targetObjt.applicantName});
   // embed target object in list item (li element)
   listItemEl.setAttribute("data-value", targetObjText);
   if (classValue) listItemEl.classList.add( classValue);

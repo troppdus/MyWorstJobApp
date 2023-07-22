@@ -11,8 +11,7 @@
   <h1>Update a application record</h1>
 </header>
 <main>
-  <progress hidden="hidden" max="100">%</progress>
-
+  <section id="Application-U"><progress hidden="hidden" max="100">%</progress></section>
   <form id="Application">
     <div>
       <label>Enter application Id:
@@ -30,7 +29,8 @@
         </select>
       </label>
     </div>
-    <div><label>Applicant: <output name="applicantID"/></label></div>
+    <!-- <div><label>Applicant: <output name="applicantID"/></label></div> -->
+    <section id="ApplicantWidget"><div class="MultiSelectionWidget"></div></section>
     <div><label>Job: <output name="jobID"/></label></div>
     <div>
       <button name="commit" type="button">Update</button>

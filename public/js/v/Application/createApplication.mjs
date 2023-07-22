@@ -29,7 +29,7 @@
  // Set up the status selection list
 //  const statusOptions = ["Pending", "Approved", "Rejected"];
  await createMultiSelectionWidget (formEl, [], "applicants",
- "applicantName", "applicantID", Applicant.checkApplicantIDAsIdRef, Applicant.retrieve);
+ "id", "applicantID", Applicant.checkApplicantIDAsIdRef, Applicant.retrieve);
  fillSelectWithOptions(statusEl, ApplicationStatusEL.labels);
  formEl.reset();
  
