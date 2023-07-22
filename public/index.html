@@ -18,6 +18,7 @@
     import Job from "./js/m/Job.mjs";
     import User from "./js/m/User.mjs";
     import Application from "./js/m/Application.mjs";
+    import Company from "./js/m/Company.mjs";
     import { generateData, clearDataApplicant_Dokument } from "./js/auxDataMngtOps_Phong_classes.mjs";
     handleAuthentication();
     
@@ -33,6 +34,7 @@
       btn.addEventListener("click", User.generateTestData);
       btn.addEventListener("click", generateData);
       btn.addEventListener("click", Application.generateTestData);
+      btn.addEventListener("click", Company.generateTestData);
     }
   </script>
 </head>
@@ -63,7 +65,9 @@
       <li><a href="retrieveAndListAllApplication.html">Retrieve</a> and list all Application records</li>
       <li><a href="updateApplication.html" class="disabled">Update</a> a Application record</li>
       <li><a href="deleteApplication.html" class="disabled">Delete</a> a Application record</li>
-
+      <hr />
+      <li style="margin-top: 1em"><a href="applications.html" class="disabled">Applications</a> management page</li>
+      <hr />
       <hr />
       <li style="margin-top: 1em"><a href="applicants.html" class="disabled">Applicants</a> management page</li>
       <hr />

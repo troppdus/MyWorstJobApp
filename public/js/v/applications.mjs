@@ -12,8 +12,7 @@
  import Job from "../m/Job.mjs";
  import Applicant from "../m/Applicant.mjs";
 //  import { handleAuthentication } from "./accessControl.mjs";
- import { fillSelectWithOptions, showProgressBar, hideProgressBar,  } from "../lib/util.mjs";
- import { createListFromMap, createMultiSelectionWidget } from "../lib/util_2.mjs";
+ import { createListFromMap, createMultiSelectionWidget, fillSelectWithOptions, showProgressBar, hideProgressBar } from "../lib/util_2.mjs";
  
  /***************************************************************
   Setup and handle UI Access Control
@@ -48,24 +47,53 @@
  /**********************************************
   * Use case Retrieve and List All Applications
   **********************************************/
- const tableBodyEl = applicationRSectionEl.querySelector("table > tbody");
+// Initialise pagination variables
+let cursor = null,
+  previousPageRef = null,
+  nextPageRef = null,
+  startAtRefs = [];
+let order = "applicantID"; // default order value
+const tableBodyEl = applicationRSectionEl.querySelector("table > tbody");
+const selectOrderEl = applicationRSectionEl.querySelector("div > label > select"),
+  previousBtnEl = document.getElementById("previousPage"),
+  nextBtnEl = document.getElementById("nextPage");
+
  document.getElementById("RetrieveAndListAll").addEventListener("click", async function () {
    tableBodyEl.innerHTML = "";
    applicationMSectionEl.hidden = true;
    applicationRSectionEl.hidden = false;
    showProgressBar( "Application-R");
-   const applicationRecs = await Application.retrieveAll();
-   for (const application of applicationRecs) {
-     const row = tableBodyEl.insertRow();
-     row.insertCell().textContent = application.applicationID;
-     row.insertCell().textContent = application.fileTitle;
-      row.insertCell().textContent = application.filePath;
-     // create list of applicant (owner) of the application
-     if (application.applicationOwner && application.applicationOwner.length) {
-       const listEl = createListFromMap( application.applicationOwner, "applicantName", "applicantID");
-       row.insertCell().appendChild(listEl);
+   const applicationRecords = await Application.retrieveBlock( {"order": order, "cursor": startAt});
+   if (applicationRecords.length) {
+
+    //  for (const applicationRec of applicationRecords) {
+      cursor = applicationRecords[0][order];
+      nextPageRef = (applicationRecords.length < 10) ? null : applicationRecords[applicationRecords.length - 1][order];
+      const row = tableBodyEl.insertRow();
+      //  applicationID: application.applicationID,
+      //  applicationName: application.applicationName,
+      //  applicationEmail: application.applicationEmail,
+      //  applicationPhoneNumber: application.applicationPhoneNumber,
+      //  jobId: application.jobId,
+      //  description: application.description,
+      //  status: application.status,
+      //  applicantID: application.applicantID
+      for ( const applicationRec of applicationRecords) {
+        const row = tableBodyEl.insertRow();
+        row.insertCell().textContent = applicationRec.applicationID;
+        row.insertCell().textContent = applicationRec.applicationName;
+        row.insertCell().textContent = applicationRec.applicationEmail;
+        row.insertCell().textContent = applicationRec.applicationPhoneNumber;
+        row.insertCell().textContent = applicationRec.jobId;
+        row.insertCell().textContent = applicationRec.description;
+        row.insertCell().textContent = ApplicationStatusEL.labels[applicationRec.status - 1];
+        if (applicationRec.applicantIDRefs && applicationRec.applicantIDRefs.length) {
+          const listEl = createListFromMap( applicationRec.applicantIDRefs, "applicantName", "applicantID");
+          row.insertCell().appendChild(listEl);
+        }
+      }
+  
      }
-   }
    hideProgressBar( "Application-R");
  });
  

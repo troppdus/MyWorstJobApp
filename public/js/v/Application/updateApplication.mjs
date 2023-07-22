@@ -79,7 +79,7 @@ fillSelectWithOptions(selectStatusEl, ApplicationStatusEL.labels);
     updateApplicantWidgetEl.innerHTML = "";
     await createMultiSelectionWidget(updateFormEl, applicationRec.applicantIDRefs, 
       "applicants", "id", "applicantID", Applicant.checkApplicationIDAsIdRef, Applicant.retrieve);
-    updateFormEl["jobID"].value = applicationRec.jobID;
+    updateFormEl["jobId"].value = applicationRec.jobId;
    } else {
      updateFormEl.reset();
    }
@@ -100,7 +100,7 @@ fillSelectWithOptions(selectStatusEl, ApplicationStatusEL.labels);
       description: updateFormEl["description"].value,
       status: updateFormEl["status"].value,
       // applicantID: updateFormEl["applicantID"].value,
-      jobID: updateFormEl["jobID"].value
+      jobId: updateFormEl["jobId"].value
    };
  
    // Check all input fields and show error messages

@@ -63,6 +63,18 @@
       <div class="button">
         <button type="button" class="back-to-menu">« Back to menu</button>
       </div>
+      <div class="nav-options">
+        <label>Ordered by:
+          <select>
+            <option value="applicationID">Application ID</option>
+            <option value="applicationName">Application Name</option>
+          </select>
+        </label>
+        <span>
+          <button type="button" id="previousPage">« Previous</button>
+          <button type="button" id="nextPage">Next »</button>
+        </span>
+      </div>
       <hr>
       <progress hidden="hidden" max="100">%</progress>
       <table>
@@ -102,7 +114,7 @@
           </div>
           <!-- <div><label>Applicant: <input name="applicantID"/></label></div> -->
           <div class="MultiSelectionWidget"></div>
-          <div class="field"><label>Job: <input name="jobID" /></label></div>
+          <div class="field"><label>Job: <input name="jobId" /></label></div>
         <div class="button-group">
           <button type="button" class="back-to-menu">« Back to menu</button>
           <button type="submit" name="commit">Create</button>

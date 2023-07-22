@@ -47,8 +47,14 @@ class ConstraintViolation {
       super( msg);
     }
   }
+
+  class ReferentialIntegrityConstraintViolation extends ConstraintViolation {
+    constructor (msg) {
+      super( msg);
+    }
+  }
   
   export { ConstraintViolation, NoConstraintViolation, MandatoryValueConstraintViolation,
     RangeConstraintViolation, StringLengthConstraintViolation, IntervalConstraintViolation,
-    PatternConstraintViolation, UniquenessConstraintViolation };
+    PatternConstraintViolation, UniquenessConstraintViolation, ReferentialIntegrityConstraintViolation };
   

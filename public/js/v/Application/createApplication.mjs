@@ -79,7 +79,7 @@
        applicationPhoneNumber: formEl["applicationPhoneNumber"].value,
        description: formEl["description"].value,
        status: formEl["status"].value,
-       jobID: formEl["jobID"].value,
+       jobId: formEl["jobId"].value,
        applicantIDRefs: [],
      };
  

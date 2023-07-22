@@ -56,7 +56,7 @@
     //  applicationName: application.applicationName,
     //  applicationEmail: application.applicationEmail,
     //  applicationPhoneNumber: application.applicationPhoneNumber,
-    //  jobID: application.jobID,
+    //  jobId: application.jobId,
     //  description: application.description,
     //  status: application.status,
     //  applicantID: application.applicantID
@@ -66,7 +66,7 @@
       row.insertCell().textContent = applicationRec.applicationName;
       row.insertCell().textContent = applicationRec.applicationEmail;
       row.insertCell().textContent = applicationRec.applicationPhoneNumber;
-      row.insertCell().textContent = applicationRec.jobID;
+      row.insertCell().textContent = applicationRec.jobId;
       row.insertCell().textContent = applicationRec.description;
       row.insertCell().textContent = ApplicationStatusEL.labels[applicationRec.status - 1];
       if (applicationRec.applicantIDRefs && applicationRec.applicantIDRefs.length) {

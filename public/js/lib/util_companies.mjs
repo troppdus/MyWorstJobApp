@@ -312,7 +312,7 @@ function addItemToListOfSelectedItems(targetObjt, idRefTargetName, classValue) {
   }
   // add first 18 chars in list item
   // convert target object into text
-  const targetObjText = JSON.stringify({ jobID: targetObjt[idRefTargetName], name: targetObjt.jobName });
+  const targetObjText = JSON.stringify({ jobId: targetObjt[idRefTargetName], name: targetObjt.jobName });
   // embed target object in list item (li element)
   listItemEl.setAttribute("data-value", targetObjText);
   if (classValue) listItemEl.classList.add(classValue);

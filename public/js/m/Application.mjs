@@ -31,20 +31,20 @@ const ApplicationStatusEL = new Enumeration(["pending", "accepted", "rejected"])
  * 
  * @constructor
  * @param {applicationID: number,  applicationName: string, applicationEmail: string,
- *  applicationPhoneNumber: number, jobID: string, description: string,
+ *  applicationPhoneNumber: number, jobId: string, description: string,
  *  status: string, applicants: string, applicantIDRefs: string}
  */
 class Application {
   // using a single record parameter with ES6 function parameter destructuring
   // constructor({ applicationID, applicationName, address, email, phone, resumeIdRefs }) {
   constructor({ applicationID, applicationName, applicationEmail, 
-    applicationPhoneNumber, jobID, description, status, applicantIDRefs }) {
+    applicationPhoneNumber, jobId, description, status, applicantIDRefs }) {
     // assign properties by invoking implicit setters
     this.applicationID = applicationID;
     this.applicationName = applicationName;
     this.applicationEmail = applicationEmail;
     this.applicationPhoneNumber = applicationPhoneNumber;
-    this.jobID = jobID;
+    this.jobId = jobId;
     this.description = description;
     this.status = status;
     this.applicantIDRefs = applicantIDRefs;
@@ -74,7 +74,7 @@ class Application {
         validationResult = new MandatoryValueConstraintViolation(
           "A value for the application ID must be provided!");
       } else {
-        const applicationDocSn = await getDoc(fsDoc(fsDb, "applications", applicationID));
+        const applicationDocSn = await getDoc(fsDoc(fsDb, "applications", String(applicationID)));
         if (applicationDocSn.exists()) {
           validationResult = new UniquenessConstraintViolation(
             `There is already an application record with application ID ${applicationID}`);
@@ -181,14 +181,14 @@ class Application {
     }
   }
 
-  // «get/set» jobID[1] : Job (string)
+  // «get/set» jobId[1] : Job (string)
 
-  get jobID() {
-    return this._jobID;
+  get jobId() {
+    return this._jobId;
   };
 
-  set jobID( j) {
-    this._jobID = j;
+  set jobId( j) {
+    this._jobId = j;
   };
 
   // «get/set» description[0..1] : String
@@ -285,7 +285,7 @@ Application.converter = {
       applicationName: application.applicationName,
       applicationEmail: application.applicationEmail,
       applicationPhoneNumber: parseInt(application.applicationPhoneNumber),
-      jobID: parseInt(application.jobID),
+      jobId: parseInt(application.jobId),
       description: application.description,      
       status: parseInt(application.status),
       applicantIDRefs: application.applicantIDRefs
@@ -300,7 +300,7 @@ Application.converter = {
         applicationName: application.applicationName,
         applicationEmail: application.applicationEmail,
         applicationPhoneNumber: application.applicationPhoneNumber,
-        jobID: application.jobID,
+        jobId: application.jobId,
         description: application.description,
         status: application.status,
         applicantIDRefs: application.applicantIDRefs
@@ -321,7 +321,7 @@ Application.add = async function (slots) {
     // invoke asynchronous ID/uniqueness check
     validationResult = await Application.checkApplicationIDAsId(application.applicationID);
     if (!(validationResult instanceof NoConstraintViolation)) throw validationResult;
-    validationResult = await Job.checkJobIdAsIdRef(application.jobID);
+    validationResult = await Job.checkJobIdAsIdRef(application.jobId);
     if (!validationResult instanceof NoConstraintViolation) throw validationResult;
     for (const a of application.applicantIDRefs) {
       validationResult = await Applicant.checkApplicantIDAsIdRef(String(a.id));
@@ -354,8 +354,8 @@ Application.add = async function (slots) {
         const applicantDocRef = fsDoc(applicantsCollRef, String(a.applicantID));
         batch.update(applicantDocRef, { applications: arrayUnion(applicationInverseRef) });
       }));
-      if (application.jobID) {
-        const jobDocRef = fsDoc(jobsCollRef, String(application.jobID));
+      if (application.jobId) {
+        const jobDocRef = fsDoc(jobsCollRef, String(application.jobId));
         batch.update(jobDocRef, { customApps: arrayUnion(applicationInverseRef) });
       }
       batch.commit(); // commit batch write

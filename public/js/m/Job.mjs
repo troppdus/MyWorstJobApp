@@ -1,19 +1,21 @@
 import { fsDb } from "../initFirebase.mjs";
-import { collection as fsColl, deleteDoc, doc as fsDoc, getDoc, getDocs, onSnapshot,
-    orderBy, query as fsQuery, setDoc, updateDoc, where }
+import {
+  collection as fsColl, doc as fsDoc, setDoc, getDoc, getDocs, orderBy, query as fsQuery,
+  Timestamp, startAt, limit, deleteField, writeBatch, arrayUnion, arrayRemove
+}
     from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
 import { isNonEmptyString, isIntegerOrIntegerString }
   from "../lib/util.mjs";
 import {
   NoConstraintViolation, MandatoryValueConstraintViolation, RangeConstraintViolation,
-  UniquenessConstraintViolation
+  UniquenessConstraintViolation, ReferentialIntegrityConstraintViolation
 }
   from "../lib/errorTypes.mjs";
 import Enumeration from "../lib/Enumeration.mjs";
 import Company from "./Company.mjs";
 
 console.log("Job.mjs");
-//   «get/set» jobID[1] : number(int)
+//   «get/set» jobId[1] : number(int)
 // - «get/set» jobName[1] : String
 // - «get/set» location[1] : String
 // - «get/set» company[1] : Company -- string for now
@@ -69,9 +71,8 @@ class Job {
         validationResult = new MandatoryValueConstraintViolation(
           "A value for the job ID must be provided!");
       } else {
-        const jobDocReff = fsDoc(fsDb, "jobs", jobId);
+        const jobDocSn = await getDoc(fsDoc(fsDb, "jobs", String(jobId)));
         try {
-          const jobDocSn = await getDoc( jobDocReff);
           if (jobDocSn.exists()) {
             validationResult = new UniquenessConstraintViolation(
               "There is already a job record with this ID!");
@@ -87,7 +88,7 @@ class Job {
     return validationResult;
   };
 
-  static async checkJobIDAsIdRef(id) {
+  static async checkJobIdAsIdRef(id) {
     let constraintViolation = Job.checkJobId(id);
     if ((constraintViolation instanceof NoConstraintViolation) && id) {
         const jobDocSn = await getDoc(fsDoc(fsDb, "jobs", String(id)));
@@ -96,7 +97,7 @@ class Job {
                 `There is no job record with this job ID ${id}!`);
         }
     }
-    return validationResult;
+    return constraintViolation;
   };
 
 
@@ -156,29 +157,25 @@ class Job {
     }
   };
 
+
   get company() {
     return this._company;
   };
 
-  static async checkCompany(company) {
-    if (!company) {
-      return new MandatoryValueConstraintViolation("A company must be provided!");
-    } 
-    let validationResult = await Company.checkCompanyIDAsIdRef(company)
-    if (validationResult instanceof NoConstraintViolation) {
-      return new NoConstraintViolation();
-    } else {
-      throw validationResult;
-    }
-  };
+  // static async checkCompany(company) {
+  //   if (!company) {
+  //     return new MandatoryValueConstraintViolation("A company must be provided!");
+  //   } 
+  //   let validationResult = await Company.checkCompanyIDAsIdRef(company)
+  //   if (validationResult instanceof NoConstraintViolation) {
+  //     return new NoConstraintViolation();
+  //   } else {
+  //     throw validationResult;
+  //   }
+  // };
 
   set company(company) {
-    const validationResult = Job.checkCompany(company);
-    if (validationResult instanceof NoConstraintViolation) {
-      this._company = company;
-    } else {
-      throw validationResult;
-    }
+    this._company = company;
   };
 
   get salary() {
@@ -292,7 +289,7 @@ Job.converter = {
       jobId: parseInt(job.jobId),
       jobName: job.jobName,
       location: job.location,
-      company: job.company,
+      company: parseInt(job.company),
       salary: parseInt(job.salary),
       typeOfEmployment: parseInt(job.typeOfEmployment),
       jobFieldCategory: job.jobFieldCategory
@@ -321,14 +318,36 @@ Job.add = async function (slots) {
     // invoke asynchronous ID/uniqueness check
     let validationResult = await Job.checkJobIdAsId(job.jobId);
     if (!validationResult instanceof NoConstraintViolation) throw validationResult;
+    validationResult = await Company.checkCompanyIDAsIdRef(job.commpany);
+    if (!validationResult instanceof NoConstraintViolation) throw validationResult;
   } catch (e) {
     console.error(`${e.constructor.name}: ${e.message}`);
     job = null;
   }
   if (job) {
+    const jobDocRef = fsDoc(fsDb, "jobs", String(job.jobId)).withConverter(Job.converter);
+    const companiesCollRef = fsColl(fsDb, "companies")
+        .withConverter(Company.converter);
+
+    // const applicationInverseRef = { applicationID: application.applicationID, applicationName: application.applicationName };
+    const jobInverseRef = { jobId: job.jobId, jobName: job.jobName };
     try {
-      const jobDocRef = fsDoc(fsDb, "jobs", job.jobId).withConverter(Job.converter);
+      const batch = writeBatch(fsDb);
+      await batch.set(jobDocRef, job);
+      // const jobDocRef = fsDoc(fsDb, "jobs", job.jobId).withConverter(Job.converter);
+      const companyDocRef = fsDoc(fsDb, "companies", job.company);
       await setDoc(jobDocRef, job);
+      console.log(`Job record "${job.jobId}" created!`);
+      // if (application.jobId) {
+      //   const jobDocRef = fsDoc(jobsCollRef, String(application.jobId));
+      //   batch.update(jobDocRef, { customApps: arrayUnion(applicationInverseRef) });
+      // }
+      if (job.company) {
+        const companyDocRef = fsDoc(companiesCollRef, String(job.company));
+        batch.update(companyDocRef, { postedJobs: arrayUnion(jobInverseRef) });
+      }
+
+      await batch.commit();
       console.log(`Job record "${job.jobId}" created!`);
     } catch (e) {
       console.error(`${e.constructor.name}: ${e.message} + ${e}`);

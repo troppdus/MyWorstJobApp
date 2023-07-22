@@ -59,6 +59,7 @@ class Company {
           "A value for the Company ID must be provided!");
       } else {
         const companyDocSn = await getDoc(fsDoc(fsDb, "companies", companyID));
+        console.log(companyDocSn);
         if (!companyDocSn.exists()) {
           validationResult = new UniquenessConstraintViolation(
             `There is no company record with this Company ID ${companyID}!`);
