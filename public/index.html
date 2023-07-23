@@ -26,16 +26,17 @@
         generateTestDataButtons = document.querySelectorAll("button.generateTestData");
     
         // set event handlers for the buttons "clearData" and "generateTestData"
+    clearButton.addEventListener("click", Application.clearData);    
+    clearButton.addEventListener("click", clearDataApplicant_Dokument);
     clearButton.addEventListener("click", Job.clearData);
     clearButton.addEventListener("click", User.clearData);
-    clearButton.addEventListener("click", clearDataApplicant_Dokument);
+    clearButton.addEventListener("click", Company.clearData);
     for (const btn of generateTestDataButtons) {
       btn.addEventListener("click", Company.generateTestData);
       btn.addEventListener("click", Job.generateTestData);
       btn.addEventListener("click", User.generateTestData);
       btn.addEventListener("click", generateData);
       btn.addEventListener("click", Application.generateTestData); 
-      
     }
   </script>
 </head>

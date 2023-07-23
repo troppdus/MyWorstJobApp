@@ -45,7 +45,7 @@ function handleAuthorization( userStatus, currentPage, email) {
     // declare variables for current page and for accessing UI elements
     const divLoginMgmtEl = document.getElementById("login-management"),
       startPage = ["/","/index.html"],
-      operationPages = ["/retrieveAndListAllJobs.html", "/credits.html","/companies.html"];
+      operationPages = ["/retrieveAndListAllJobs.html", "/credits.html", "/dokuments.html", "/applicants.html", "/applications.html", "/companies.html"];
     divLoginMgmtEl.innerHTML = "";
     switch (userStatus) {
       case "Anonymous":

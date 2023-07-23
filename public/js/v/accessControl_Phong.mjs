@@ -45,7 +45,7 @@
    // declare variables for current page and for accessing UI elements
    const divLoginMgmtEl = document.getElementById("login-management"),
      startPage = ["/","/index.html"],
-     operationPages = ["/dokuments.html", "/applicants.html"];
+     operationPages = ["/dokuments.html", "/applicants.html", "/applications.html", "/companies.html"];
    divLoginMgmtEl.innerHTML = "";
    switch (userStatus) {
      case "Anonymous":

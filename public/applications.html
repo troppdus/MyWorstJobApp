@@ -12,13 +12,14 @@
   <link rel="stylesheet" href="css/normalize.min.css"/>
   <link rel="stylesheet" href="css/main.css"/>
   <script src="js/v/applications.mjs" type="module">
-    import { generateData, clearData } from "./js/auxDataMngtOps_Phong_classes.mjs";
-    const clearButton = document.getElementById("clearData"),
-      generateTestDataButtons = document.querySelectorAll("button.generateTestData");
+    import { generateDataApplications, clearDataApplication } from "./js/auxDataMngtOps_Ishan.mjs";
+    const clearButton = document.getElementById("clearData");
+    const generateTestDataButtons = document.getElementById("generateTestData");
     // Set event handlers for the buttons "clearData" and "generateTestData"
-    clearButton.addEventListener("click", clearData);
+    
+    clearButton.addEventListener("click", clearDataApplication);
     for (let btn of generateTestDataButtons) {
-      btn.addEventListener("click", generateData);
+      btn.addEventListener("click", generateDataApplications);
     }
   </script>
 </head>
@@ -30,12 +31,12 @@
       <figure><a href="https://web-engineering.info">
         <img alt="" title="Icon made by Lorc under CC BY 3.0. Available on https://game-icons.net"
              src="favicon.svg"/></a></figure>
-      <h1>Public Library</h1>
-      <h2>JS/Firebase Web App with Bidirectional Associations</h2>
+      <h1>MyWorstJobApp</h1>
+      <h2>Applications Page</h2>
     </div>
     <nav>
       <ul>
-        <!-- <li><a href="applicants.html">Applicants</a></li> -->
+        <li><a href="index.html"> Home Page </a></li>
       </ul>
     </nav>
   </div>
@@ -47,7 +48,7 @@
       <!-- ======================================================= -->
       <h1>Manage Applications Data</h1>
       <ul class="menu">
-        <li><button type="button" class="generateTestData" disabled="disabled">Generate test data</button></li>
+        <li><button type="button" id="generateTestData" disabled="disabled">Generate test data</button></li>
         <li><button type="button" id="clearData" disabled="disabled">Clear data</button></li>
         <li><button type="button" id="RetrieveAndListAll">Retrieve/list all application records</button></li>
         <li><button type="button" id="Create" disabled="disabled">Create a new application record</button></li>
@@ -77,7 +78,7 @@
       </div>
       <hr>
       <progress hidden="hidden" max="100">%</progress>
-      <table>
+      <table class="full-width">
         <thead>
         <tr>
           <th>Application ID</th>
@@ -101,20 +102,30 @@
       <!-- ======================================================= -->
       <h1>Create a new Application Record</h1>
       <form>
-          <div class="field"><label>Application ID: <input name="applicationID" /></label></div>
-          <div class="field"><label>Application Name: <input name="applicationName" /></label></div>
-          <div class="field"><label>Application Email: <input name="applicationEmail" /></label></div>
-          <div class="field"><label>Application Phone Number: <input name="applicationPhoneNumber" /></label></div>
-          <div class="field"><label>Description: <textarea name="description"></textarea></label></div>
-          <div class="field">
-            <label>Status:
-              <select name="status">
-              </select>
-            </label>
-          </div>
-          <!-- <div><label>Applicant: <input name="applicantID"/></label></div> -->
-          <div class="MultiSelectionWidget"></div>
-          <div class="field"><label>Job: <input name="jobId" /></label></div>
+        <div class="field">
+          <label>Application ID: <input name="applicationID" /></label>
+        </div>
+        <div class="field">
+          <label>Application Name: <input name="applicationName" /></label>
+        </div>
+        <div class="field">
+          <label>Application Email: <input name="applicationEmail" /></label>
+        </div>
+        <div class="field">
+          <label>Application Phone Number: <input name="applicationPhoneNumber" /></label>
+        </div>
+        <div class="field">
+          <label>Description: <input name="description"></input></label>
+        </div>
+        <div class="field">
+          <label>Status: <select name="status"> </select>
+          </label>
+        </div>
+        <!-- <div><label>Applicant: <input name="applicantID"/></label></div> -->
+        <div class="MultiSelectionWidget"> </div>
+        <div class="field">
+          <label>Job: <input name="jobId" /></label>
+        </div>
         <div class="button-group">
           <button type="button" class="back-to-menu">« Back to menu</button>
           <button type="submit" name="commit">Create</button>
@@ -128,13 +139,28 @@
       <h1>Update an Application Record</h1>
       <form>
         <div class="field">
-          <label>ID: <input type="text" name="applicationID"/></label>
+          <label>Application ID: <input name="applicationID" /></label>
         </div>
         <div class="field">
-          <label>File Name: <input type="text" name="fileTitle"/></label>
+          <label>Application Name: <input name="applicationName" /></label>
         </div>
         <div class="field">
-          <label>File Path: <input type="text" name="filePath"/></label>
+          <label>Application Email: <input name="applicationEmail" /></label>
+        </div>
+        <div class="field">
+          <label>Application Phone Number: <input name="applicationPhoneNumber" /></label>
+        </div>
+        <div class="field">
+          <label>Description: <input name="description"></input></label>
+        </div>
+        <div class="field">
+          <label>Status: <select name="status"> </select>
+          </label>
+        </div>
+        <!-- <div><label>Applicant: <input name="applicantID"/></label></div> -->
+        <div class="MultiSelectionWidget"> </div>
+        <div class="field">
+          <label><label>Job Id: <output name="jobId"/></label>
         </div>
         <div class="button-group">
           <button type="button" class="back-to-menu">« Back to menu</button>
@@ -147,9 +173,9 @@
     <section id="Application-D" class="UI-Page" hidden="hidden">
       <!-- ======================================================= -->
       <h1>Delete an Application Record</h1>
-      <form>
+      <form id="deleteApplicationForm">
         <div class="field">
-          <label>ID: <input type="text" name="applicationID"/></label>
+          <label>Application ID: <input type="text" name="applicationID"/></label>
         </div>
         <div class="button-group">
           <button type="button" class="back-to-menu">« Back to menu</button>

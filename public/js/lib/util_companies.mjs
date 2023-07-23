@@ -238,7 +238,7 @@ async function createMultiSelectionWidget(formEl, idRefs, inputEl,
   if (idRefs.length) {
     for (const aId of idRefs) {
       const listEl = widgetEl.children[1];
-      listEl.appendChild(addItemToListOfSelectedItems(aId, "id"));
+      listEl.appendChild(addItemToListOfSelectedItems(aId, "jobId"));
     }
   }
   /** get references of associated objects from list **/

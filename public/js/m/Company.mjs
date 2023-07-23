@@ -179,6 +179,18 @@ Company.retrieve = async function (companyID) {
   }
 };
 
+Company.retrieveAll = async function () {
+  try {
+    const companyRecs = (await getDocs(fsColl(fsDb, "companies")
+      .withConverter(Company.converter))).docs.map(d => d.data());
+    if (companyRecs.length) console.log(`${companyRecs.length} company records retrieved.`);
+    return companyRecs;
+  } catch (e) {
+    console.error(`Error retrieving all company records: ${e}`);
+  }
+};
+
+
 Company.retrieveBlock = async function (params) {
   try {
     let companiesCollRef = fsColl(fsDb, "companies");

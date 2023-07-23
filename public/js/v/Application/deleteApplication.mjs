@@ -18,10 +18,10 @@ selectAppEl.addEventListener("input", async function () {
 if (deleteFormEl.checkValidity()) {
   // Handle Delete button click events
   deleteButton.addEventListener("click", async function () {
-    const applicationIdRef = selectAppEl.value;
-    if (!applicationIdRef) return;
+    const applicationIDRef = selectAppEl.value;
+    if (!applicationIDRef) return;
     if (confirm("Do you really want to delete this application?")) {
-      await Application.destroy(applicationIdRef);
+      await Application.destroy(applicationIDRef);
       deleteFormEl.reset();
     }
   });

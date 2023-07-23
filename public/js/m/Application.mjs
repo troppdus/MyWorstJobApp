@@ -372,7 +372,7 @@ Application.add = async function (slots) {
  */
 Application.retrieve = async function (applicationID) {
   try {
-    const applicationRec = (await getDoc(fsDoc(fsDb, "applications", applicationID)
+    const applicationRec = (await getDoc(fsDoc(fsDb, "applications", String(applicationID))
       .withConverter(Application.converter))).data();
     if (applicationRec) console.log(`Application record "${applicationID}" retrieved.`);
     return applicationRec;
@@ -380,6 +380,20 @@ Application.retrieve = async function (applicationID) {
     console.error(`Error retrieving application record: ${e}`);
   }
 };
+
+Application.retrieveAll = async function (order) { 
+  if (!order) order = "applicationID";
+  const applicationsCollRef = fsColl(fsDb, "applications");
+  const q = fsQuery(applicationsCollRef, orderBy(order));
+  try {
+    const applicationRecs = (await getDocs(q.withConverter(Application.converter))).docs.map(d => d.data());
+    console.log(`${applicationRecs.length} application records retrieved ${order ? "ordered by " + order : ""}`);
+    return applicationRecs;
+  } catch (e) {
+    console.error(`Error retrieving application records: ${e}`);
+  }
+};
+
 /**
  * Load all application records from Firestore
  * @param params: {object}
@@ -510,7 +524,7 @@ Application.update = async function ({ applicationID, applicationName, applicati
  * @returns {Promise<void>}
  */
 Application.destroy = async function (applicationID) {
-  const applicationDocRef = fsDoc(fsDb, "applications", applicationID)
+  const applicationDocRef = fsDoc(fsDb, "applications", String(applicationID))
     .withConverter(Application.converter),
     jobsCollRef = fsColl(fsDb, "jobs")
       .withConverter(Job.converter),
@@ -519,15 +533,19 @@ Application.destroy = async function (applicationID) {
   try {
     // delete master class object (application) while updating derived inverse
     // properties in objects from slave classes (authors and publishers)
-    const applicationRec = (await getDoc(applicationDocRef
-      .withConverter(Application.converter))).data();
-    const inverseRef = { applicationID: applicationRec.applicationID, applicationName: applicationRec.applicationName };
+
+    
     const batch = writeBatch(fsDb); // initiate batch write object
     // // delete derived inverse reference properties, Authors::/authoredApplications
+    const applicationRec = (await getDoc(applicationDocRef
+      .withConverter(Application.converter))).data();
+    const inverseRef = {applicationID: applicationRec.applicationID, applicationName: applicationRec.applicationName };
+    console.log("check");
     await Promise.all(applicationRec.applicantIDRefs.map(aId => {
-      const applicantCollRef = fsDoc(applicantsCollRef, String(aId.id));
+      const applicantCollRef = fsDoc(applicantsCollRef, String(aId.applicantID));
       batch.update(applicantCollRef, { applications: arrayRemove(inverseRef) });
     }));
+    console.log("check 3 ");
     // delete derived inverse reference properties, Jobs
     batch.delete(applicationDocRef); // create application record (master)
     batch.commit(); // commit batch write
