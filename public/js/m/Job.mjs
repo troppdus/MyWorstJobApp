@@ -465,7 +465,7 @@ Job.update = async function (slots) {
 Job.destroy = async function (jobId) {
   try {
     // Fetch the job first to get the jobName
-    const jobDoc = await getDoc(fsDoc(fsDb, "jobs", jobId));
+    const jobDoc = await getDoc(fsDoc(fsDb, "jobs", String(jobId)).withConverter(Job.converter));
     const jobData = jobDoc.data();
 
     const jobReference = { jobId: parseInt(jobId), jobName: jobData.jobName };
