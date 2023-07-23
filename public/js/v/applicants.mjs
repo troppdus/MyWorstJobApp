@@ -85,6 +85,10 @@ async function createBlock(startAt) {
       row.insertCell(-1).textContent = applicantRec.email;
       row.insertCell(-1).textContent = applicantRec.phone;
       row.insertCell(-1).appendChild(listEl);
+      if (applicantRec.applications && applicantRec.applications.length) {
+        const listEl = createListFromMap( applicantRec.applications, "applicationName", "applicationID");
+        row.insertCell().appendChild(listEl);
+      }
     }
   }
   hideProgressBar("Applicant-R");
