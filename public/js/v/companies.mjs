@@ -223,8 +223,7 @@
      slots = {
        companyID: updateFormEl["companyID"].value,
        companyName: updateFormEl["companyName"].value,
-       description: updateFormEl["description"].value,
-       postedJobs: updateFormEl["postedJobs"].value,
+       description: updateFormEl["description"].value
      };
 
    updateFormEl["companyName"].setCustomValidity(
@@ -236,7 +235,7 @@
      for (const jobItemEl of addedJobsListEl.children) {
        if (jobItemEl.classList.contains("added")) {
          const job = JSON.parse(jobItemEl.getAttribute("data-value"));
-         const responseValidation = await Job.checkJobIdAsIdRef( job.id);
+         const responseValidation = await Job.checkJobIdAsIdRef( job.jobId);
          if (responseValidation.message) {
            updateFormEl["jobs"].setCustomValidity( responseValidation.message);
            break;

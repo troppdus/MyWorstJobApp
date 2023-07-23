@@ -303,16 +303,16 @@ function fillChoiceSet(listEl, selection, keyProp, displayProp) {
 function addItemToListOfSelectedItems(targetObjt, idRefTargetName, classValue) {
   const listItemEl = document.createElement("li"),
     removeBtn = createPushButton("x");
-  // if target object has a property "name"
+
   if (targetObjt.jobName) {
     listItemEl.innerText = `${targetObjt[idRefTargetName]}: ${targetObjt.jobName}`.substring(0, 16);
   } else {
-    //use targetObjt.name
+
     listItemEl.innerText = `${targetObjt[idRefTargetName]}: ${targetObjt.name}`.substring(0, 16);
   }
   // add first 18 chars in list item
   // convert target object into text
-  const targetObjText = JSON.stringify({ jobId: targetObjt[idRefTargetName], name: targetObjt.jobName });
+  const targetObjText = JSON.stringify({ jobId: targetObjt[idRefTargetName], jobName: targetObjt.jobName });
   // embed target object in list item (li element)
   listItemEl.setAttribute("data-value", targetObjText);
   if (classValue) listItemEl.classList.add(classValue);
