@@ -428,14 +428,16 @@ Application.retrieveBlock = async function (params) {
  * @param applicationPhoneNumber: {string}
  * @param description: {string}
  * @param status: {string}
- * 
+ * "
  * @returns {Promise<void>}
  */
-Application.update = async function ({ applicationID, applicationName, applicationEmail,
-  applicationPhoneNumber, description, status, applicantIdRefsToAdd, applicantIdRefsToRemove }) {
+// slots applicationID, applicationName, applicationEmail,
+//   applicationPhoneNumber, description, status, applicantIDRefsToAdd, applicantIDRefsToRemove
+Application.update = async function ( slots) {
+  
   let validationResult = null,
     applicationBeforeUpdate = null;
-  const applicationDocRef = fsDoc(fsDb, "applications", applicationID.toString()).withConverter(Application.converter),
+  const applicationDocRef = fsDoc(fsDb, "applications", String(slots.applicationID)).withConverter(Application.converter),
     updatedSlots = {};
   try {
     // retrieve up-to-date application record
@@ -445,16 +447,16 @@ Application.update = async function ({ applicationID, applicationName, applicati
   }
   // evaluate if slots contains updates, while building "updatedSlots" object
   if (applicationBeforeUpdate) {
-    if (applicationBeforeUpdate.applicationName !== applicationName) updatedSlots.applicationName = applicationName;
-    if (applicationBeforeUpdate.applicationEmail !== applicationEmail) updatedSlots.applicationEmail = applicationEmail;
-    if (applicationBeforeUpdate.applicationPhoneNumber !== applicationPhoneNumber) updatedSlots.applicationPhoneNumber = applicationPhoneNumber;
-    if (applicationBeforeUpdate.description !== description) updatedSlots.description = description;
-    if (applicationBeforeUpdate.status !== status) updatedSlots.status = status;
-    if (applicantIdRefsToAdd) for (const applicantIdRef of applicantIdRefsToAdd) {
-      applicationBeforeUpdate.addApplicant(applicantIdRef);}
-    if (applicantIdRefsToRemove) for (const applicantIdRef of applicantIdRefsToRemove) {
-      applicationBeforeUpdate.removeApplicant(applicantIdRef);}
-    if (applicantIdRefsToAdd || applicantIdRefsToRemove) 
+    if (applicationBeforeUpdate.applicationName !== slots.applicationName) updatedSlots.applicationName = slots.applicationName;
+    if (applicationBeforeUpdate.applicationEmail !== slots.applicationEmail) updatedSlots.applicationEmail = slots.applicationEmail;
+    if (applicationBeforeUpdate.applicationPhoneNumber !== slots.applicationPhoneNumber) updatedSlots.applicationPhoneNumber = slots.applicationPhoneNumber;
+    if (applicationBeforeUpdate.description !== slots.description) updatedSlots.description = slots.description;
+    if (applicationBeforeUpdate.status !== slots.status) updatedSlots.status = slots.status;
+    if (slots.applicantIDRefsToAdd) for (const applicationIDRef of slots.applicantIDRefsToAdd) {
+      applicationBeforeUpdate.addApplicant(applicationIDRef);}
+    if (slots.applicantIDRefsToRemove) for (const applicationIDRef of slots.applicantIDRefsToRemove) {
+      applicationBeforeUpdate.removeApplicant(applicationIDRef);}
+    if (slots.applicantIDRefsToAdd || slots.applicantIDRefsToRemove) 
         updatedSlots.applicantIDRefs = applicationBeforeUpdate.applicantIDRefs;
   }
   // if there are updates, run checkers while updating master object (application)
@@ -468,25 +470,25 @@ Application.update = async function ({ applicationID, applicationName, applicati
           .withConverter(Job.converter);
           
       // initialize (before and after update) inverse ID references
-      const inverseRefBefore = { applicationID: applicationID, applicationName: applicationBeforeUpdate.applicationName };
-      const inverseRefAfter = { applicationID: applicationID, applicationName: applicationName };
+      const inverseRefBefore = { applicationID: slots.applicationID, applicationName: applicationBeforeUpdate.applicationName };
+      const inverseRefAfter = { applicationID: slots.applicationID, applicationName: slots.applicationName };
       const batch = writeBatch(fsDb); // initiate batch write
 
       // remove old derived inverse references properties from slave
       // objects (applicants) Applicant::applicantOwner
-      if (applicantIdRefsToRemove) {
-        await Promise.all(applicantIdRefsToRemove.map(a => {
-          const applicantCollRef = fsDoc(applicantsCollRef, String(a.id));
+      if (slots.applicantIDRefsToRemove) {
+        await Promise.all(slots.applicantIDRefsToRemove.map(a => {
+          const applicantCollRef = fsDoc(applicantsCollRef, String(a.applicantID));
           batch.update(applicantCollRef, { applications: arrayRemove(inverseRefBefore) });
         }));
       }
       // add new derived inverse references properties from slave objects
       // (applicants) Applicant::applicantOwner, while checking constraint violations
 
-      if (applicantIdRefsToAdd) {
-        await Promise.all(applicantIdRefsToAdd.map(a => {
-          const applicantCollRef = fsDoc(applicantsCollRef, String(a.id));
-          validationResult = Applicant.checkApplicantIDAsIdRef(String(a.id));
+      if (slots.applicantIDRefsToAdd) {
+        await Promise.all(slots.applicantIDRefsToAdd.map(async a => {
+          const applicantCollRef = fsDoc(applicantsCollRef, String(a.applicantID));
+          validationResult = await Applicant.checkApplicantIDAsIdRef(String(a.applicantID));
           if (!(validationResult instanceof NoConstraintViolation)) throw validationResult;
           batch.update(applicantCollRef, { applications: arrayUnion(inverseRefAfter) });
         }));
@@ -494,15 +496,15 @@ Application.update = async function ({ applicationID, applicationName, applicati
       // if applicationName changes, update applicationName in ID references (array of maps) in
       // unchanged author objects
       if (updatedSlots.applicationName) {
-        const NoChangedApplicantIdRefs = applicantIdRefsToAdd ?
-          applicationBeforeUpdate.applicantIDRefs.filter(a => !applicantIdRefsToAdd.includes(a))
+        const NoChangedApplicantIdRefs = slots.applicantIDRefsToAdd ?
+          applicationBeforeUpdate.applicantIDRefs.filter(a => !slots.applicantIDRefsToAdd.includes(a))
           : applicationBeforeUpdate.applicantIDRefs;
         await Promise.all(NoChangedApplicantIdRefs.map(a => {
-          const applicantDocRef = fsDoc(applicantsCollRef, String(a.id));
+          const applicantDocRef = fsDoc(applicantsCollRef, String(a.applicantID));
           batch.update(applicantDocRef, { applications: arrayRemove(inverseRefBefore) });
         }));
         await Promise.all(NoChangedApplicantIdRefs.map(a => {
-          const applicantDocRef = fsDoc(applicantsCollRef, String(a.id));
+          const applicantDocRef = fsDoc(applicantsCollRef, String(a.applicantID));
           batch.update(applicantDocRef, { applications: arrayUnion(inverseRefAfter) });
         }));
       }
@@ -513,7 +515,7 @@ Application.update = async function ({ applicationID, applicationName, applicati
     } catch (e) {
       console.error(`${e.constructor.name}: ${e.message}`);
     }
-    console.log(`Property(ies) "${updatedProperties.toString()}" modified for application record "${applicationID}"`);
+    console.log(`Property(ies) "${updatedProperties.toString()}" modified for application record "${slots.applicationID}"`);
   } else {
     console.log(`No property value changed for application record "${applicationID}"!`);
   }
