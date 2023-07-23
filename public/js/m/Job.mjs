@@ -464,21 +464,27 @@ Job.update = async function (slots) {
  */
 Job.destroy = async function (jobId) {
   try {
+    // Fetch the job first to get the jobName
+    const jobDoc = await getDoc(fsDoc(fsDb, "jobs", jobId));
+    const jobData = jobDoc.data();
+
+    const jobReference = { jobId: parseInt(jobId), jobName: jobData.jobName };
+
+    // Start deleting job
     const fsDocRefDelete = fsDoc(fsDb, "jobs", jobId);
     await deleteDoc(fsDocRefDelete);
     console.log(`Job record ${jobId} deleted.`);
 
     // Remove the job from all postedJobs attributes of companies
     const companiesCollRef = fsColl(fsDb, "companies");
-    const companiesQuery = fsQuery(companiesCollRef, where("postedJobs", "array-contains", jobId));
+    const companiesQuery = fsQuery(companiesCollRef, where("postedJobs", "array-contains", jobReference));
     const companiesSnaps = await getDocs(companiesQuery);
 
     const batch = writeBatch(fsDb); // Initiate batch write
 
-    companiesSnaps.forEach((companySnap) => {
+    companiesSnaps.docs.forEach((companySnap) => {
       const companyRef = fsDoc(companiesCollRef, companySnap.id);
-      const updatedPostedJobs = companySnap.data().postedJobs.filter((job) => job !== jobId);
-      batch.update(companyRef, { postedJobs: updatedPostedJobs });
+      batch.update(companyRef, { postedJobs: arrayRemove(jobReference) });
     });
 
     await batch.commit();
