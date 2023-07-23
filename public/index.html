@@ -23,7 +23,9 @@
     handleAuthentication();
     
     const clearButton = document.getElementById("clearData"),
-        generateTestDataButtons = document.querySelectorAll("button.generateTestData");
+        generateTestDataButtons = document.querySelectorAll("button.generateTestData"),
+        generateTestDataButtons2 = document.querySelectorAll("button.secondTest"),
+        generateTestDataButtons3 = document.querySelectorAll("button.thirdTest");
     
         // set event handlers for the buttons "clearData" and "generateTestData"
     clearButton.addEventListener("click", Application.clearData);
@@ -35,9 +37,14 @@
       btn.addEventListener("click", Company.generateTestData);
       btn.addEventListener("click", Job.generateTestData);
       btn.addEventListener("click", User.generateTestData);
+    }
+    for (const btn of generateTestDataButtons2) {
       btn.addEventListener("click", generateData);
+    }
+    for (const btn of generateTestDataButtons3) {
       btn.addEventListener("click", Application.generateTestData); 
     }
+
   </script>
 </head>
 
@@ -63,10 +70,10 @@
       <li><a href="deleteUser.html" class="disabled">Delete</a> a user record</li>
       <hr />
 
-      <li style="margin-top: 1em"><a href="createApplication.html" class="disabled">Create</a> a new Application record</li>
+      <!-- <li style="margin-top: 1em"><a href="createApplication.html" class="disabled">Create</a> a new Application record</li>
       <li><a href="retrieveAndListAllApplication.html">Retrieve</a> and list all Application records</li>
       <li><a href="updateApplication.html" class="disabled">Update</a> a Application record</li>
-      <li><a href="deleteApplication.html" class="disabled">Delete</a> a Application record</li>
+      <li><a href="deleteApplication.html" class="disabled">Delete</a> a Application record</li> -->
       <hr />
       <li style="margin-top: 1em"><a href="applications.html" class="disabled">Applications</a> management page</li>
       <hr />
@@ -77,9 +84,16 @@
       <hr>
       <li style="margin-top: 1em"><a href="dokuments.html" class="disabled">Documents</a> management page</li>
       <hr />
-      <li style="margin-top: 1em"><button class="generateTestData" type="button" disabled="disabled">Generate test
+      <h4>Due to relation between different classes, data generation has to be done in steps. <br>Generate each set of data while providing 10-15 seconds for network request to finish before next set of data</h4>
+      <li style="margin-top: 1em"><button class="generateTestData" type="button" disabled="disabled">Generate 1st set
           data</button></li>
-      <li><button id="clearData" type="button">Clear database</button></li>
+      <li style="margin-top: 1em"><button class="generateTestData secondTest" type="button" disabled="disabled">Generate 2nd set of
+        data</button></li>
+      <li style="margin-top: 1em"><button class="generateTestData thirdTest" type="button" disabled="disabled">Generate 3rd set of
+          data</button></li>
+      <li style="margin-top: 1em"><button id="clearData" type="button">Clear database</button></li>
+
+      <hr
     </menu>
   </main>
 </body>

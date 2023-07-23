@@ -319,6 +319,7 @@ Application.add = async function (slots) {
     // validate data by creating Application instance
     application = await new Application(slots);
     // invoke asynchronous ID/uniqueness check
+    console.log("application", application.applicationID);
     validationResult = await Application.checkApplicationIDAsId(application.applicationID);
     if (!(validationResult instanceof NoConstraintViolation)) throw validationResult;
     validationResult = await Job.checkJobIdAsIdRef(application.jobId);

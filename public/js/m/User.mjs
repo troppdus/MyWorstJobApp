@@ -62,7 +62,7 @@ class User {
         validationResult = new MandatoryValueConstraintViolation(
           "A value for the user ID must be provided!");
       } else {
-        const userDocReff = fsDoc(fsDb, "users", userID);
+        const userDocReff = fsDoc(fsDb, "users", String(userID));
         try {
           const userDocSn = await getDoc( userDocReff);
           if (userDocSn.exists()) {
@@ -319,7 +319,7 @@ User.add = async function (slots) {
   }
   if (user) {
     try {
-      const userDocRef = fsDoc(fsDb, "users", user.userID).withConverter(User.converter);
+      const userDocRef = fsDoc(fsDb, "users", String(user.userID)).withConverter(User.converter);
       console.log("Uploading user to Firestore with ref:", userDocRef);
       await setDoc(userDocRef, user);
       console.log(`User record "${user.userID}" created!`);
@@ -335,7 +335,7 @@ User.add = async function (slots) {
  */
 User.retrieve = async function (userID) {
   try {
-    const userRec = (await getDoc(fsDoc(fsDb, "users", userID)
+    const userRec = (await getDoc(fsDoc(fsDb, "users", String(userID))
       .withConverter(User.converter))).data();
     console.log(`User record "${userRec.userID}" retrieved.`);
     return userRec;
@@ -438,7 +438,7 @@ User.update = async function (slots) {
  */
 User.destroy = async function (userID) {
   try {
-    const fsDocRefDelete = fsDoc(fsDb, "users", userID);
+    const fsDocRefDelete = fsDoc(fsDb, "users", String(userID));
     await deleteDoc(fsDocRefDelete);
     console.log(`User record ${userID} deleted.`);
   } catch (e) {
@@ -490,7 +490,7 @@ User.clearData = async function () {
 User.observeChanges = async function (userID) {
   try {
     // listen document changes, returning a snapshot (snapshot) on every change
-    const userDocRef = fsDoc( fsDb, "users", userID).withConverter( User.converter);
+    const userDocRef = fsDoc( fsDb, "users", String(userID)).withConverter( User.converter);
     const userRec = (await getDoc( userDocRef)).data();
     return onSnapshot( userDocRef, function (snapshot) {
       // create object with original document data
