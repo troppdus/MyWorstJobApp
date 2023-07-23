@@ -264,9 +264,14 @@ Dokument.update = async function (slots) {
  * @param dokumentID: {string}
  * @returns {Promise<void>}
  */
-Dokument.destroy = async function (slots) {
+Dokument.destroy = async function (dokumentID) {
     const applicantsCollRef = fsColl( fsDb, "applicants"),
-      dokumentsCollRef = fsColl( fsDb, "dokuments");
+      dokumentsCollRef = fsColl( fsDb, "dokuments"),
+      dokumentDocRef = fsDoc(fsDb, "dokuments", String(dokumentID))
+        .withConverter(Dokument.converter);
+    const slots = (await getDoc(dokumentDocRef
+        .withConverter(Dokument.converter))).data();
+    console.log(slots);
     try {
       const dokumentRef = {id: parseInt( slots.dokumentID), name: slots.fileTitle},
         q = fsQuery( applicantsCollRef, where("resumeIdRefs", "array-contains", dokumentRef)),

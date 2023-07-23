@@ -30,7 +30,7 @@ async function generateData () {
     await Promise.all( applicantRecs.map( d => Applicant.add( d)));
     console.log(`${applicantRecs.length} applicant records saved.`);
   } catch (e) {
-    console.error(`${e.constructor.name}: ${e.message}`);
+    console.error(`${e.constructor.name}: ${e.message}, ${e.stack}`);
   }
 }
 /**
@@ -48,6 +48,7 @@ async function clearDataApplicant_Dokument () {
       console.log("Clearing dokument records...");
       const dokumentsCollRef = fsColl( fsDb, "dokuments");
       const dokumentQrySns = (await getDocs( dokumentsCollRef, orderBy( "dokumentID")));
+      console.log(`${dokumentQrySns.docs.length} dokument records deleted. 1`);
       await Promise.all( dokumentQrySns.docs.map( d => Dokument.destroy( d.id)))
       console.log(`${dokumentQrySns.docs.length} dokument records deleted.`);
     }

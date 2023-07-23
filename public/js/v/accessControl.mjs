@@ -61,11 +61,13 @@ function handleAuthorization( userStatus, currentPage, email) {
         if (startPage.includes( currentPage)) {
           // declare variables for accessing UI elements
           const clearDataBtn = document.getElementById("clearData"),
+            clearDataBtns = document.querySelectorAll(".clearData"),
             generateDataBtns = document.querySelectorAll(".generateTestData"),
             disabledEls = document.querySelectorAll(".disabled");
           // perform DOM operations to enable menu items
           for (const el of disabledEls) el.classList.remove("disabled");
           clearDataBtn.disabled = false;
+          for (const btn of clearDataBtns) btn.disabled = false;
           for (const btn of generateDataBtns) btn.disabled = false;
         } else if (operationPages.includes( currentPage)) {
           const buttonEls = document.querySelectorAll("ul.menu > li > button");

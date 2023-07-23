@@ -23,16 +23,20 @@
     handleAuthentication();
     
     const clearButton = document.getElementById("clearData"),
+        clearButton2 = document.getElementById("clearData2"),
+        clearButton3 = document.getElementById("clearData3"),
+        clearButton4 = document.getElementById("clearData4"),
         generateTestDataButtons = document.querySelectorAll("button.generateTestData"),
         generateTestDataButtons2 = document.querySelectorAll("button.secondTest"),
         generateTestDataButtons3 = document.querySelectorAll("button.thirdTest");
     
         // set event handlers for the buttons "clearData" and "generateTestData"
     clearButton.addEventListener("click", Application.clearData);
-    clearButton.addEventListener("click", clearDataApplicant_Dokument);
-    clearButton.addEventListener("click", User.clearData);
-    clearButton.addEventListener("click", Job.clearData);
-    clearButton.addEventListener("click", Company.clearData);
+    clearButton2.addEventListener("click", clearDataApplicant_Dokument);
+    clearButton3.addEventListener("click", User.clearData);
+    clearButton4.addEventListener("click", Job.clearData);
+    clearButton4.addEventListener("click", Company.clearData);
+    
     for (const btn of generateTestDataButtons) {
       btn.addEventListener("click", Company.generateTestData);
       btn.addEventListener("click", Job.generateTestData);
@@ -70,20 +74,18 @@
       <li><a href="deleteUser.html" class="disabled">Delete</a> a user record</li>
       <hr />
 
-      <!-- <li style="margin-top: 1em"><a href="createApplication.html" class="disabled">Create</a> a new Application record</li>
-      <li><a href="retrieveAndListAllApplication.html">Retrieve</a> and list all Application records</li>
-      <li><a href="updateApplication.html" class="disabled">Update</a> a Application record</li>
-      <li><a href="deleteApplication.html" class="disabled">Delete</a> a Application record</li> -->
-      <hr />
       <li style="margin-top: 1em"><a href="applications.html" class="disabled">Applications</a> management page</li>
       <hr />
-      <hr />
+
       <li style="margin-top: 1em"><a href="applicants.html" class="disabled">Applicants</a> management page</li>
       <hr />
+
       <li style="margin-top: 1em"><a href="companies.html" class="disabled">Company</a> management page</li>
       <hr>
+
       <li style="margin-top: 1em"><a href="dokuments.html" class="disabled">Documents</a> management page</li>
       <hr />
+
       <h4>Due to relation between different classes, data generation has to be done in steps. <br>Generate each set of data while providing 10-15 seconds for network request to finish before next set of data</h4>
       <li style="margin-top: 1em"><button class="generateTestData" type="button" disabled="disabled">Generate 1st set
           data</button></li>
@@ -91,9 +93,11 @@
         data</button></li>
       <li style="margin-top: 1em"><button class="generateTestData thirdTest" type="button" disabled="disabled">Generate 3rd set of
           data</button></li>
-      <li style="margin-top: 1em"><button id="clearData" type="button">Clear database</button></li>
-
-      <hr
+      <li style="margin-top: 1em"><button id="clearData" class="clearData" type="button" disabled="disabled">1. Clear Application database 1</button></li>
+      <li style="margin-top: 1em"><button id="clearData2" class="clearData" type="button" disabled="disabled">2. Clear Applicant and Dokument database 2</button></li>
+      <li style="margin-top: 1em"><button id="clearData3" class="clearData" type="button" disabled="disabled">3. Clear User database 3</button></li>
+      <li style="margin-top: 1em"><button id="clearData4" class="clearData" type="button" disabled="disabled">4. Clear Job and Company database 4</button></li>
+      <hr>
     </menu>
   </main>
 </body>

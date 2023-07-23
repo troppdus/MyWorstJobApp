@@ -579,7 +579,7 @@ Application.clearData = async function () {
     // delete all documents
     await Promise.all(appRecs.map(d => Application.destroy(d.applicationID.toString())));
     // ... and then report that they have been deleted
-    console.log(`${Object.values(jobRecs).length} job records deleted.`);
+    console.log(`${Object.values(appRecs).length} job records deleted.`);
   }
 };
 
