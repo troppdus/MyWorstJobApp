@@ -224,8 +224,9 @@ createFormEl["commit"].addEventListener("click", async function () {
         createFormEl["applicants"].setCustomValidity("");
       }
     }
-  } else createFormEl["applicants"].setCustomValidity
-        (createFormEl["applicants"].value ? "" : "No Applicant Selected!");
+  }
+  // } else createFormEl["applicants"].setCustomValidity
+  //       (createFormEl["applicants"].value ? "" : "No Applicant Selected!");
     
    
  
