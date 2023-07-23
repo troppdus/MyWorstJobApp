@@ -47,7 +47,10 @@
 - **Ilia Karasev - ilia-karasev**: data validation in the model code and in the UI, update/delete Job
 - **Ishan Lamal - ishanism**: created firestore rules, create/retrieve Job
 
-
+# Division of work for Assignment 7C-4
+- **Phong Vu Thanh - fontvu**: Applicant, Document classes
+- **Ilia Karasev - ilia-karasev**: User, Company classes
+- **Ishan Lamal - ishanism**: Job, Application classes
 
 
 
