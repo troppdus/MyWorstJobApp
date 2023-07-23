@@ -236,7 +236,7 @@ Dokument.update = async function (slots) {
             = {id: parseInt(slots.dokumentID), name: dokumentBeforeUpdate.fileTitle},
           dokumentRefAfter = {id: String(slots.dokumentID), name: slots.fileTitle},
           q = fsQuery( applicantsCollRef, where("resumeIdRefs", "array-contains",
-            dokumentRefBefore)),
+              dokumentRefBefore)),
           applicantQrySns = (await getDocs(q)),
           batch = writeBatch( fsDb); // initiate batch write
           console.log(`Number of applicants found: ${applicantQrySns.docs.length}`);
@@ -264,25 +264,27 @@ Dokument.update = async function (slots) {
  * @param dokumentID: {string}
  * @returns {Promise<void>}
  */
-Dokument.destroy = async function (dokumentID) {
-    const applicantsCollRef = fsColl(fsDb, "applicants"),
-        q = fsQuery(applicantsCollRef, where("dokument_id", "==", dokumentID)),
-        dokumentDocRef = fsDoc(fsColl(fsDb, "dokuments"), dokumentID);
+Dokument.destroy = async function (slots) {
+    const applicantsCollRef = fsColl( fsDb, "applicants"),
+      dokumentsCollRef = fsColl( fsDb, "dokuments");
     try {
-        const applicantQrySns = (await getDocs(q)),
-            batch = writeBatch(fsDb); // initiate batch write
-        // iterate ID references (foreign keys) of master class objects (applicants) and
-        // update derived inverse reference property
-        await Promise.all(applicantQrySns.docs.map(d => {
-            batch.update(fsDoc(applicantsCollRef, d.id), {
-                dokument_id: deleteField()
-            });
-        }));
-        batch.delete(dokumentDocRef); // delete dokument record
-        batch.commit(); // finish batch write
-        console.log(`Dokument record "${dokumentID}" deleted!`);
+      const dokumentRef = {id: parseInt( slots.dokumentID), name: slots.fileTitle},
+        q = fsQuery( applicantsCollRef, where("resumeIdRefs", "array-contains", dokumentRef)),
+        dokumentDocRef = fsDoc( dokumentsCollRef, String( slots.dokumentID)),
+        applicantQrySns = (await getDocs( q)),
+        batch = writeBatch( fsDb); // initiate batch write
+      // iterate ID references (foreign keys) of master class objects (applicants) and
+      // delete derived inverse reference properties
+      console.log(`Number of applicants found: ${applicantQrySns.docs.length}`);
+      await Promise.all( applicantQrySns.docs.map( d => {
+        const applicantDocRef = fsDoc(applicantsCollRef, d.id);
+        batch.update(applicantDocRef, {resumeIdRefs: arrayRemove( dokumentRef)});
+      }));
+      batch.delete( dokumentDocRef); // delete dokument record
+      batch.commit(); // commit batch write
+      console.log(`Dokument record ${slots.dokumentID} deleted!`);
     } catch (e) {
-        console.error(`Error deleting dokument record: ${e}`);
+      console.error(`Error deleting dokument record: ${e}`);
     }
 };
 

@@ -179,17 +179,18 @@ Company.retrieve = async function (companyID) {
   }
 };
 
-Company.retrieveAll = async function () {
+Company.retrieveAll = async function (order) {
+  if (!order) order = "companyID";
+  const companiesCollRef = fsColl(fsDb, "companies");
+  const q = fsQuery(companiesCollRef, orderBy(order));
   try {
-    const companyRecs = (await getDocs(fsColl(fsDb, "companies")
-      .withConverter(Company.converter))).docs.map(d => d.data());
-    if (companyRecs.length) console.log(`${companyRecs.length} company records retrieved.`);
+    const companyRecs = (await getDocs(q.withConverter(Company.converter))).docs.map(d => d.data());
+    console.log(`${companyRecs.length} company records retrieved ${order ? "ordered by " + order : ""}`);
     return companyRecs;
   } catch (e) {
-    console.error(`Error retrieving all company records: ${e}`);
+    console.error(`Error retrieving company records: ${e}`);
   }
 };
-
 
 Company.retrieveBlock = async function (params) {
   try {
@@ -254,15 +255,28 @@ Company.update = async function ({ companyID, companyName, postedJobsToAdd, post
 
 Company.destroy = async function (companyID) {
   const companyDocRef = fsDoc(fsDb, "companies", companyID).withConverter(Company.converter);
-  try {
-    const batch = writeBatch(fsDb); // initiate batch write
 
+  try {
+    const companyDoc = await getDoc(companyDocRef);
+    const companyData = companyDoc.data();
+
+    const postedJobs = companyData.postedJobs || []; // Default to empty array if null
+
+    const jobIds = postedJobs.map(job => job.jobId);
+
+    // Delete each job using Job.destroy
+    for (let jobId of jobIds) {
+      await Job.destroy(String(jobId));
+      console.log(`Job ${jobId} deleted.`);
+    }
+
+    const batch = writeBatch(fsDb);
     batch.delete(companyDocRef);
     await batch.commit();
-    
+
     console.log(`Company record "${companyID}" deleted!`);
   } catch (e) {
-    console.error(`Error deleting company record: ${e}`);
+    console.error(`Error deleting company record and its associated jobs: ${e}`);
   }
 };
 
